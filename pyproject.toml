@@ -1,9 +1,12 @@
 [project]
 name = "guided-discovery-ai-foundation"
 version = "0.0.0"
-description = "Python quality and test tooling for the repository foundation."
+description = "Python tooling and M1 AI service dependencies."
 requires-python = ">=3.13,<3.14"
-dependencies = []
+dependencies = [
+    "fastapi==0.141.1",
+    "uvicorn==0.52.0",
+]
 
 [dependency-groups]
 dev = [
@@ -13,7 +16,9 @@ dev = [
 
 [tool.pytest.ini_options]
 addopts = ["--strict-config", "--strict-markers"]
-testpaths = ["tests/python"]
+cache_dir = ".cache/pytest"
+pythonpath = ["ai/orchestrator"]
+testpaths = ["tests/python", "ai/orchestrator/tests"]
 
 [tool.ruff]
 line-length = 100

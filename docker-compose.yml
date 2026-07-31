@@ -1,5 +1,23 @@
 name: guided-discovery-ai
 
+x-backend-service: &backend-service
+  image: guided-discovery-ai-node-skeleton
+  build:
+    context: .
+    dockerfile: docker/node-skeleton.Dockerfile
+  init: true
+  restart: "no"
+  healthcheck:
+    test:
+      - CMD
+      - node
+      - -e
+      - fetch('http://127.0.0.1:' + process.env.SERVICE_PORT + '/health').then(response => { if (!response.ok) process.exit(1) }).catch(() => process.exit(1))
+    interval: 5s
+    timeout: 3s
+    retries: 20
+    start_period: 10s
+
 services:
   workspace:
     build:
@@ -13,6 +31,221 @@ services:
       - .:/workspace
       - pnpm-store:/pnpm/store
     working_dir: /workspace
+
+  api-gateway:
+    <<: *backend-service
+    command: pnpm --filter @guided-discovery/api-gateway start
+    environment:
+      SERVICE_NAME: ${API_GATEWAY_NAME:-api-gateway}
+      SERVICE_PORT: "3000"
+      SERVICE_VERSION: "${SERVICE_VERSION:-0.1.0}"
+      DATABASE_URL: "${DATABASE_URL:-postgresql://placeholder:placeholder@database.invalid:5432/api_gateway}"
+    ports:
+      - "3000:3000"
+
+  auth-service:
+    <<: *backend-service
+    command: pnpm --filter @guided-discovery/auth-service start
+    environment:
+      SERVICE_NAME: ${AUTH_SERVICE_NAME:-auth-service}
+      SERVICE_PORT: "3001"
+      SERVICE_VERSION: "${SERVICE_VERSION:-0.1.0}"
+      DATABASE_URL: "${DATABASE_URL:-postgresql://placeholder:placeholder@database.invalid:5432/auth_service}"
+    ports:
+      - "3001:3001"
+
+  user-service:
+    <<: *backend-service
+    command: pnpm --filter @guided-discovery/user-service start
+    environment:
+      SERVICE_NAME: ${USER_SERVICE_NAME:-user-service}
+      SERVICE_PORT: "3002"
+      SERVICE_VERSION: "${SERVICE_VERSION:-0.1.0}"
+      DATABASE_URL: "${DATABASE_URL:-postgresql://placeholder:placeholder@database.invalid:5432/user_service}"
+    ports:
+      - "3002:3002"
+
+  permission-service:
+    <<: *backend-service
+    command: pnpm --filter @guided-discovery/permission-service start
+    environment:
+      SERVICE_NAME: ${PERMISSION_SERVICE_NAME:-permission-service}
+      SERVICE_PORT: "3003"
+      SERVICE_VERSION: "${SERVICE_VERSION:-0.1.0}"
+      DATABASE_URL: "${DATABASE_URL:-postgresql://placeholder:placeholder@database.invalid:5432/permission_service}"
+    ports:
+      - "3003:3003"
+
+  memory-service:
+    <<: *backend-service
+    command: pnpm --filter @guided-discovery/memory-service start
+    environment:
+      SERVICE_NAME: ${MEMORY_SERVICE_NAME:-memory-service}
+      SERVICE_PORT: "3004"
+      SERVICE_VERSION: "${SERVICE_VERSION:-0.1.0}"
+      DATABASE_URL: "${DATABASE_URL:-postgresql://placeholder:placeholder@database.invalid:5432/memory_service}"
+    ports:
+      - "3004:3004"
+
+  navigation-service:
+    <<: *backend-service
+    command: pnpm --filter @guided-discovery/navigation-service start
+    environment:
+      SERVICE_NAME: ${NAVIGATION_SERVICE_NAME:-navigation-service}
+      SERVICE_PORT: "3005"
+      SERVICE_VERSION: "${SERVICE_VERSION:-0.1.0}"
+      DATABASE_URL: "${DATABASE_URL:-postgresql://placeholder:placeholder@database.invalid:5432/navigation_service}"
+    ports:
+      - "3005:3005"
+
+  recommendation-service:
+    <<: *backend-service
+    command: pnpm --filter @guided-discovery/recommendation-service start
+    environment:
+      SERVICE_NAME: ${RECOMMENDATION_SERVICE_NAME:-recommendation-service}
+      SERVICE_PORT: "3006"
+      SERVICE_VERSION: "${SERVICE_VERSION:-0.1.0}"
+      DATABASE_URL: "${DATABASE_URL:-postgresql://placeholder:placeholder@database.invalid:5432/recommendation_service}"
+    ports:
+      - "3006:3006"
+
+  learning-service:
+    <<: *backend-service
+    command: pnpm --filter @guided-discovery/learning-service start
+    environment:
+      SERVICE_NAME: ${LEARNING_SERVICE_NAME:-learning-service}
+      SERVICE_PORT: "3007"
+      SERVICE_VERSION: "${SERVICE_VERSION:-0.1.0}"
+      DATABASE_URL: "${DATABASE_URL:-postgresql://placeholder:placeholder@database.invalid:5432/learning_service}"
+    ports:
+      - "3007:3007"
+
+  documentation-service:
+    <<: *backend-service
+    command: pnpm --filter @guided-discovery/documentation-service start
+    environment:
+      SERVICE_NAME: ${DOCUMENTATION_SERVICE_NAME:-documentation-service}
+      SERVICE_PORT: "3008"
+      SERVICE_VERSION: "${SERVICE_VERSION:-0.1.0}"
+      DATABASE_URL: "${DATABASE_URL:-postgresql://placeholder:placeholder@database.invalid:5432/documentation_service}"
+    ports:
+      - "3008:3008"
+
+  translation-service:
+    <<: *backend-service
+    command: pnpm --filter @guided-discovery/translation-service start
+    environment:
+      SERVICE_NAME: ${TRANSLATION_SERVICE_NAME:-translation-service}
+      SERVICE_PORT: "3009"
+      SERVICE_VERSION: "${SERVICE_VERSION:-0.1.0}"
+      DATABASE_URL: "${DATABASE_URL:-postgresql://placeholder:placeholder@database.invalid:5432/translation_service}"
+    ports:
+      - "3009:3009"
+
+  community-service:
+    <<: *backend-service
+    command: pnpm --filter @guided-discovery/community-service start
+    environment:
+      SERVICE_NAME: ${COMMUNITY_SERVICE_NAME:-community-service}
+      SERVICE_PORT: "3010"
+      SERVICE_VERSION: "${SERVICE_VERSION:-0.1.0}"
+      DATABASE_URL: "${DATABASE_URL:-postgresql://placeholder:placeholder@database.invalid:5432/community_service}"
+    ports:
+      - "3010:3010"
+
+  notification-service:
+    <<: *backend-service
+    command: pnpm --filter @guided-discovery/notification-service start
+    environment:
+      SERVICE_NAME: ${NOTIFICATION_SERVICE_NAME:-notification-service}
+      SERVICE_PORT: "3011"
+      SERVICE_VERSION: "${SERVICE_VERSION:-0.1.0}"
+      DATABASE_URL: "${DATABASE_URL:-postgresql://placeholder:placeholder@database.invalid:5432/notification_service}"
+    ports:
+      - "3011:3011"
+
+  media-service:
+    <<: *backend-service
+    command: pnpm --filter @guided-discovery/media-service start
+    environment:
+      SERVICE_NAME: ${MEDIA_SERVICE_NAME:-media-service}
+      SERVICE_PORT: "3012"
+      SERVICE_VERSION: "${SERVICE_VERSION:-0.1.0}"
+      DATABASE_URL: "${DATABASE_URL:-postgresql://placeholder:placeholder@database.invalid:5432/media_service}"
+    ports:
+      - "3012:3012"
+
+  analytics-service:
+    <<: *backend-service
+    command: pnpm --filter @guided-discovery/analytics-service start
+    environment:
+      SERVICE_NAME: ${ANALYTICS_SERVICE_NAME:-analytics-service}
+      SERVICE_PORT: "3013"
+      SERVICE_VERSION: "${SERVICE_VERSION:-0.1.0}"
+      DATABASE_URL: "${DATABASE_URL:-postgresql://placeholder:placeholder@database.invalid:5432/analytics_service}"
+    ports:
+      - "3013:3013"
+
+  search-service:
+    <<: *backend-service
+    command: pnpm --filter @guided-discovery/search-service start
+    environment:
+      SERVICE_NAME: ${SEARCH_SERVICE_NAME:-search-service}
+      SERVICE_PORT: "3014"
+      SERVICE_VERSION: "${SERVICE_VERSION:-0.1.0}"
+      DATABASE_URL: "${DATABASE_URL:-postgresql://placeholder:placeholder@database.invalid:5432/search_service}"
+    ports:
+      - "3014:3014"
+
+  planning-service:
+    <<: *backend-service
+    command: pnpm --filter @guided-discovery/planning-service start
+    environment:
+      SERVICE_NAME: ${PLANNING_SERVICE_NAME:-planning-service}
+      SERVICE_PORT: "3015"
+      SERVICE_VERSION: "${SERVICE_VERSION:-0.1.0}"
+      DATABASE_URL: "${DATABASE_URL:-postgresql://placeholder:placeholder@database.invalid:5432/planning_service}"
+    ports:
+      - "3015:3015"
+
+  ai-orchestrator:
+    build:
+      context: .
+      dockerfile: docker/ai-orchestrator.Dockerfile
+    environment:
+      AI_SERVICE_NAME: "${AI_SERVICE_NAME:-ai-orchestrator}"
+      AI_SERVICE_PORT: "8000"
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+
+  mobile:
+    <<: *backend-service
+    command: pnpm --filter @guided-discovery/mobile start -- --host 0.0.0.0 --port 8081
+    environment:
+      METRO_PORT: "8081"
+      MOBILE_API_BASE_URL: "${MOBILE_API_BASE_URL:-http://localhost:3000}"
+    ports:
+      - "8081:8081"
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:8081/status').then(response => { if (!response.ok) process.exit(1) }).catch(() => process.exit(1))
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 15s
 
 volumes:
   pnpm-store:

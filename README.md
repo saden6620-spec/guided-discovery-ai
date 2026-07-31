@@ -1,96 +1,91 @@
 # Guided Discovery AI
 
-Guided Discovery AI is a modular AI platform whose first planned application is an intelligent travel companion. The platform is designed to help people explore safely, learn through guided discovery, and become more capable without creating dependency.
+Guided Discovery AI is a modular AI platform whose first planned application is an intelligent travel companion. The project is currently at **M1 — Platform Skeleton**.
 
-This repository is currently limited to **Phase 0 — M0 Repository Foundation**. It contains development tooling and repository structure only. It does not contain application logic, backend services, APIs, authentication, databases, AI behavior, or user-facing features.
+M1 contains launchable process shells, health endpoints, configuration contracts, native React Native starter projects, and documented module boundaries. It intentionally contains no product behavior, authentication implementation, database schema, AI execution, memory behavior, or plugin runtime.
 
 ## Prerequisites
 
 - Node.js 24.18.0 LTS (`>=24 <25`)
-- pnpm 11.4.0, activated through Corepack
+- pnpm 11.4.0
 - Python 3.13.14 (`>=3.13,<3.14`)
-- Docker Engine 29 with Docker Compose v2, or a compatible Docker Desktop release
-- Git
+- Docker Engine 29 with Docker Compose v2 or a compatible Docker Desktop release
+- Android Studio for Android mobile launches
+- macOS, Xcode, and CocoaPods for iOS mobile launches
 
 ## Setup
-
-1. Install the prerequisite runtime versions.
-2. Enable Corepack and activate the repository's pinned pnpm version.
-3. Install JavaScript dependencies using the committed lockfile.
-4. Create a Python virtual environment.
-5. Install `pytest==9.1.1` and `ruff==0.15.22` into that environment.
-6. Install the Playwright Chromium browser.
-7. Run the complete validation suite.
-
-The corresponding commands are:
 
 ```text
 corepack enable
 corepack prepare pnpm@11.4.0 --activate
 pnpm install --frozen-lockfile
 python -m venv .venv
-python -m pip install pytest==9.1.1 ruff==0.15.22
+python -m pip install fastapi==0.141.1 pytest==9.1.1 ruff==0.15.22 uvicorn==0.52.0
 pnpm exec playwright install chromium
 pnpm validate
 ```
 
-Activate the virtual environment before running Python commands. Activation is operating-system and shell specific.
+Activate the Python virtual environment before running Python commands.
 
-## Repository Structure
+## Skeleton Layout
 
-```text
-apps/            Future user-facing applications
-backend/         Future backend services
-ai/              Future AI runtime and independent engines
-packages/        Future shared packages
-infrastructure/  Future reproducible deployment infrastructure
-docs/            Approved documentation destination
-scripts/         Future cross-platform automation
-assets/          Future static assets
-tests/           Foundation and future project-wide tests
-tools/           Future developer tooling
-Documents/       Current authoritative project specifications
-docker/          Development container image
-```
+- `apps/mobile/`: blank React Native application with Android and iOS native projects
+- `apps/*/`: documented future client boundaries
+- `backend/*/`: independent NestJS service processes with `GET /health`
+- `ai/orchestrator/`: placeholder FastAPI process with `GET /health`
+- `ai/*/`: documented AI subsystem boundaries with no AI behavior
+- `packages/*/`: documented shared contracts and package boundaries
+- `infrastructure/*/`: documented infrastructure boundaries without deployment implementation
 
-The authoritative detailed layout is defined in `Documents/REPOSITORY_STRUCTURE.md`.
+The complete authoritative layout is in `Documents/REPOSITORY_STRUCTURE.md`.
 
 ## Development Commands
 
-| Command                | Purpose                                                                  |
-| ---------------------- | ------------------------------------------------------------------------ |
-| `pnpm format`          | Format supported JavaScript, TypeScript, configuration, and Python files |
-| `pnpm format:check`    | Verify formatting without changing files                                 |
-| `pnpm lint`            | Run ESLint and Ruff                                                      |
-| `pnpm typecheck`       | Run TypeScript checking                                                  |
-| `pnpm test:javascript` | Run Jest foundation tests                                                |
-| `pnpm test:python`     | Run Pytest foundation tests                                              |
-| `pnpm test:e2e`        | Run Playwright foundation tests                                          |
-| `pnpm validate`        | Run all local quality and test checks                                    |
-| `pnpm docker:config`   | Validate Docker Compose                                                  |
-| `pnpm docker:up`       | Build and start the development environment                              |
-| `pnpm docker:down`     | Stop the development environment                                         |
+| Command                | Purpose                                                         |
+| ---------------------- | --------------------------------------------------------------- |
+| `pnpm build`           | Build all runnable TypeScript workspaces through Turborepo      |
+| `pnpm format`          | Format supported TypeScript, JavaScript, JSON, YAML, and Python |
+| `pnpm format:check`    | Check formatting                                                |
+| `pnpm lint`            | Run root and workspace ESLint plus Ruff                         |
+| `pnpm typecheck`       | Type-check root configuration and every TypeScript workspace    |
+| `pnpm test`            | Run Jest, Pytest, and workspace tests                           |
+| `pnpm test:e2e`        | Run Playwright tests                                            |
+| `pnpm validate`        | Build and run the complete local validation suite               |
+| `pnpm docker:up`       | Build and start the complete runnable skeleton                  |
+| `pnpm verify:skeleton` | Verify every backend, AI, and Metro health endpoint             |
+| `pnpm docker:down`     | Stop the local skeleton                                         |
 
-## Dev Container
+## Starting Individual Processes
 
-Open the repository in a Dev Container-compatible editor and select **Reopen in Container**. The container uses Node.js 24.18.0, pnpm 11.4.0, and Python 3.13.14.
+```text
+pnpm --filter @guided-discovery/api-gateway dev
+python -m uvicorn app.main:application --app-dir ai/orchestrator --port 8000
+pnpm --filter @guided-discovery/mobile start
+```
 
-## Documentation
+Every backend service accepts `SERVICE_NAME`, `SERVICE_PORT`, `SERVICE_VERSION`, and the placeholder `DATABASE_URL`. The AI placeholder accepts `AI_SERVICE_NAME` and `AI_SERVICE_PORT`. Copy `.env.example` to `.env` for Compose overrides.
 
-Start with:
+## Docker Compose
 
-- `Documents/AGENTS.md`
-- `Documents/TASKS.md`
-- `Documents/SYSTEM_ARCHITECTURE.md`
-- `Documents/REPOSITORY_STRUCTURE.md`
-- `Documents/TECH_STACK.md`
+```text
+docker compose config --quiet
+docker compose up --build --detach --wait
+pnpm verify:skeleton
+docker compose down --remove-orphans
+```
 
-Only the active milestone in `Documents/TASKS.md` may be implemented.
+Compose launches the development workspace, all 16 backend skeletons, the FastAPI AI Orchestrator placeholder, and the React Native Metro server.
 
-## Troubleshooting
+## Mobile
 
-- If pnpm reports an engine mismatch, verify that Node.js 24 is active.
-- If Python tooling cannot run, verify that Python 3.13 is active and the virtual environment contains Pytest and Ruff.
-- If Playwright cannot find Chromium, rerun `pnpm exec playwright install chromium`.
-- On Windows, Docker Desktop with WSL2-backed storage is recommended for container performance.
-- Run `docker compose config` to diagnose Compose configuration before starting the environment.
+```text
+pnpm --filter @guided-discovery/mobile start
+pnpm --filter @guided-discovery/mobile android
+pnpm --filter @guided-discovery/mobile ios
+```
+
+The mobile shell contains only a minimal title and subtitle.
+
+## Scope Control
+
+Only the milestone active in `Documents/TASKS.md` may be implemented. M2 remains unstarted.

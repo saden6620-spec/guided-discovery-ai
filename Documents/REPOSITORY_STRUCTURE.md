@@ -93,6 +93,7 @@ backend/
 ├── navigation-service/
 ├── recommendation-service/
 ├── learning-service/
+├── planning-service/
 ├── documentation-service/
 ├── translation-service/
 ├── community-service/

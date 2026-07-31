@@ -5,13 +5,17 @@
 
 # JavaScript
 .pnpm-store/
+.turbo/
 node_modules/
+**/node_modules.linux-artifact/
+apps/mobile/.generated-git-metadata/
 coverage/
 playwright-report/
 test-results/
 
 # Python
 .pytest_cache/
+.cache/
 .ruff_cache/
 .venv/
 __pycache__/

@@ -45,7 +45,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install Python tooling
-        run: python -m pip install pytest==9.1.1 ruff==0.15.22
+        run: python -m pip install fastapi==0.141.1 pytest==9.1.1 ruff==0.15.22 uvicorn==0.52.0
 
       - name: Install Playwright Chromium
         run: pnpm exec playwright install --with-deps chromium
@@ -57,13 +57,16 @@ jobs:
         run: docker compose config --quiet
 
       - name: Build and start development environment
-        run: docker compose up --build --detach
+        run: docker compose up --build --detach --wait
 
       - name: Verify container runtimes
         run: |
           test "$(docker compose exec -T workspace node --version)" = "v24.18.0"
           test "$(docker compose exec -T workspace pnpm --version)" = "11.4.0"
           test "$(docker compose exec -T workspace python --version)" = "Python 3.13.14"
+
+      - name: Verify skeleton services
+        run: pnpm verify:skeleton
 
       - name: Stop development environment
         if: always()

@@ -14,13 +14,13 @@ Only the active milestone may be implemented. Work outside the active milestone 
 
 # Current Status
 
-- Active phase: Phase 0 — Development Environment
-- Phase status: Complete
-- Active milestone: M0 — Repository Foundation
-- Milestone status: Complete
+- Active phase: Phase 1 — Platform Foundation
+- Phase status: In progress
+- Active milestone: M1 — Platform Skeleton
+- Milestone status: In progress
 - Hosted CI validation date: July 31, 2026
 - Hosted CI tested branch: `main`
-- Next milestone: M1 — Platform Skeleton
+- Next milestone: M2 — Core Backend
 - Next milestone status: Not started
 - Last reviewed: 2026-07-31
 
@@ -142,6 +142,63 @@ All work outside M0 is deferred, including:
 - Push run `30621872911`: Passed
 - Manual run `30621886110`: Passed
 - M1 — Platform Skeleton: Not started
+
+---
+
+# M1 — Platform Skeleton
+
+## Objective
+
+Create launchable, independently testable application and service skeletons without implementing product or domain behavior.
+
+## Included Tasks
+
+| Task | Status |
+|---|---|
+| Create every documented application directory | Complete |
+| Create a launchable blank React Native mobile shell | Complete |
+| Create every documented backend service skeleton | Complete |
+| Add backend health endpoints and configuration loading | Complete |
+| Add database connection configuration only | Complete |
+| Add authentication and permission interfaces only | Complete |
+| Create every documented AI subsystem directory | Complete |
+| Add a placeholder FastAPI AI Orchestrator health service | Complete |
+| Add memory and plugin placeholders only | Complete |
+| Create every documented shared package skeleton | Complete |
+| Create every documented infrastructure directory | Complete |
+| Wire pnpm workspaces and Turborepo across the skeleton | Complete |
+| Add Docker images and Compose services for runnable skeletons | Complete |
+| Validate builds, formatting, linting, tests, startup, and environment loading | Complete |
+| Obtain a successful GitHub-hosted CI run | In progress |
+
+## Explicitly Out of Scope
+
+- Product or domain business logic
+- Authentication or authorization behavior
+- Database schemas and migrations
+- AI inference, orchestration behavior, model providers, embeddings, or learning
+- Memory storage, retrieval, ranking, or deletion behavior
+- Plugin discovery, loading, execution, marketplace, or sandbox behavior
+- User-facing product screens or workflows
+- Phase 2 domain-service APIs
+- Kubernetes, Terraform, cloud deployment, and production infrastructure
+
+## Completion Rule
+
+M1 may be marked complete only after all skeleton processes build and start, local validation passes, Docker Compose boots the runnable skeleton, and GitHub-hosted CI passes. M2 remains untouched until separately approved.
+
+## Validation Record
+
+- Local validation date: July 31, 2026
+- Tested branch: `main`
+- Frozen dependency installation: Passed
+- Turborepo build: Passed for all 28 TypeScript workspaces
+- Formatting, linting, and type checking: Passed
+- Jest, Pytest, React Native Jest, and Playwright: Passed
+- Docker Compose: All 16 backend services, AI Orchestrator, mobile Metro, and development workspace started successfully
+- Health verification: Every runnable M1 skeleton endpoint passed
+- Environment loading and pinned container runtimes: Passed
+- GitHub-hosted CI: Pending
 
 ---
 

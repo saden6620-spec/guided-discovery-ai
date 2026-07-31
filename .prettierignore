@@ -1,9 +1,13 @@
 .pnpm-store/
 .pytest_cache/
+.cache/
 .ruff_cache/
+.turbo/
 __pycache__/
+apps/mobile/.generated-git-metadata/
 coverage/
 node_modules/
+**/node_modules.linux-artifact/
 playwright-report/
 test-results/
 pnpm-lock.yaml
