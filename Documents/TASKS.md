@@ -15,9 +15,9 @@ Only the active milestone may be implemented. Work outside the active milestone 
 # Current Status
 
 - Active phase: Phase 1 — Platform Foundation
-- Phase status: In progress
+- Phase status: Complete
 - Active milestone: M1 — Platform Skeleton
-- Milestone status: In progress
+- Milestone status: Complete
 - Hosted CI validation date: July 31, 2026
 - Hosted CI tested branch: `main`
 - Next milestone: M2 — Core Backend
@@ -113,7 +113,7 @@ Scaffolding may establish approved directories and development configuration, bu
 
 All work outside M0 is deferred, including:
 
-- Phase 1 — Platform Foundation
+- Additional Phase 1 work beyond M1
 - Phase 2 — Core Backend
 - Phase 3 — AI Foundation
 - Phase 4 — Client Applications
@@ -141,7 +141,7 @@ All work outside M0 is deferred, including:
 - GitHub Actions workflow: `CI`
 - Push run `30621872911`: Passed
 - Manual run `30621886110`: Passed
-- M1 — Platform Skeleton: Not started
+- M1 — Platform Skeleton: Complete
 
 ---
 
@@ -169,7 +169,7 @@ Create launchable, independently testable application and service skeletons with
 | Wire pnpm workspaces and Turborepo across the skeleton | Complete |
 | Add Docker images and Compose services for runnable skeletons | Complete |
 | Validate builds, formatting, linting, tests, startup, and environment loading | Complete |
-| Obtain a successful GitHub-hosted CI run | In progress |
+| Obtain a successful GitHub-hosted CI run | Complete |
 
 ## Explicitly Out of Scope
 
@@ -192,13 +192,18 @@ M1 may be marked complete only after all skeleton processes build and start, loc
 - Local validation date: July 31, 2026
 - Tested branch: `main`
 - Frozen dependency installation: Passed
-- Turborepo build: Passed for all 28 TypeScript workspaces
+- Turborepo build: Passed for all 29 TypeScript workspaces
 - Formatting, linting, and type checking: Passed
 - Jest, Pytest, React Native Jest, and Playwright: Passed
 - Docker Compose: All 16 backend services, AI Orchestrator, mobile Metro, and development workspace started successfully
 - Health verification: Every runnable M1 skeleton endpoint passed
 - Environment loading and pinned container runtimes: Passed
-- GitHub-hosted CI: Pending
+- GitHub-hosted CI validation date: July 31, 2026
+- GitHub-hosted CI workflow: `CI`
+- GitHub-hosted CI push run `30625632508`: Passed
+- GitHub-hosted CI tested branch: `main`
+- M1 milestone status: Complete
+- M2 — Core Backend: Not started
 
 ---
 
