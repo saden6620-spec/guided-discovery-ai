@@ -15,9 +15,13 @@ Only the active milestone may be implemented. Work outside the active milestone 
 # Current Status
 
 - Active phase: Phase 0 — Development Environment
-- Phase status: In progress
+- Phase status: Complete
 - Active milestone: M0 — Repository Foundation
-- Milestone status: In progress
+- Milestone status: Complete
+- Hosted CI validation date: July 31, 2026
+- Hosted CI tested branch: `main`
+- Next milestone: M1 — Platform Skeleton
+- Next milestone status: Not started
 - Last reviewed: 2026-07-31
 
 Allowed status values:
@@ -49,7 +53,7 @@ Establish the repository and development-tooling foundation required for later m
 | Configure Python formatting, linting, and testing foundations | Complete |
 | Add Docker Compose for local development dependencies | Complete |
 | Add Dev Container support | Complete |
-| Add initial GitHub Actions CI | In progress |
+| Add initial GitHub Actions CI | Complete |
 | Add `.env.example` | Complete |
 | Add root development scripts | Complete |
 | Add a human-readable root `README.md` | Complete |
@@ -125,8 +129,19 @@ All work outside M0 is deferred, including:
 
 # Known Blockers
 
-- A GitHub-hosted CI run has not been performed because this local repository is not connected to a GitHub remote. The workflow passed local syntax validation, and every configured job command passed locally.
+- No known blocker prevents M0 completion.
 - `ROBOT_INTERFACE.md` is missing, but it is deferred and is not a blocker for M0.
+
+---
+
+# M0 Validation Record
+
+- Validation date: July 31, 2026
+- Tested branch: `main`
+- GitHub Actions workflow: `CI`
+- Push run `30621872911`: Passed
+- Manual run `30621886110`: Passed
+- M1 — Platform Skeleton: Not started
 
 ---
 
