@@ -17,7 +17,7 @@ Only the active milestone may be implemented. Work outside the active milestone 
 - Active phase: Phase 2 — Core Backend
 - Phase status: In progress
 - Active milestone: M2.2 — Memory Service
-- Milestone status: In progress
+- Milestone status: Complete
 - Hosted CI validation date: July 31, 2026
 - Hosted CI tested branch: `main`
 - Next milestone: M2.3 — Planning Service
@@ -290,7 +290,7 @@ Implement the approved Memory Service HTTP, persistence, lifecycle, deletion, re
 | OpenAPI generation and contract validation | Complete |
 | Unit, integration, API contract, and migration tests | Complete |
 | Complete local and Docker validation | Complete |
-| GitHub-hosted CI validation | Not started |
+| GitHub-hosted CI validation | Complete |
 
 ## Scope Control
 
@@ -311,8 +311,11 @@ M2.3 and later work remains not started. M2.2 excludes all non-memory domain ser
 - Docker Compose configuration and complete skeleton startup: Passed
 - Memory Service liveness and readiness: Passed; PostgreSQL and schema checks reported `UP`
 - Container migration and startup: Passed without Prisma runtime warnings after installing OpenSSL
-- GitHub-hosted CI: Pending
-- M2.2 milestone status: In progress pending hosted CI
+- GitHub-hosted CI validation date: August 1, 2026
+- GitHub-hosted CI workflow: `CI`
+- GitHub-hosted CI run `30695266345`: Passed
+- GitHub-hosted CI tested branch: `main`
+- M2.2 milestone status: Complete
 - M2.3 — Planning Service: Not started
 
 ---
