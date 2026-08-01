@@ -6,8 +6,8 @@ describe("memory encryption adapter", () => {
     const encrypted = encryption.encrypt("private memory content");
     expect(encrypted.toString("utf8")).not.toContain("private memory content");
     expect(encryption.decrypt(encrypted)).toBe("private memory content");
-    expect(() =>
-      encryption.decrypt(Buffer.from(encrypted).fill(0, encrypted.length - 1)),
-    ).toThrow();
+    const tampered = Buffer.from(encrypted);
+    tampered[tampered.length - 1] ^= 1;
+    expect(() => encryption.decrypt(tampered)).toThrow();
   });
 });
