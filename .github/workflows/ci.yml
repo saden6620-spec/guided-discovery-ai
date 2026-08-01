@@ -87,6 +87,8 @@ jobs:
         run: docker compose config --quiet
 
       - name: Build and start development environment
+        env:
+          PLANNING_DATABASE_URL: postgresql://planning_service:planning_service_local@planning-database:5432/planning_service
         run: docker compose up --build --detach --wait
 
       - name: Verify container runtimes
