@@ -17,9 +17,9 @@ Only the active milestone may be implemented. Work outside the active milestone 
 - Active phase: Phase 2 — Core Backend
 - Phase status: In progress
 - Active milestone: M2.3 — Planning Service
-- Milestone status: In progress
-- Hosted CI validation: Pending
-- Hosted CI tested branch: Pending
+- Milestone status: Complete
+- Hosted CI validation: Passed on August 1, 2026
+- Hosted CI tested branch: `main`
 - Next milestone: M2.4 — Navigation Service
 - Next milestone status: Not started
 - Last reviewed: 2026-08-01
@@ -342,13 +342,13 @@ Implement the approved Planning Service HTTP, persistence, lifecycle, child-muta
 | OpenAPI generation and contract validation | Complete |
 | Unit, integration, API contract, and migration tests | Complete |
 | Complete local, migration, and Docker validation | Complete |
-| GitHub-hosted CI validation | In progress |
+| GitHub-hosted CI validation | Complete |
 
 ## Scope Control
 
 M2.4 and later work remains not started. M2.3 excludes plan generation, Navigation Service behavior, providers, recommendations, AI behavior, authentication business logic, Search, embeddings, personalization, and client features.
 
-## Local Validation Record
+## Validation Record
 
 - Local validation date: August 1, 2026
 - Tested branch: `main`
@@ -363,8 +363,11 @@ M2.4 and later work remains not started. M2.3 excludes plan generation, Navigati
 - Docker Compose configuration, image build, and complete skeleton startup: Passed after excluding ignored dependency artifacts from the build context
 - Planning Service liveness and readiness: Passed; PostgreSQL reported `UP`
 - Container runtimes: Node.js 24.18.0, pnpm 11.4.0, Python 3.13.14
-- GitHub-hosted CI validation: Pending
-- M2.3 milestone status: In progress pending hosted CI
+- GitHub-hosted CI validation date: August 1, 2026
+- GitHub-hosted CI workflow: `CI`
+- GitHub-hosted CI run `30702819899`: Passed
+- GitHub-hosted CI tested branch: `main`
+- M2.3 milestone status: Complete
 - M2.4 — Navigation Service: Not started
 
 ---
