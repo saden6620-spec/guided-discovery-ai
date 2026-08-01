@@ -47,6 +47,20 @@ services:
     volumes:
       - planning-postgres-data:/var/lib/postgresql/data
 
+  navigation-database:
+    image: postgres:17.6-alpine
+    environment:
+      POSTGRES_DB: navigation_service
+      POSTGRES_USER: navigation_service
+      POSTGRES_PASSWORD: navigation_service_local
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U navigation_service -d navigation_service"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - navigation-postgres-data:/var/lib/postgresql/data
+
   workspace:
     build:
       context: .
@@ -122,12 +136,17 @@ services:
 
   navigation-service:
     <<: *backend-service
-    command: pnpm --filter @guided-discovery/navigation-service start
+    command: sh -c "pnpm --filter @guided-discovery/navigation-service migrate:deploy && pnpm --filter @guided-discovery/navigation-service start"
+    depends_on:
+      navigation-database:
+        condition: service_healthy
     environment:
       SERVICE_NAME: ${NAVIGATION_SERVICE_NAME:-navigation-service}
       SERVICE_PORT: "3005"
-      SERVICE_VERSION: "${SERVICE_VERSION:-0.1.0}"
-      DATABASE_URL: "${DATABASE_URL:-postgresql://placeholder:placeholder@database.invalid:5432/navigation_service}"
+      SERVICE_VERSION: "${SERVICE_VERSION:-0.2.0}"
+      DATABASE_URL: "${NAVIGATION_DATABASE_URL:-postgresql://navigation_service:navigation_service_local@navigation-database:5432/navigation_service}"
+      APP_ENV: development
+      PERMISSION_TEST_ALLOW: "true"
     ports:
       - "3005:3005"
 
@@ -289,3 +308,4 @@ volumes:
   pnpm-store:
   memory-postgres-data:
   planning-postgres-data:
+  navigation-postgres-data:

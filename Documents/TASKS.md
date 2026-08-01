@@ -16,11 +16,11 @@ Only the active milestone may be implemented. Work outside the active milestone 
 
 - Active phase: Phase 2 — Core Backend
 - Phase status: In progress
-- Active milestone: M2.3 — Planning Service
-- Milestone status: Complete
-- Hosted CI validation: Passed on August 1, 2026
-- Hosted CI tested branch: `main`
-- Next milestone: M2.4 — Navigation Service
+- Active milestone: M2.4 — Navigation Service
+- Milestone status: In progress
+- Hosted CI validation: Pending
+- Hosted CI tested branch: Pending
+- Next milestone: M2.5 — Recommendation Service
 - Next milestone status: Not started
 - Last reviewed: 2026-08-01
 
@@ -368,7 +368,60 @@ M2.4 and later work remains not started. M2.3 excludes plan generation, Navigati
 - GitHub-hosted CI run `30702819899`: Passed
 - GitHub-hosted CI tested branch: `main`
 - M2.3 milestone status: Complete
-- M2.4 — Navigation Service: Not started
+- M2.4 — Navigation Service: In progress
+
+---
+
+# M2.4 — Navigation Service
+
+## Objective
+
+Implement the approved provider-neutral Navigation Service HTTP, private provisioning, persistence, lifecycle, reliability, privacy, and operational contracts without implementing route generation, external map providers, live GPS, AI navigation, client maps, Recommendation Service, or another later milestone.
+
+## Included Tasks
+
+| Task | Status |
+| --- | --- |
+| Reconcile M2.4 implementation instructions with approved ADR-0007 lifecycle | Complete |
+| NestJS module organization and configuration | Complete |
+| Public start, stop, status, and reroute API | Complete |
+| Private destination and route provisioning API | Complete |
+| Navigation-owned entities, constraints, indexes, and Prisma migration | Complete |
+| Atomic Trip and first Navigation Session creation | Complete |
+| ACTIVE, COMPLETED, and CANCELLED lifecycle enforcement | Complete |
+| Authorization boundary, validation, optimistic concurrency, and idempotency | Complete |
+| Encrypted route geometry and coordinate privacy controls | Complete |
+| Transactional outbox, inbox, and dead-letter foundations | Complete |
+| Approved Trip and Navigation events | Complete |
+| Health, readiness, version, logging, metrics, and tracing integration | Complete |
+| OpenAPI generation and public/internal contract validation | Complete |
+| Unit, integration, API, lifecycle, privacy, event, and migration tests | Complete |
+| Complete repository, migration, Playwright, and Docker validation | Complete |
+| GitHub-hosted CI validation | In progress |
+
+## Scope Control
+
+M2.5 and later work remains not started. M2.4 excludes Recommendation Service behavior, external map providers, route generation, live GPS, traffic, weather, ETA intelligence, safety-engine decisions, AI navigation, client map screens, robot navigation, community sharing, pause, resume, session replacement, navigation-only sessions, and undocumented provisioning endpoints.
+
+## Local Validation Record
+
+- Local validation date: August 1, 2026
+- Tested branch: `main`
+- Frozen pnpm installation and dependency resolution: Passed
+- Approved public OpenAPI, internal OpenAPI, AsyncAPI, and lifecycle contract validation: Passed
+- Prisma schema validation and forward migration: Passed
+- Migration clean apply, lossless reversal, and reapplication: Passed against the independently owned Navigation PostgreSQL database
+- Navigation Service Jest suites: 7 tests passed across 5 suites
+- Repository Jest suites: 87 tests passed across 26 suites, including Memory and Planning regressions
+- Pytest: Passed
+- Formatting, ESLint, Ruff, strict TypeScript, Turborepo tests, and 34-workspace Turborepo build: Passed
+- Playwright: Passed after installing its documented Chromium system dependencies
+- Docker Compose configuration, image build, and complete skeleton startup: Passed
+- Memory, Planning, and Navigation readiness: Passed; each service reported PostgreSQL `UP`
+- Container runtimes: Node.js 24.18.0, pnpm 11.4.0, Python 3.13.14
+- GitHub-hosted CI validation: Pending
+- M2.4 milestone status: In progress pending hosted CI
+- M2.5 — Recommendation Service: Not started
 
 ---
 

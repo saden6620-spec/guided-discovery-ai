@@ -344,6 +344,42 @@ importers:
 
   backend/navigation-service:
     dependencies:
+      '@guided-discovery/authentication':
+        specifier: workspace:*
+        version: link:../../packages/authentication
+      '@guided-discovery/database':
+        specifier: workspace:*
+        version: link:../../packages/database
+      '@guided-discovery/errors':
+        specifier: workspace:*
+        version: link:../../packages/errors
+      '@guided-discovery/events':
+        specifier: workspace:*
+        version: link:../../packages/events
+      '@guided-discovery/health':
+        specifier: workspace:*
+        version: link:../../packages/health
+      '@guided-discovery/logging':
+        specifier: workspace:*
+        version: link:../../packages/logging
+      '@guided-discovery/permissions':
+        specifier: workspace:*
+        version: link:../../packages/permissions
+      '@guided-discovery/shared-config':
+        specifier: workspace:*
+        version: link:../../packages/shared-config
+      '@guided-discovery/shared-types':
+        specifier: workspace:*
+        version: link:../../packages/shared-types
+      '@guided-discovery/telemetry':
+        specifier: workspace:*
+        version: link:../../packages/telemetry
+      '@guided-discovery/testing':
+        specifier: workspace:*
+        version: link:../../packages/testing
+      '@guided-discovery/validation':
+        specifier: workspace:*
+        version: link:../../packages/validation
       '@nestjs/common':
         specifier: 11.1.28
         version: 11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -353,13 +389,46 @@ importers:
       '@nestjs/platform-express':
         specifier: 11.1.28
         version: 11.1.28(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.28)
+      '@nestjs/swagger':
+        specifier: 11.4.6
+        version: 11.4.6(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.28)(reflect-metadata@0.2.2)
+      pg:
+        specifier: 8.22.0
+        version: 8.22.0
       reflect-metadata:
         specifier: 0.2.2
         version: 0.2.2
       rxjs:
         specifier: 7.8.2
         version: 7.8.2
+      yaml:
+        specifier: 2.8.1
+        version: 2.8.1
+      zod:
+        specifier: 4.4.3
+        version: 4.4.3
     devDependencies:
+      '@nestjs/testing':
+        specifier: 11.1.28
+        version: 11.1.28(@nestjs/common@11.1.28(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.28)(@nestjs/platform-express@11.1.28)
+      '@types/express':
+        specifier: 5.0.6
+        version: 5.0.6
+      '@types/pg':
+        specifier: 8.15.5
+        version: 8.15.5
+      '@types/supertest':
+        specifier: 6.0.3
+        version: 6.0.3
+      prettier:
+        specifier: 3.9.0
+        version: 3.9.0
+      prisma:
+        specifier: 7.9.1
+        version: 7.9.1(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
+      supertest:
+        specifier: 7.2.2
+        version: 7.2.2
       tsx:
         specifier: 4.20.6
         version: 4.20.6

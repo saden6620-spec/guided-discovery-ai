@@ -32,6 +32,7 @@ jobs:
     env:
       DATABASE_URL: postgresql://memory_service:memory_service_ci@127.0.0.1:5432/memory_service
       PLANNING_DATABASE_URL: postgresql://memory_service:memory_service_ci@127.0.0.1:5432/planning_service
+      NAVIGATION_DATABASE_URL: postgresql://memory_service:memory_service_ci@127.0.0.1:5432/navigation_service
       APP_ENV: test
       PERMISSION_TEST_ALLOW: "true"
     steps:
@@ -80,6 +81,14 @@ jobs:
           DATABASE_URL: ${{ env.PLANNING_DATABASE_URL }}
         run: pnpm --filter @guided-discovery/planning-service migrate:deploy
 
+      - name: Create Navigation Service database
+        run: PGPASSWORD=memory_service_ci psql -h 127.0.0.1 -U memory_service -d memory_service -c 'CREATE DATABASE navigation_service'
+
+      - name: Apply Navigation Service migrations
+        env:
+          DATABASE_URL: ${{ env.NAVIGATION_DATABASE_URL }}
+        run: pnpm --filter @guided-discovery/navigation-service migrate:deploy
+
       - name: Validate repository
         run: pnpm validate
 
@@ -89,6 +98,7 @@ jobs:
       - name: Build and start development environment
         env:
           PLANNING_DATABASE_URL: postgresql://planning_service:planning_service_local@planning-database:5432/planning_service
+          NAVIGATION_DATABASE_URL: postgresql://navigation_service:navigation_service_local@navigation-database:5432/navigation_service
         run: docker compose up --build --detach --wait
 
       - name: Verify container runtimes

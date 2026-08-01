@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS idempotency_records,dead_letter_events,inbox_events,outbox_events,landmarks,visited_locations CASCADE; ALTER TABLE trips DROP CONSTRAINT IF EXISTS trips_active_session_fk; DROP TABLE IF EXISTS navigation_sessions,trips,routes,destinations CASCADE;
