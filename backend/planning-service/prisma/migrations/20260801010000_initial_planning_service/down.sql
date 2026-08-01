@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS idempotency_records,dead_letter_events,inbox_events,outbox_events,travel_checklists,reservations,itinerary_items,itineraries CASCADE;

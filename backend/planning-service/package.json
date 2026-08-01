@@ -1,23 +1,52 @@
 {
   "name": "@guided-discovery/planning-service",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "tsc --project tsconfig.json",
     "dev": "tsx watch src/main.ts",
     "start": "node dist/main.js",
-    "lint": "eslint src",
-    "typecheck": "tsc --project tsconfig.json --noEmit"
+    "lint": "eslint src __tests__",
+    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "test": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js --config ../../jest.config.mjs --runInBand backend/planning-service",
+    "test:integration": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js --config ../../jest.config.mjs --runInBand backend/planning-service/__tests__/integration",
+    "prisma:validate": "prisma validate --config prisma.config.ts",
+    "migrate:deploy": "prisma migrate deploy --config prisma.config.ts",
+    "migrate:status": "prisma migrate status --config prisma.config.ts",
+    "openapi:generate": "node dist/openapi/generate.js"
   },
   "dependencies": {
+    "@guided-discovery/authentication": "workspace:*",
+    "@guided-discovery/database": "workspace:*",
+    "@guided-discovery/errors": "workspace:*",
+    "@guided-discovery/events": "workspace:*",
+    "@guided-discovery/health": "workspace:*",
+    "@guided-discovery/logging": "workspace:*",
+    "@guided-discovery/permissions": "workspace:*",
+    "@guided-discovery/shared-config": "workspace:*",
+    "@guided-discovery/shared-types": "workspace:*",
+    "@guided-discovery/telemetry": "workspace:*",
+    "@guided-discovery/testing": "workspace:*",
+    "@guided-discovery/validation": "workspace:*",
     "@nestjs/common": "11.1.28",
     "@nestjs/core": "11.1.28",
     "@nestjs/platform-express": "11.1.28",
+    "@nestjs/swagger": "11.4.6",
+    "pg": "8.22.0",
     "reflect-metadata": "0.2.2",
-    "rxjs": "7.8.2"
+    "rxjs": "7.8.2",
+    "yaml": "2.8.1",
+    "zod": "4.4.3"
   },
   "devDependencies": {
+    "@nestjs/testing": "11.1.28",
+    "@types/express": "5.0.6",
+    "@types/pg": "8.15.5",
+    "@types/supertest": "6.0.3",
+    "prettier": "3.9.0",
+    "prisma": "7.9.1",
+    "supertest": "7.2.2",
     "tsx": "4.20.6"
   }
 }

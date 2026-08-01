@@ -79,12 +79,13 @@ Adopt **Option C** for M2.
 
 ### Plan PATCH shape
 
-The approved shape should distinguish:
+The approved shape uses scalar parent fields alongside ordered operation arrays:
 
-- `set`: scalar parent fields.
-- `items.create`, `items.update`, `items.delete`.
-- `reservations.create`, `reservations.update`, `reservations.delete`.
-- `checklistItems.create`, `checklistItems.update`, `checklistItems.delete`.
+- `itemOperations` containing `CREATE`, `UPDATE`, or `DELETE` operations.
+- `reservationOperations` containing `CREATE`, `UPDATE`, or `DELETE` operations.
+- `checklistOperations` containing `CREATE`, `UPDATE`, or `DELETE` operations.
+
+Each operation is discriminated by its `operation` field. This operation-array model is the authoritative public contract defined in `docs/api/m2/openapi.yaml`; child collections are never replaced implicitly.
 
 Every update child includes `id` and `expectedVersion`. Every delete entry includes `id` and `expectedVersion`. Creates have no ID. Array order is represented by an explicit non-negative `position` and validated for uniqueness within the aggregate.
 

@@ -16,11 +16,11 @@ Only the active milestone may be implemented. Work outside the active milestone 
 
 - Active phase: Phase 2 — Core Backend
 - Phase status: In progress
-- Active milestone: M2.2 — Memory Service
-- Milestone status: Complete
-- Hosted CI validation date: July 31, 2026
-- Hosted CI tested branch: `main`
-- Next milestone: M2.3 — Planning Service
+- Active milestone: M2.3 — Planning Service
+- Milestone status: In progress
+- Hosted CI validation: Pending
+- Hosted CI tested branch: Pending
+- Next milestone: M2.4 — Navigation Service
 - Next milestone status: Not started
 - Last reviewed: 2026-08-01
 
@@ -316,7 +316,56 @@ M2.3 and later work remains not started. M2.2 excludes all non-memory domain ser
 - GitHub-hosted CI run `30695266345`: Passed
 - GitHub-hosted CI tested branch: `main`
 - M2.2 milestone status: Complete
-- M2.3 — Planning Service: Not started
+- M2.3 — Planning Service: In progress
+
+---
+
+# M2.3 — Planning Service
+
+## Objective
+
+Implement the approved Planning Service HTTP, persistence, lifecycle, child-mutation, reliability, and operational contracts without implementing plan generation, Navigation, recommendations, providers, AI behavior, or another domain service.
+
+## Included Tasks
+
+| Task | Status |
+| --- | --- |
+| Correct the four approved Planning specification contradictions | Complete |
+| NestJS module organization and configuration | Complete |
+| Public Planning API | Complete |
+| Itinerary aggregate entities, repository, and Prisma migrations | Complete |
+| Stable-ID itinerary item, reservation, and checklist operations | Complete |
+| Validation, authorization boundary, concurrency, and idempotency | Complete |
+| Planning lifecycle transitions and immediate logical deletion | Complete |
+| Transactional outbox and inbox/dead-letter abstractions | Complete |
+| Health, readiness, logging, metrics, and tracing integration | Complete |
+| OpenAPI generation and contract validation | Complete |
+| Unit, integration, API contract, and migration tests | Complete |
+| Complete local, migration, and Docker validation | Complete |
+| GitHub-hosted CI validation | In progress |
+
+## Scope Control
+
+M2.4 and later work remains not started. M2.3 excludes plan generation, Navigation Service behavior, providers, recommendations, AI behavior, authentication business logic, Search, embeddings, personalization, and client features.
+
+## Local Validation Record
+
+- Local validation date: August 1, 2026
+- Tested branch: `main`
+- Frozen pnpm installation and dependency resolution: Passed
+- Approved OpenAPI Planning contract generation and structural validation: Passed
+- Prisma schema validation and forward migration: Passed
+- Migration clean apply, reversal, and reapplication: Passed against an isolated PostgreSQL database
+- Planning Service Jest suites: 7 tests passed across 5 suites
+- Repository Jest suites: 80 tests passed across 21 suites
+- Pytest: Passed
+- Formatting, ESLint, Ruff, strict TypeScript, Playwright, Turborepo tests, and Turborepo build: Passed
+- Docker Compose configuration, image build, and complete skeleton startup: Passed after excluding ignored dependency artifacts from the build context
+- Planning Service liveness and readiness: Passed; PostgreSQL reported `UP`
+- Container runtimes: Node.js 24.18.0, pnpm 11.4.0, Python 3.13.14
+- GitHub-hosted CI validation: Pending
+- M2.3 milestone status: In progress pending hosted CI
+- M2.4 — Navigation Service: Not started
 
 ---
 

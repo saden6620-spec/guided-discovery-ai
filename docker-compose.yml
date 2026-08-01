@@ -33,6 +33,20 @@ services:
     volumes:
       - memory-postgres-data:/var/lib/postgresql/data
 
+  planning-database:
+    image: postgres:17.6-alpine
+    environment:
+      POSTGRES_DB: planning_service
+      POSTGRES_USER: planning_service
+      POSTGRES_PASSWORD: planning_service_local
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U planning_service -d planning_service"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - planning-postgres-data:/var/lib/postgresql/data
+
   workspace:
     build:
       context: .
@@ -218,12 +232,17 @@ services:
 
   planning-service:
     <<: *backend-service
-    command: pnpm --filter @guided-discovery/planning-service start
+    command: sh -c "pnpm --filter @guided-discovery/planning-service migrate:deploy && pnpm --filter @guided-discovery/planning-service start"
+    depends_on:
+      planning-database:
+        condition: service_healthy
     environment:
       SERVICE_NAME: ${PLANNING_SERVICE_NAME:-planning-service}
       SERVICE_PORT: "3015"
-      SERVICE_VERSION: "${SERVICE_VERSION:-0.1.0}"
-      DATABASE_URL: "${DATABASE_URL:-postgresql://placeholder:placeholder@database.invalid:5432/planning_service}"
+      SERVICE_VERSION: "${SERVICE_VERSION:-0.2.0}"
+      DATABASE_URL: "${PLANNING_DATABASE_URL:-postgresql://planning_service:planning_service_local@planning-database:5432/planning_service}"
+      APP_ENV: development
+      PERMISSION_TEST_ALLOW: "true"
     ports:
       - "3015:3015"
 
@@ -269,3 +288,4 @@ services:
 volumes:
   pnpm-store:
   memory-postgres-data:
+  planning-postgres-data:

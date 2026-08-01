@@ -1,0 +1,161 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Itinerary {
+  id              String            @id @db.Uuid
+  ownerId         String            @map("owner_id") @db.Uuid
+  title           String            @db.VarChar(200)
+  status          String            @db.VarChar(32)
+  startDate       DateTime?         @map("start_date") @db.Date
+  endDate         DateTime?         @map("end_date") @db.Date
+  budgetAmount    Decimal?          @map("budget_amount") @db.Decimal(14, 2)
+  budgetCurrency  String?           @map("budget_currency") @db.Char(3)
+  notesCiphertext Bytes?            @map("notes_ciphertext")
+  createdAt       DateTime          @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime          @map("updated_at") @db.Timestamptz(3)
+  deletedAt       DateTime?         @map("deleted_at") @db.Timestamptz(3)
+  purgeAfter      DateTime?         @map("purge_after") @db.Timestamptz(3)
+  version         Int
+  items           ItineraryItem[]
+  reservations    Reservation[]
+  checklistItems  TravelChecklist[]
+
+  @@index([ownerId, status, createdAt(sort: Desc), id(sort: Desc)])
+  @@index([ownerId, startDate])
+  @@map("itineraries")
+}
+
+model ItineraryItem {
+  id                String    @id @db.Uuid
+  itineraryId       String    @map("itinerary_id") @db.Uuid
+  position          Int
+  title             String    @db.VarChar(200)
+  startsAt          DateTime? @map("starts_at") @db.Timestamptz(3)
+  endsAt            DateTime? @map("ends_at") @db.Timestamptz(3)
+  locationReference String?   @map("location_reference") @db.VarChar(500)
+  notesCiphertext   Bytes?    @map("notes_ciphertext")
+  status            String    @db.VarChar(32)
+  createdAt         DateTime  @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime  @map("updated_at") @db.Timestamptz(3)
+  deletedAt         DateTime? @map("deleted_at") @db.Timestamptz(3)
+  version           Int
+  itinerary         Itinerary @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
+
+  @@index([itineraryId, deletedAt])
+  @@map("itinerary_items")
+}
+
+model Reservation {
+  id                  String    @id @db.Uuid
+  itineraryId         String    @map("itinerary_id") @db.Uuid
+  providerName        String    @map("provider_name") @db.VarChar(200)
+  referenceCiphertext Bytes?    @map("reference_ciphertext")
+  startsAt            DateTime? @map("starts_at") @db.Timestamptz(3)
+  endsAt              DateTime? @map("ends_at") @db.Timestamptz(3)
+  status              String    @db.VarChar(32)
+  createdAt           DateTime  @map("created_at") @db.Timestamptz(3)
+  updatedAt           DateTime  @map("updated_at") @db.Timestamptz(3)
+  deletedAt           DateTime? @map("deleted_at") @db.Timestamptz(3)
+  version             Int
+  itinerary           Itinerary @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
+
+  @@index([itineraryId, status])
+  @@map("reservations")
+}
+
+model TravelChecklist {
+  id          String    @id @db.Uuid
+  itineraryId String    @map("itinerary_id") @db.Uuid
+  position    Int
+  title       String    @db.VarChar(200)
+  status      String    @db.VarChar(32)
+  completedAt DateTime? @map("completed_at") @db.Timestamptz(3)
+  createdAt   DateTime  @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime  @map("updated_at") @db.Timestamptz(3)
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(3)
+  version     Int
+  itinerary   Itinerary @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
+
+  @@index([itineraryId, deletedAt])
+  @@map("travel_checklists")
+}
+
+model OutboxEvent {
+  eventId        String    @id @map("event_id") @db.Uuid
+  eventType      String    @map("event_type") @db.VarChar(128)
+  eventVersion   Int       @map("event_version")
+  subjectType    String    @map("subject_type") @db.VarChar(64)
+  subjectId      String    @map("subject_id") @db.Uuid
+  subjectVersion Int       @map("subject_version")
+  partitionKey   String    @map("partition_key") @db.VarChar(128)
+  payload        Json
+  occurredAt     DateTime  @map("occurred_at") @db.Timestamptz(3)
+  availableAt    DateTime  @map("available_at") @db.Timestamptz(3)
+  publishedAt    DateTime? @map("published_at") @db.Timestamptz(3)
+  attemptCount   Int       @default(0) @map("attempt_count")
+  lastErrorCode  String?   @map("last_error_code") @db.VarChar(64)
+  createdAt      DateTime  @map("created_at") @db.Timestamptz(3)
+
+  @@index([availableAt, eventId])
+  @@map("outbox_events")
+}
+
+model InboxEvent {
+  consumerName   String    @map("consumer_name") @db.VarChar(64)
+  eventId        String    @map("event_id") @db.Uuid
+  subjectId      String    @map("subject_id") @db.Uuid
+  subjectVersion Int       @map("subject_version")
+  receivedAt     DateTime  @map("received_at") @db.Timestamptz(3)
+  processedAt    DateTime? @map("processed_at") @db.Timestamptz(3)
+  resultCode     String    @map("result_code") @db.VarChar(64)
+
+  @@id([consumerName, eventId])
+  @@index([receivedAt])
+  @@map("inbox_events")
+}
+
+model DeadLetterEvent {
+  id              String    @id @db.Uuid
+  originalEventId String    @map("original_event_id") @db.Uuid
+  consumerName    String    @map("consumer_name") @db.VarChar(64)
+  eventType       String    @map("event_type") @db.VarChar(128)
+  eventVersion    Int       @map("event_version")
+  payload         Bytes
+  failureCode     String    @map("failure_code") @db.VarChar(64)
+  attemptCount    Int       @map("attempt_count")
+  firstFailedAt   DateTime  @map("first_failed_at") @db.Timestamptz(3)
+  lastFailedAt    DateTime  @map("last_failed_at") @db.Timestamptz(3)
+  resolvedAt      DateTime? @map("resolved_at") @db.Timestamptz(3)
+  expiresAt       DateTime  @map("expires_at") @db.Timestamptz(3)
+
+  @@index([expiresAt])
+  @@map("dead_letter_events")
+}
+
+model IdempotencyRecord {
+  id              String    @id @db.Uuid
+  environment     String    @db.VarChar(32)
+  principalId     String    @map("principal_id") @db.Uuid
+  service         String    @db.VarChar(64)
+  method          String    @db.VarChar(16)
+  routeTemplate   String    @map("route_template") @db.VarChar(256)
+  keyHash         String    @map("key_hash") @db.VarChar(64)
+  requestHash     String    @map("request_hash") @db.VarChar(64)
+  state           String    @db.VarChar(16)
+  responseStatus  Int?      @map("response_status")
+  responseBody    Bytes?    @map("response_body")
+  responseHeaders Json?     @map("response_headers")
+  createdAt       DateTime  @map("created_at") @db.Timestamptz(3)
+  completedAt     DateTime? @map("completed_at") @db.Timestamptz(3)
+  expiresAt       DateTime  @map("expires_at") @db.Timestamptz(3)
+
+  @@unique([environment, principalId, service, method, routeTemplate, keyHash])
+  @@index([expiresAt])
+  @@map("idempotency_records")
+}

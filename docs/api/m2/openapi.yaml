@@ -979,9 +979,10 @@ components:
     PlanItemInput:
       type: object
       additionalProperties: false
-      required: [title]
+      required: [title, position]
       properties:
         title: { type: string, minLength: 1, maxLength: 200 }
+        position: { type: integer, minimum: 0 }
         startsAt: { type: string, format: date-time }
         endsAt: { type: string, format: date-time }
         locationReference: { type: string, maxLength: 500 }
@@ -1000,9 +1001,10 @@ components:
     ChecklistItemInput:
       type: object
       additionalProperties: false
-      required: [title]
+      required: [title, position]
       properties:
         title: { type: string, minLength: 1, maxLength: 200 }
+        position: { type: integer, minimum: 0 }
         status: { type: string, enum: [PENDING, COMPLETE], default: PENDING }
     PlanResource:
       type: object

@@ -47,11 +47,11 @@ This ledger is the sole physical persistence for memory deletion tombstones. “
 
 ### `itinerary_items`
 
-`id`, `itinerary_id FK cascade-on-purge`, `position integer >=0`, `title varchar(200)`, `starts_at null`, `ends_at null`, `location_reference varchar(256) null`, encrypted `notes_ciphertext null`, `status` (`PLANNED|COMPLETED|CANCELLED`), common timestamps, `deleted_at`, `version`. Unique active `(itinerary_id,position)`; check end after start.
+`id`, `itinerary_id FK cascade-on-purge`, `position integer >=0`, `title varchar(200)`, `starts_at null`, `ends_at null`, `location_reference varchar(500) null`, encrypted `notes_ciphertext null`, `status` (`PLANNED|COMPLETED|CANCELLED`), common timestamps, `deleted_at`, `version`. Unique active `(itinerary_id,position)`; check end after start.
 
 ### `reservations`
 
-`id`, `itinerary_id FK cascade-on-purge`, `provider_name varchar(100)`, encrypted `reference_ciphertext null`, `starts_at null`, `ends_at null`, `status` (`PLANNED|CONFIRMED|CANCELLED`), common timestamps, `deleted_at`, `version`. Check end after start; index `(itinerary_id,status)`.
+`id`, `itinerary_id FK cascade-on-purge`, `provider_name varchar(200)`, encrypted `reference_ciphertext null`, `starts_at null`, `ends_at null`, `status` (`PLANNED|CONFIRMED|CANCELLED`), common timestamps, `deleted_at`, `version`. Check end after start; index `(itinerary_id,status)`.
 
 ### `travel_checklists`
 

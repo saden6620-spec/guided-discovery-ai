@@ -7,6 +7,7 @@ apps/mobile/.generated-git-metadata
 .venv
 coverage
 node_modules
+**/node_modules
 **/node_modules.linux-artifact
 playwright-report
 test-results

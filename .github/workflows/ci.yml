@@ -31,6 +31,7 @@ jobs:
           --health-retries 20
     env:
       DATABASE_URL: postgresql://memory_service:memory_service_ci@127.0.0.1:5432/memory_service
+      PLANNING_DATABASE_URL: postgresql://memory_service:memory_service_ci@127.0.0.1:5432/planning_service
       APP_ENV: test
       PERMISSION_TEST_ALLOW: "true"
     steps:
@@ -70,6 +71,14 @@ jobs:
 
       - name: Apply Memory Service migrations
         run: pnpm --filter @guided-discovery/memory-service migrate:deploy
+
+      - name: Create Planning Service database
+        run: PGPASSWORD=memory_service_ci psql -h 127.0.0.1 -U memory_service -d memory_service -c 'CREATE DATABASE planning_service'
+
+      - name: Apply Planning Service migrations
+        env:
+          DATABASE_URL: ${{ env.PLANNING_DATABASE_URL }}
+        run: pnpm --filter @guided-discovery/planning-service migrate:deploy
 
       - name: Validate repository
         run: pnpm validate
