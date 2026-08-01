@@ -33,7 +33,7 @@ describe("Memory Service integration", () => {
       "TRUNCATE idempotency_records,outbox_events,inbox_events,dead_letter_events,legal_hold_resources,legal_holds,memory_links,memory_versions,memories,memory_deletion_ledger CASCADE",
     );
     await pool.end();
-  });
+  }, 30_000);
 
   afterAll(async () => application?.close());
 
@@ -197,6 +197,46 @@ describe("Memory Service integration", () => {
       [pending[0].event.eventId],
     );
     expect(Number(inboxCount.rows[0].count)).toBe(1);
+    await pool.query(
+      "UPDATE memory_deletion_ledger SET purge_after=now()-interval '1 second' WHERE memory_id=$1",
+      [memoryId],
+    );
+    const acknowledgement = (consumer) => ({
+      eventId: crypto.randomUUID(),
+      eventType: "MemoryDeletionAcknowledged",
+      eventVersion: 1,
+      occurredAt: new Date().toISOString(),
+      producer: consumer,
+      subjectType: "MEMORY",
+      subjectId: memoryId,
+      subjectVersion: 1,
+      correlationId: crypto.randomUUID(),
+      payload: {
+        memoryId,
+        deletionVersion: 1,
+        consumer,
+        acknowledgedAt: new Date().toISOString(),
+      },
+    });
+    const searchAcknowledgement = acknowledgement("search-service");
+    expect(await reliability.acknowledgeDeletion(searchAcknowledgement)).toBe(true);
+    expect(await reliability.acknowledgeDeletion(searchAcknowledgement)).toBe(false);
+    expect(await reliability.acknowledgeDeletion(acknowledgement("analytics-service"))).toBe(true);
+    expect(await reliability.purgeDue(["search-service", "analytics-service"], 100)).toBe(1);
+    const purgeState = await pool.query(
+      "SELECT purge_status,(SELECT count(*) FROM memories WHERE id=$1) AS memory_count FROM memory_deletion_ledger WHERE memory_id=$1",
+      [memoryId],
+    );
+    expect(purgeState.rows[0].purge_status).toBe("COMPLETE");
+    expect(Number(purgeState.rows[0].memory_count)).toBe(0);
+    const purgedEvent = await pool.query(
+      "SELECT payload FROM outbox_events WHERE event_type='MemoryPurged' AND subject_id=$1",
+      [memoryId],
+    );
+    expect(purgedEvent.rowCount).toBe(1);
+    expect(purgedEvent.rows[0].payload.payload).toEqual(
+      expect.objectContaining({ memoryId, deletionVersion: 1 }),
+    );
     await pool.end();
   });
 

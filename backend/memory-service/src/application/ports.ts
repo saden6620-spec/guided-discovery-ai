@@ -73,6 +73,8 @@ export interface MemoryRepository {
   listCategories(): Promise<readonly MemoryCategory[]>;
   ping(signal: AbortSignal): Promise<void>;
   schemaIsCurrent(signal: AbortSignal): Promise<boolean>;
+  acknowledgeDeletion(event: DomainEvent): Promise<boolean>;
+  purgeDue(requiredConsumers: readonly string[], limit: number): Promise<number>;
   close(): Promise<void>;
 }
 

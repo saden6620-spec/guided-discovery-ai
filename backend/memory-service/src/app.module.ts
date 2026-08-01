@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 
 import { MemoryApplicationService } from "./application/memory.service.js";
+import { DeletionLifecycleService } from "./application/deletion-lifecycle.service.js";
 import {
   ENCRYPTION_ADAPTER,
   MEMORY_REPOSITORY,
@@ -18,6 +19,7 @@ import { RequestObservabilityInterceptor } from "./presentation/observability.in
   controllers: [MemoryController, MemoryCategoryController, HealthController],
   providers: [
     MemoryApplicationService,
+    DeletionLifecycleService,
     RequestObservabilityInterceptor,
     { provide: MEMORY_REPOSITORY, useClass: PostgresMemoryRepository },
     { provide: ENCRYPTION_ADAPTER, useClass: AesGcmEncryptionAdapter },

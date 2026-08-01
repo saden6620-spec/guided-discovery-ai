@@ -20,6 +20,8 @@ PostgreSQL stores encrypted memory content and immutable versions. `memory_delet
 
 No message broker is implemented in M2.2. Outbox, inbox, and dead-letter persistence provide the approved reliable-event boundary for a later broker adapter.
 
+Registered consumers acknowledge `MemoryDeletionRequired` with versioned, content-free events. The deletion coordinator deduplicates acknowledgements in the inbox and physically purges eligible content only after the retention deadline, every configured acknowledgement, and the absence of an active legal hold. Purge retains the content-free deletion ledger and atomically emits `MemoryPurged`.
+
 ## Local commands
 
 Set `DATABASE_URL`, apply migrations with `pnpm --filter @guided-discovery/memory-service migrate:deploy`, then use the workspace build, lint, typecheck, and test commands. Integration tests require `APP_ENV=test` and `PERMISSION_TEST_ALLOW=true`; these test-only switches are rejected as authentication behavior outside the test environment.

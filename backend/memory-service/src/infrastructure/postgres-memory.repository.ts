@@ -220,6 +220,92 @@ export class PostgresMemoryRepository implements MemoryRepository, Outbox, Inbox
     );
   }
 
+  async acknowledgeDeletion(event: DomainEvent): Promise<boolean> {
+    const payload = deletionAcknowledgement(event);
+    return this.transaction(async (transaction) => {
+      const ledger = await transaction.client.query<{ deletion_version: number }>(
+        "SELECT deletion_version FROM memory_deletion_ledger WHERE memory_id=$1 FOR UPDATE",
+        [payload.memoryId],
+      );
+      if (ledger.rows[0]?.deletion_version !== payload.deletionVersion) return false;
+      const inserted = await transaction.client.query(
+        "INSERT INTO inbox_events(consumer_name,event_id,subject_id,subject_version,received_at,processed_at,result_code) VALUES($1,$2,$3,$4,now(),now(),'ACKNOWLEDGED') ON CONFLICT(consumer_name,event_id) DO NOTHING",
+        [payload.consumer, event.eventId, payload.memoryId, payload.deletionVersion],
+      );
+      return inserted.rowCount === 1;
+    });
+  }
+
+  async purgeDue(requiredConsumers: readonly string[], limit: number): Promise<number> {
+    if (requiredConsumers.length === 0) return 0;
+    return this.transaction(async (transaction) => {
+      const candidates = await transaction.client.query<{
+        memory_id: string;
+        owner_id: string;
+        deletion_version: number;
+      }>(
+        `SELECT ledger.memory_id,ledger.owner_id,ledger.deletion_version
+         FROM memory_deletion_ledger ledger
+         WHERE ledger.purge_status='SCHEDULED' AND ledger.purge_after<=now() AND ledger.legal_hold_ref IS NULL
+           AND NOT EXISTS (
+             SELECT 1 FROM legal_hold_resources resource
+             JOIN legal_holds hold ON hold.id=resource.hold_id
+             WHERE resource.resource_type='MEMORY' AND resource.resource_id=ledger.memory_id
+               AND hold.released_at IS NULL AND (hold.expires_at IS NULL OR hold.expires_at>now())
+           )
+         ORDER BY ledger.purge_after,ledger.memory_id
+         LIMIT $1 FOR UPDATE OF ledger SKIP LOCKED`,
+        [Math.max(1, Math.min(limit, 1000))],
+      );
+      let purged = 0;
+      for (const candidate of candidates.rows) {
+        const acknowledgements = await transaction.client.query<{ consumer_name: string }>(
+          "SELECT DISTINCT consumer_name FROM inbox_events WHERE subject_id=$1 AND subject_version=$2 AND consumer_name=ANY($3::varchar[])",
+          [candidate.memory_id, candidate.deletion_version, requiredConsumers],
+        );
+        if (
+          new Set(acknowledgements.rows.map((row) => row.consumer_name)).size !==
+          requiredConsumers.length
+        )
+          continue;
+        const purgedAt = new Date();
+        await transaction.client.query(
+          "DELETE FROM memory_links WHERE source_memory_id=$1 OR target_memory_id=$1",
+          [candidate.memory_id],
+        );
+        await transaction.client.query(
+          "DELETE FROM memories WHERE id=$1 AND deleted_at IS NOT NULL",
+          [candidate.memory_id],
+        );
+        await transaction.client.query(
+          "UPDATE memory_deletion_ledger SET purge_status='COMPLETE',last_error_code=NULL,updated_at=$2 WHERE memory_id=$1 AND deletion_version=$3",
+          [candidate.memory_id, purgedAt, candidate.deletion_version],
+        );
+        const event = {
+          eventId: randomUUID(),
+          eventType: "MemoryPurged",
+          eventVersion: 1,
+          occurredAt: purgedAt.toISOString(),
+          producer: "memory-service",
+          subjectType: "MEMORY",
+          subjectId: candidate.memory_id,
+          subjectVersion: candidate.deletion_version,
+          ownerId: candidate.owner_id,
+          correlationId: randomUUID(),
+          deletionVersion: candidate.deletion_version,
+          payload: {
+            memoryId: candidate.memory_id,
+            deletionVersion: candidate.deletion_version,
+            purgedAt: purgedAt.toISOString(),
+          },
+        } as unknown as DomainEvent;
+        await transaction.appendEvent(event);
+        purged += 1;
+      }
+      return purged;
+    });
+  }
+
   async ping(signal: AbortSignal): Promise<void> {
     if (signal.aborted) throw new Error("HEALTH_CHECK_ABORTED");
     await this.pool.query("SELECT 1");
@@ -557,4 +643,32 @@ function mapMemory(row: MemoryRow, links: readonly MemoryLink[]): MemoryRecord {
 
 function isPostgresError(error: unknown, code: string): boolean {
   return typeof error === "object" && error !== null && "code" in error && error.code === code;
+}
+
+function deletionAcknowledgement(event: DomainEvent): {
+  memoryId: string;
+  deletionVersion: number;
+  consumer: string;
+} {
+  const payload = event.payload as Partial<{
+    memoryId: string;
+    deletionVersion: number;
+    consumer: string;
+    acknowledgedAt: string;
+  }>;
+  if (
+    event.eventType !== "MemoryDeletionAcknowledged" ||
+    event.eventVersion !== 1 ||
+    typeof payload.memoryId !== "string" ||
+    !Number.isInteger(payload.deletionVersion) ||
+    typeof payload.consumer !== "string" ||
+    !/^[a-z][a-z0-9-]{2,63}$/u.test(payload.consumer) ||
+    typeof payload.acknowledgedAt !== "string"
+  )
+    throw new Error("MEMORY_DELETION_ACKNOWLEDGEMENT_INVALID");
+  return {
+    memoryId: payload.memoryId,
+    deletionVersion: payload.deletionVersion as number,
+    consumer: payload.consumer,
+  };
 }
