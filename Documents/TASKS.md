@@ -17,9 +17,9 @@ Only the active milestone may be implemented. Work outside the active milestone 
 - Active phase: Phase 2 — Core Backend
 - Phase status: In progress
 - Active milestone: M2.4 — Navigation Service
-- Milestone status: In progress
-- Hosted CI validation: Pending
-- Hosted CI tested branch: Pending
+- Milestone status: Complete
+- Hosted CI validation: Passed on August 1, 2026
+- Hosted CI tested branch: `main`
 - Next milestone: M2.5 — Recommendation Service
 - Next milestone status: Not started
 - Last reviewed: 2026-08-01
@@ -397,13 +397,13 @@ Implement the approved provider-neutral Navigation Service HTTP, private provisi
 | OpenAPI generation and public/internal contract validation | Complete |
 | Unit, integration, API, lifecycle, privacy, event, and migration tests | Complete |
 | Complete repository, migration, Playwright, and Docker validation | Complete |
-| GitHub-hosted CI validation | In progress |
+| GitHub-hosted CI validation | Complete |
 
 ## Scope Control
 
 M2.5 and later work remains not started. M2.4 excludes Recommendation Service behavior, external map providers, route generation, live GPS, traffic, weather, ETA intelligence, safety-engine decisions, AI navigation, client map screens, robot navigation, community sharing, pause, resume, session replacement, navigation-only sessions, and undocumented provisioning endpoints.
 
-## Local Validation Record
+## Validation Record
 
 - Local validation date: August 1, 2026
 - Tested branch: `main`
@@ -419,8 +419,11 @@ M2.5 and later work remains not started. M2.4 excludes Recommendation Service be
 - Docker Compose configuration, image build, and complete skeleton startup: Passed
 - Memory, Planning, and Navigation readiness: Passed; each service reported PostgreSQL `UP`
 - Container runtimes: Node.js 24.18.0, pnpm 11.4.0, Python 3.13.14
-- GitHub-hosted CI validation: Pending
-- M2.4 milestone status: In progress pending hosted CI
+- GitHub-hosted CI validation date: August 1, 2026
+- GitHub-hosted CI workflow: `CI`
+- GitHub-hosted CI run `30707288568`: Passed
+- GitHub-hosted CI tested branch: `main`
+- M2.4 milestone status: Complete
 - M2.5 — Recommendation Service: Not started
 
 ---
