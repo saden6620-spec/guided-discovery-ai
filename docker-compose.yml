@@ -19,6 +19,20 @@ x-backend-service: &backend-service
     start_period: 10s
 
 services:
+  memory-database:
+    image: postgres:17.6-alpine
+    environment:
+      POSTGRES_DB: memory_service
+      POSTGRES_USER: memory_service
+      POSTGRES_PASSWORD: memory_service_local
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U memory_service -d memory_service"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - memory-postgres-data:/var/lib/postgresql/data
+
   workspace:
     build:
       context: .
@@ -78,12 +92,17 @@ services:
 
   memory-service:
     <<: *backend-service
-    command: pnpm --filter @guided-discovery/memory-service start
+    command: sh -c "pnpm --filter @guided-discovery/memory-service migrate:deploy && pnpm --filter @guided-discovery/memory-service start"
+    depends_on:
+      memory-database:
+        condition: service_healthy
     environment:
       SERVICE_NAME: ${MEMORY_SERVICE_NAME:-memory-service}
       SERVICE_PORT: "3004"
       SERVICE_VERSION: "${SERVICE_VERSION:-0.1.0}"
-      DATABASE_URL: "${DATABASE_URL:-postgresql://placeholder:placeholder@database.invalid:5432/memory_service}"
+      DATABASE_URL: "${MEMORY_DATABASE_URL:-postgresql://memory_service:memory_service_local@memory-database:5432/memory_service}"
+      APP_ENV: development
+      PERMISSION_TEST_ALLOW: "true"
     ports:
       - "3004:3004"
 
@@ -249,3 +268,4 @@ services:
 
 volumes:
   pnpm-store:
+  memory-postgres-data:

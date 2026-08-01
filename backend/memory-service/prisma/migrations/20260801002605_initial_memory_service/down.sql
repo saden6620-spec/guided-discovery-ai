@@ -1,0 +1,12 @@
+DROP TABLE IF EXISTS "idempotency_records";
+DROP TABLE IF EXISTS "legal_hold_resources";
+DROP TABLE IF EXISTS "legal_holds";
+DROP TABLE IF EXISTS "dead_letter_events";
+DROP TABLE IF EXISTS "inbox_events";
+DROP TABLE IF EXISTS "outbox_events";
+DROP TABLE IF EXISTS "memory_deletion_ledger";
+DROP TABLE IF EXISTS "memory_links";
+ALTER TABLE IF EXISTS "memories" DROP CONSTRAINT IF EXISTS "memories_current_version_fkey";
+DROP TABLE IF EXISTS "memory_versions";
+DROP TABLE IF EXISTS "memories";
+DROP TABLE IF EXISTS "memory_categories";

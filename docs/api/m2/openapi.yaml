@@ -796,7 +796,6 @@ components:
           id,
           title,
           summary,
-          rationale,
           category,
           importance,
           state,

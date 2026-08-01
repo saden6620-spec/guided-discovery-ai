@@ -5,6 +5,7 @@ const config = {
   testMatch: [
     "<rootDir>/tests/javascript/**/*.test.cjs",
     "<rootDir>/packages/**/__tests__/**/*.test.cjs",
+    "<rootDir>/backend/memory-service/__tests__/**/*.test.cjs",
   ],
 };
 

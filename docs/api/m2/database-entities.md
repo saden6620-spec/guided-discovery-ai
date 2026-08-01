@@ -37,6 +37,8 @@ Constraints enforce state/timestamp consistency, paired policy fields, confirmat
 
 `memory_id uuid PK`, `owner_id uuid not null`, `deletion_version integer not null`, `deleted_at`, `purge_after`, `legal_hold_ref null`, `purge_status`, `last_error_code null`, `updated_at`. It is content-free. Index `(purge_status,purge_after)` and retain the post-purge tombstone under `T1_TOMBSTONE`.
 
+This ledger is the sole physical persistence for memory deletion tombstones. “Tombstone” is an architectural concept, not a separate table; implementations must not create `memory_tombstones`.
+
 ## Planning Service
 
 ### `itineraries`

@@ -15,6 +15,24 @@ jobs:
   quality:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17.6-alpine
+        env:
+          POSTGRES_DB: memory_service
+          POSTGRES_USER: memory_service
+          POSTGRES_PASSWORD: memory_service_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U memory_service -d memory_service"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://memory_service:memory_service_ci@127.0.0.1:5432/memory_service
+      APP_ENV: test
+      PERMISSION_TEST_ALLOW: "true"
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
@@ -49,6 +67,9 @@ jobs:
 
       - name: Install Playwright Chromium
         run: pnpm exec playwright install --with-deps chromium
+
+      - name: Apply Memory Service migrations
+        run: pnpm --filter @guided-discovery/memory-service migrate:deploy
 
       - name: Validate repository
         run: pnpm validate

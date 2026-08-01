@@ -16,11 +16,11 @@ Only the active milestone may be implemented. Work outside the active milestone 
 
 - Active phase: Phase 2 — Core Backend
 - Phase status: In progress
-- Active milestone: M2.1 — Shared Backend Foundation
-- Milestone status: Complete
+- Active milestone: M2.2 — Memory Service
+- Milestone status: In progress
 - Hosted CI validation date: July 31, 2026
 - Hosted CI tested branch: `main`
-- Next milestone: M2.2 — Memory Service
+- Next milestone: M2.3 — Planning Service
 - Next milestone status: Not started
 - Last reviewed: 2026-08-01
 
@@ -265,6 +265,55 @@ M2.1 is complete only when every shared package is documented, strictly typed, e
 - GitHub-hosted CI tested branch: `main`
 - M2.1 milestone status: Complete
 - M2.2 — Memory Service: Not started
+
+---
+
+# M2.2 — Memory Service
+
+## Objective
+
+Implement the approved Memory Service HTTP, persistence, lifecycle, deletion, reliability, and operational contracts without implementing AI retrieval, embeddings, Search, recommendations, or another domain service.
+
+## Included Tasks
+
+| Task | Status |
+| --- | --- |
+| Correct approved Memory Service specification contradictions | Complete |
+| NestJS module organization and configuration | Complete |
+| Public Memory API and internal category API | Complete |
+| Memory entities, repository, and Prisma migrations | Complete |
+| Validation, authorization boundary, concurrency, and idempotency | Complete |
+| Immutable versions and stable links | Complete |
+| Immediate deletion ledger and purge metadata | Complete |
+| Transactional outbox and inbox abstractions | Complete |
+| Health, readiness, logging, and telemetry integration | Complete |
+| OpenAPI generation and contract validation | Complete |
+| Unit, integration, API contract, and migration tests | Complete |
+| Complete local and Docker validation | Complete |
+| GitHub-hosted CI validation | Not started |
+
+## Scope Control
+
+M2.3 and later work remains not started. M2.2 excludes all non-memory domain services, AI behavior, embeddings, vector or semantic retrieval, Search indexing implementation, personalization, recommendations, and client behavior.
+
+## Validation Record
+
+- Local validation date: August 1, 2026
+- Tested branch: `main`
+- Frozen pnpm installation and dependency resolution: Passed
+- Approved public OpenAPI structural validation: Passed; seven non-blocking pre-existing tag-description warnings
+- Prisma schema validation and forward migration: Passed
+- Migration reversal and clean reapplication: Passed against an isolated PostgreSQL database
+- Memory Service Jest suites: 6 tests passed across 5 suites
+- Repository Jest suites: 73 tests passed across 16 suites
+- Pytest: 2 tests passed
+- Formatting, ESLint, Ruff, TypeScript, Playwright, Turborepo test, and Turborepo build: Passed
+- Docker Compose configuration and complete skeleton startup: Passed
+- Memory Service liveness and readiness: Passed; PostgreSQL and schema checks reported `UP`
+- Container migration and startup: Passed without Prisma runtime warnings after installing OpenSSL
+- GitHub-hosted CI: Pending
+- M2.2 milestone status: In progress pending hosted CI
+- M2.3 — Planning Service: Not started
 
 ---
 

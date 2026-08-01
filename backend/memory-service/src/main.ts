@@ -1,38 +1,30 @@
 import "reflect-metadata";
 
-import { Controller, Get, Module } from "@nestjs/common";
+import { Logger } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 
-const SERVICE_NAME = process.env.SERVICE_NAME ?? "memory-service";
-const SERVICE_PORT = Number.parseInt(process.env.SERVICE_PORT ?? "3004", 10);
+import { loadConfiguration } from "@guided-discovery/shared-config";
 
-interface HealthResponse {
-  readonly service: string;
-  readonly status: "ok";
-  readonly version: string;
-}
+import { AppModule } from "./app.module.js";
+import { ApiExceptionFilter } from "./presentation/http.js";
+import { RequestObservabilityInterceptor } from "./presentation/observability.interceptor.js";
 
-@Controller()
-class HealthController {
-  @Get("health")
-  getHealth(): HealthResponse {
-    return {
-      service: SERVICE_NAME,
-      status: "ok",
-      version: process.env.SERVICE_VERSION ?? "0.1.0",
-    };
-  }
-}
-
-@Module({
-  controllers: [HealthController],
-})
-class AppModule {}
-
-async function bootstrap(): Promise<void> {
-  const application = await NestFactory.create(AppModule);
+export async function bootstrap(): Promise<void> {
+  const configuration = loadConfiguration({
+    serviceName: "memory-service",
+    serviceVersion: process.env.SERVICE_VERSION ?? "0.2.0",
+    environment: process.env,
+    defaultPort: 3004,
+  });
+  const application = await NestFactory.create(AppModule, { bodyParser: true });
+  application.useGlobalFilters(new ApiExceptionFilter());
+  application.useGlobalInterceptors(application.get(RequestObservabilityInterceptor));
   application.enableShutdownHooks();
-  await application.listen(SERVICE_PORT, "0.0.0.0");
+  await application.listen(configuration.port, "0.0.0.0");
 }
 
-void bootstrap();
+if (process.env.NODE_ENV !== "test-bootstrap")
+  void bootstrap().catch((error: unknown) => {
+    Logger.error(error, "MemoryServiceBootstrap");
+    process.exitCode = 1;
+  });
