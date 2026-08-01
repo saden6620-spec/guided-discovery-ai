@@ -17,7 +17,7 @@ Only the active milestone may be implemented. Work outside the active milestone 
 - Active phase: Phase 2 — Core Backend
 - Phase status: In progress
 - Active milestone: M2.1 — Shared Backend Foundation
-- Milestone status: In progress
+- Milestone status: Complete
 - Hosted CI validation date: July 31, 2026
 - Hosted CI tested branch: `main`
 - Next milestone: M2.2 — Memory Service
@@ -229,7 +229,7 @@ Implement only reusable backend infrastructure shared by backend services. Domai
 | Shared testing utilities | Complete |
 | Package documentation and exports | Complete |
 | Complete local validation | Complete |
-| GitHub-hosted CI validation | Not started |
+| GitHub-hosted CI validation | Complete |
 
 ## Explicitly Out of Scope
 
@@ -260,8 +260,10 @@ M2.1 is complete only when every shared package is documented, strictly typed, e
 - Docker Compose startup: All M1 skeleton containers became healthy
 - Skeleton health and environment verification: Passed
 - Container runtimes: Node.js 24.18.0, pnpm 11.4.0, Python 3.13.14
-- GitHub-hosted CI: Pending
-- M2.1 milestone status: In progress pending hosted CI
+- GitHub-hosted CI workflow: `CI`
+- GitHub-hosted CI run `30674524410`: Passed
+- GitHub-hosted CI tested branch: `main`
+- M2.1 milestone status: Complete
 - M2.2 — Memory Service: Not started
 
 ---
