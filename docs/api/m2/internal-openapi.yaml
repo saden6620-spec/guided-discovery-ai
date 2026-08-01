@@ -1,0 +1,871 @@
+openapi: 3.1.1
+info:
+  title: Guided Discovery AI M2 Internal Service API
+  version: 1.0.0
+  description: Private workload-authenticated M2 commands. Not exposed by the public gateway.
+servers:
+  - url: /internal/v1
+security:
+  - serviceBearer: []
+paths:
+  /authorization/check:
+    post:
+      operationId: checkAuthorization
+      tags: [Permission]
+      parameters:
+        [
+          { $ref: "#/components/parameters/RequestId" },
+          { $ref: "#/components/parameters/Traceparent" },
+        ]
+      requestBody:
+        {
+          required: true,
+          content:
+            {
+              application/json:
+                { schema: { $ref: "#/components/schemas/AuthorizationCheckRequest" } },
+            },
+        }
+      responses:
+        "200": { $ref: "#/components/responses/AuthorizationDecisionResponse" }
+        "401": { $ref: "#/components/responses/ErrorResponse" }
+        "403": { $ref: "#/components/responses/ErrorResponse" }
+        "422": { $ref: "#/components/responses/ErrorResponse" }
+        "429": { $ref: "#/components/responses/RateLimitedResponse" }
+        "500": { $ref: "#/components/responses/ErrorResponse" }
+        "503": { $ref: "#/components/responses/ErrorResponse" }
+  /authorization/batch-check:
+    post:
+      operationId: batchCheckAuthorization
+      tags: [Permission]
+      parameters:
+        [
+          { $ref: "#/components/parameters/RequestId" },
+          { $ref: "#/components/parameters/Traceparent" },
+        ]
+      requestBody:
+        {
+          required: true,
+          content:
+            {
+              application/json:
+                { schema: { $ref: "#/components/schemas/BatchAuthorizationCheckRequest" } },
+            },
+        }
+      responses:
+        "200":
+          {
+            description: Complete ordered decisions,
+            headers: { X-Request-ID: { $ref: "#/components/headers/RequestId" } },
+            content:
+              {
+                application/json:
+                  { schema: { $ref: "#/components/schemas/BatchAuthorizationDecisionEnvelope" } },
+              },
+          }
+        "401": { $ref: "#/components/responses/ErrorResponse" }
+        "403": { $ref: "#/components/responses/ErrorResponse" }
+        "422": { $ref: "#/components/responses/ErrorResponse" }
+        "429": { $ref: "#/components/responses/RateLimitedResponse" }
+        "500": { $ref: "#/components/responses/ErrorResponse" }
+        "503": { $ref: "#/components/responses/ErrorResponse" }
+  /permissions/projection/{resourceType}/{resourceId}:
+    get:
+      operationId: getPermissionProjection
+      tags: [Permission]
+      parameters:
+        - { $ref: "#/components/parameters/RequestId" }
+        - { $ref: "#/components/parameters/Traceparent" }
+        - {
+            name: resourceType,
+            in: path,
+            required: true,
+            schema: { type: string, pattern: "^[A-Z][A-Z0-9_]{1,63}$" },
+          }
+        - {
+            name: resourceId,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/Uuid" },
+          }
+      responses:
+        "200":
+          {
+            description: Non-authoritative projection,
+            headers: { X-Request-ID: { $ref: "#/components/headers/RequestId" } },
+            content:
+              {
+                application/json:
+                  { schema: { $ref: "#/components/schemas/PermissionProjectionEnvelope" } },
+              },
+          }
+        "401": { $ref: "#/components/responses/ErrorResponse" }
+        "403": { $ref: "#/components/responses/ErrorResponse" }
+        "404": { $ref: "#/components/responses/ErrorResponse" }
+        "429": { $ref: "#/components/responses/RateLimitedResponse" }
+        "500": { $ref: "#/components/responses/ErrorResponse" }
+        "503": { $ref: "#/components/responses/ErrorResponse" }
+  /memory-categories:
+    get:
+      operationId: listSystemMemoryCategories
+      tags: [Memory]
+      parameters:
+        [
+          { $ref: "#/components/parameters/RequestId" },
+          { $ref: "#/components/parameters/Traceparent" },
+        ]
+      responses:
+        "200":
+          {
+            description: System categories,
+            headers: { X-Request-ID: { $ref: "#/components/headers/RequestId" } },
+            content:
+              {
+                application/json:
+                  { schema: { $ref: "#/components/schemas/MemoryCategoryListEnvelope" } },
+              },
+          }
+        "401": { $ref: "#/components/responses/ErrorResponse" }
+        "403": { $ref: "#/components/responses/ErrorResponse" }
+        "429": { $ref: "#/components/responses/RateLimitedResponse" }
+        "500": { $ref: "#/components/responses/ErrorResponse" }
+  /destinations/{destinationId}:
+    put:
+      operationId: upsertDestination
+      tags: [Navigation]
+      parameters:
+        [
+          { $ref: "#/components/parameters/RequestId" },
+          { $ref: "#/components/parameters/Traceparent" },
+          { $ref: "#/components/parameters/IdempotencyKey" },
+          {
+            name: destinationId,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/Uuid" },
+          },
+        ]
+      requestBody:
+        {
+          required: true,
+          content:
+            {
+              application/json:
+                { schema: { $ref: "#/components/schemas/DestinationUpsertRequest" } },
+            },
+        }
+      responses:
+        "200": { $ref: "#/components/responses/ResourceResponse" }
+        "201": { $ref: "#/components/responses/ResourceResponse" }
+        "401": { $ref: "#/components/responses/ErrorResponse" }
+        "403": { $ref: "#/components/responses/ErrorResponse" }
+        "409": { $ref: "#/components/responses/ErrorResponse" }
+        "422": { $ref: "#/components/responses/ErrorResponse" }
+        "429": { $ref: "#/components/responses/RateLimitedResponse" }
+        "500": { $ref: "#/components/responses/ErrorResponse" }
+        "503": { $ref: "#/components/responses/ErrorResponse" }
+  /routes/{routeId}:
+    put:
+      operationId: upsertRoute
+      tags: [Navigation]
+      parameters:
+        [
+          { $ref: "#/components/parameters/RequestId" },
+          { $ref: "#/components/parameters/Traceparent" },
+          { $ref: "#/components/parameters/IdempotencyKey" },
+          {
+            name: routeId,
+            in: path,
+            required: true,
+            schema: { $ref: "#/components/schemas/Uuid" },
+          },
+        ]
+      requestBody:
+        {
+          required: true,
+          content:
+            { application/json: { schema: { $ref: "#/components/schemas/RouteUpsertRequest" } } },
+        }
+      responses:
+        "200": { $ref: "#/components/responses/ResourceResponse" }
+        "201": { $ref: "#/components/responses/ResourceResponse" }
+        "401": { $ref: "#/components/responses/ErrorResponse" }
+        "403": { $ref: "#/components/responses/ErrorResponse" }
+        "404": { $ref: "#/components/responses/ErrorResponse" }
+        "409": { $ref: "#/components/responses/ErrorResponse" }
+        "422": { $ref: "#/components/responses/ErrorResponse" }
+        "429": { $ref: "#/components/responses/RateLimitedResponse" }
+        "500": { $ref: "#/components/responses/ErrorResponse" }
+        "503": { $ref: "#/components/responses/ErrorResponse" }
+  /recommendations:
+    post:
+      operationId: ingestRecommendation
+      tags: [Recommendation]
+      parameters:
+        [
+          { $ref: "#/components/parameters/RequestId" },
+          { $ref: "#/components/parameters/Traceparent" },
+          { $ref: "#/components/parameters/IdempotencyKey" },
+        ]
+      requestBody:
+        {
+          required: true,
+          content:
+            {
+              application/json:
+                { schema: { $ref: "#/components/schemas/CreateRecommendationCommand" } },
+            },
+        }
+      responses:
+        "201": { $ref: "#/components/responses/ResourceResponse" }
+        "401": { $ref: "#/components/responses/ErrorResponse" }
+        "403": { $ref: "#/components/responses/ErrorResponse" }
+        "409": { $ref: "#/components/responses/ErrorResponse" }
+        "422": { $ref: "#/components/responses/ErrorResponse" }
+        "429": { $ref: "#/components/responses/RateLimitedResponse" }
+        "500": { $ref: "#/components/responses/ErrorResponse" }
+        "503": { $ref: "#/components/responses/ErrorResponse" }
+  /notifications:
+    post:
+      operationId: scheduleNotification
+      tags: [Notification]
+      parameters:
+        [
+          { $ref: "#/components/parameters/RequestId" },
+          { $ref: "#/components/parameters/Traceparent" },
+          { $ref: "#/components/parameters/IdempotencyKey" },
+        ]
+      requestBody:
+        {
+          required: true,
+          content:
+            {
+              application/json:
+                { schema: { $ref: "#/components/schemas/ScheduleNotificationCommand" } },
+            },
+        }
+      responses:
+        "201": { $ref: "#/components/responses/ResourceResponse" }
+        "401": { $ref: "#/components/responses/ErrorResponse" }
+        "403": { $ref: "#/components/responses/ErrorResponse" }
+        "409": { $ref: "#/components/responses/ErrorResponse" }
+        "422": { $ref: "#/components/responses/ErrorResponse" }
+        "429": { $ref: "#/components/responses/RateLimitedResponse" }
+        "500": { $ref: "#/components/responses/ErrorResponse" }
+        "503": { $ref: "#/components/responses/ErrorResponse" }
+  /retention/legal-holds:
+    post:
+      operationId: createLegalHold
+      tags: [Retention]
+      parameters:
+        [
+          { $ref: "#/components/parameters/RequestId" },
+          { $ref: "#/components/parameters/Traceparent" },
+          { $ref: "#/components/parameters/IdempotencyKey" },
+        ]
+      requestBody:
+        {
+          required: true,
+          content:
+            {
+              application/json: { schema: { $ref: "#/components/schemas/CreateLegalHoldCommand" } },
+            },
+        }
+      responses:
+        "201":
+          {
+            description: Legal hold created,
+            headers: { X-Request-ID: { $ref: "#/components/headers/RequestId" } },
+            content:
+              { application/json: { schema: { $ref: "#/components/schemas/LegalHoldEnvelope" } } },
+          }
+        "401": { $ref: "#/components/responses/ErrorResponse" }
+        "403": { $ref: "#/components/responses/ErrorResponse" }
+        "404": { $ref: "#/components/responses/ErrorResponse" }
+        "409": { $ref: "#/components/responses/ErrorResponse" }
+        "422": { $ref: "#/components/responses/ErrorResponse" }
+        "429": { $ref: "#/components/responses/RateLimitedResponse" }
+        "500": { $ref: "#/components/responses/ErrorResponse" }
+        "503": { $ref: "#/components/responses/ErrorResponse" }
+  /retention/legal-holds/{holdId}:
+    delete:
+      operationId: releaseLegalHold
+      tags: [Retention]
+      parameters:
+        - { $ref: "#/components/parameters/RequestId" }
+        - { $ref: "#/components/parameters/Traceparent" }
+        - { $ref: "#/components/parameters/IdempotencyKey" }
+        - { name: holdId, in: path, required: true, schema: { $ref: "#/components/schemas/Uuid" } }
+        - {
+            name: expectedVersion,
+            in: query,
+            required: true,
+            schema: { type: integer, minimum: 1 },
+          }
+      responses:
+        "204": { description: Hold released; deleted resources remain invisible }
+        "401": { $ref: "#/components/responses/ErrorResponse" }
+        "403": { $ref: "#/components/responses/ErrorResponse" }
+        "404": { $ref: "#/components/responses/ErrorResponse" }
+        "409": { $ref: "#/components/responses/ErrorResponse" }
+        "422": { $ref: "#/components/responses/ErrorResponse" }
+        "429": { $ref: "#/components/responses/RateLimitedResponse" }
+        "500": { $ref: "#/components/responses/ErrorResponse" }
+        "503": { $ref: "#/components/responses/ErrorResponse" }
+components:
+  securitySchemes:
+    serviceBearer: { type: http, scheme: bearer, bearerFormat: JWT }
+  parameters:
+    RequestId:
+      {
+        name: X-Request-ID,
+        in: header,
+        required: false,
+        schema: { type: string, minLength: 1, maxLength: 128 },
+      }
+    Traceparent:
+      {
+        name: traceparent,
+        in: header,
+        required: false,
+        schema: { type: string, pattern: "^[0-9a-f]{2}-[0-9a-f]{32}-[0-9a-f]{16}-[0-9a-f]{2}$" },
+      }
+    IdempotencyKey:
+      {
+        name: Idempotency-Key,
+        in: header,
+        required: true,
+        schema: { type: string, minLength: 16, maxLength: 128, pattern: "^[!-~]+$" },
+      }
+  headers:
+    RequestId: { required: true, schema: { type: string, minLength: 1, maxLength: 128 } }
+    RateLimitLimit: { required: true, schema: { type: integer, minimum: 0 } }
+    RateLimitRemaining: { required: true, schema: { type: integer, minimum: 0 } }
+    RateLimitReset: { required: true, schema: { type: integer, minimum: 0 } }
+    RetryAfter: { required: true, schema: { type: integer, minimum: 1 } }
+  responses:
+    AuthorizationDecisionResponse:
+      description: Authoritative decision
+      headers: { X-Request-ID: { $ref: "#/components/headers/RequestId" } }
+      content:
+        {
+          application/json:
+            { schema: { $ref: "#/components/schemas/AuthorizationDecisionEnvelope" } },
+        }
+    ResourceResponse:
+      description: Internal resource result
+      headers: { X-Request-ID: { $ref: "#/components/headers/RequestId" } }
+      content:
+        { application/json: { schema: { $ref: "#/components/schemas/GenericResourceEnvelope" } } }
+    ErrorResponse:
+      description: Explicit operation error
+      headers: { X-Request-ID: { $ref: "#/components/headers/RequestId" } }
+      content: { application/json: { schema: { $ref: "#/components/schemas/ErrorEnvelope" } } }
+    RateLimitedResponse:
+      description: Rate limited
+      headers:
+        X-Request-ID: { $ref: "#/components/headers/RequestId" }
+        RateLimit-Limit: { $ref: "#/components/headers/RateLimitLimit" }
+        RateLimit-Remaining: { $ref: "#/components/headers/RateLimitRemaining" }
+        RateLimit-Reset: { $ref: "#/components/headers/RateLimitReset" }
+        Retry-After: { $ref: "#/components/headers/RetryAfter" }
+      content: { application/json: { schema: { $ref: "#/components/schemas/ErrorEnvelope" } } }
+  schemas:
+    Uuid:
+      {
+        type: string,
+        format: uuid,
+        pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      }
+    EmptyMetadata: { type: object, additionalProperties: false }
+    ErrorEnvelope:
+      type: object
+      additionalProperties: false
+      required: [success, error, metadata]
+      properties:
+        success: { const: false }
+        error:
+          type: object
+          additionalProperties: false
+          required: [code, message, requestId]
+          properties:
+            code: { type: string, pattern: "^[A-Z][A-Z0-9_]{2,63}$" }
+            message: { type: string, minLength: 1, maxLength: 500 }
+            requestId: { type: string, minLength: 1, maxLength: 128 }
+            fields:
+              {
+                type: array,
+                maxItems: 100,
+                items:
+                  {
+                    type: object,
+                    additionalProperties: false,
+                    required: [field, code, message],
+                    properties:
+                      {
+                        field: { type: string, maxLength: 256 },
+                        code: { type: string, maxLength: 64 },
+                        message: { type: string, maxLength: 500 },
+                      },
+                  },
+              }
+        metadata: { $ref: "#/components/schemas/EmptyMetadata" }
+    AuthorizationCheckRequest:
+      type: object
+      additionalProperties: false
+      required: [principalId, actorType, action, resourceType, purpose, sensitivity]
+      properties:
+        principalId: { $ref: "#/components/schemas/Uuid" }
+        actorType: { enum: [USER, SERVICE] }
+        action: { enum: [READ, CREATE, UPDATE, DELETE, INDEX, DELIVER, ADMINISTER] }
+        resourceType: { type: string, pattern: "^[A-Z][A-Z0-9_]{1,63}$" }
+        resourceId: { oneOf: [{ $ref: "#/components/schemas/Uuid" }, { type: "null" }] }
+        ownerId: { oneOf: [{ $ref: "#/components/schemas/Uuid" }, { type: "null" }] }
+        purpose: { type: string, pattern: "^[a-z][a-z0-9_.-]{2,63}$" }
+        sensitivity: { enum: [STANDARD, SENSITIVE, HIGHLY_SENSITIVE] }
+        permissionPolicyRef:
+          { oneOf: [{ type: string, minLength: 1, maxLength: 128 }, { type: "null" }] }
+        permissionPolicyVersion: { oneOf: [{ type: integer, minimum: 1 }, { type: "null" }] }
+        context:
+          {
+            type: object,
+            maxProperties: 16,
+            additionalProperties: { type: [string, number, integer, boolean, "null"] },
+          }
+    AuthorizationDecision:
+      type: object
+      additionalProperties: false
+      required:
+        [
+          decision,
+          decisionId,
+          permissionVersion,
+          policyRef,
+          policyVersion,
+          validUntil,
+          reasonCode,
+          obligations,
+        ]
+      properties:
+        decision: { enum: [ALLOW, DENY] }
+        decisionId: { $ref: "#/components/schemas/Uuid" }
+        permissionVersion: { type: integer, minimum: 1 }
+        policyRef: { type: string, minLength: 1, maxLength: 128 }
+        policyVersion: { type: integer, minimum: 1 }
+        validUntil: { type: string, format: date-time }
+        reasonCode: { oneOf: [{ type: string, minLength: 1, maxLength: 64 }, { type: "null" }] }
+        obligations:
+          {
+            type: array,
+            uniqueItems: true,
+            items: { enum: [REDACT_CONTENT, NO_ANALYTICS, NO_INDEX, REQUIRE_REAUTH] },
+          }
+    AuthorizationDecisionEnvelope:
+      {
+        type: object,
+        additionalProperties: false,
+        required: [success, data, metadata],
+        properties:
+          {
+            success: { const: true },
+            data: { $ref: "#/components/schemas/AuthorizationDecision" },
+            metadata: { $ref: "#/components/schemas/EmptyMetadata" },
+          },
+      }
+    BatchAuthorizationCheckRequest:
+      type: object
+      additionalProperties: false
+      required: [checks]
+      properties:
+        checks:
+          {
+            type: array,
+            minItems: 1,
+            maxItems: 100,
+            items:
+              {
+                type: object,
+                additionalProperties: false,
+                required: [checkId, check],
+                properties:
+                  {
+                    checkId: { type: string, minLength: 1, maxLength: 64, pattern: "^[!-~]+$" },
+                    check: { $ref: "#/components/schemas/AuthorizationCheckRequest" },
+                  },
+              },
+          }
+    BatchAuthorizationDecisionEnvelope:
+      {
+        type: object,
+        additionalProperties: false,
+        required: [success, data, metadata],
+        properties:
+          {
+            success: { const: true },
+            data:
+              {
+                type: array,
+                minItems: 1,
+                maxItems: 100,
+                items:
+                  {
+                    type: object,
+                    additionalProperties: false,
+                    required: [checkId, decision],
+                    properties:
+                      {
+                        checkId: { type: string },
+                        decision: { $ref: "#/components/schemas/AuthorizationDecision" },
+                      },
+                  },
+              },
+            metadata: { $ref: "#/components/schemas/EmptyMetadata" },
+          },
+      }
+    PermissionProjectionEnvelope:
+      {
+        type: object,
+        additionalProperties: false,
+        required: [success, data, metadata],
+        properties:
+          {
+            success: { const: true },
+            data:
+              {
+                type: object,
+                additionalProperties: false,
+                required:
+                  [
+                    ownerId,
+                    visibility,
+                    sensitivity,
+                    policyRef,
+                    policyVersion,
+                    permissionVersion,
+                    indexAllowed,
+                    analyticsAllowed,
+                  ],
+                properties:
+                  {
+                    ownerId: { $ref: "#/components/schemas/Uuid" },
+                    visibility: { enum: [PRIVATE, PUBLIC] },
+                    sensitivity: { enum: [STANDARD, SENSITIVE, HIGHLY_SENSITIVE] },
+                    policyRef: { type: string, maxLength: 128 },
+                    policyVersion: { type: integer, minimum: 1 },
+                    permissionVersion: { type: integer, minimum: 1 },
+                    indexAllowed: { type: boolean },
+                    analyticsAllowed: { type: boolean },
+                  },
+              },
+            metadata: { $ref: "#/components/schemas/EmptyMetadata" },
+          },
+      }
+    MemoryCategory:
+      {
+        type: object,
+        additionalProperties: false,
+        required: [id, key, displayName, defaultSensitivity, version],
+        properties:
+          {
+            id: { $ref: "#/components/schemas/Uuid" },
+            key:
+              {
+                enum:
+                  [
+                    PROFILE,
+                    GOAL,
+                    LEARNING_PROGRESS,
+                    SKILL,
+                    PREFERENCE,
+                    TRAVEL_HISTORY,
+                    INTEREST,
+                    JOURNAL,
+                    EXPERIENCE,
+                    HEALTH,
+                    SAFETY_PREFERENCE,
+                  ],
+              },
+            displayName: { type: string, minLength: 1, maxLength: 100 },
+            defaultSensitivity: { enum: [STANDARD, SENSITIVE, HIGHLY_SENSITIVE] },
+            version: { type: integer, minimum: 1 },
+          },
+      }
+    MemoryCategoryListEnvelope:
+      {
+        type: object,
+        additionalProperties: false,
+        required: [success, data, metadata],
+        properties:
+          {
+            success: { const: true },
+            data: { type: array, items: { $ref: "#/components/schemas/MemoryCategory" } },
+            metadata: { $ref: "#/components/schemas/EmptyMetadata" },
+          },
+      }
+    Accessibility:
+      {
+        type: object,
+        additionalProperties: false,
+        required: [wheelchairAccessible, stepFree],
+        properties:
+          {
+            wheelchairAccessible: { type: boolean },
+            stepFree: { type: boolean },
+            notes: { oneOf: [{ type: string, maxLength: 1000 }, { type: "null" }] },
+          },
+      }
+    DestinationUpsertRequest:
+      {
+        type: object,
+        additionalProperties: false,
+        required:
+          [
+            provider,
+            providerReference,
+            name,
+            latitude,
+            longitude,
+            timezone,
+            accessibility,
+            sourceVersion,
+          ],
+        properties:
+          {
+            provider: { type: string, pattern: "^[A-Z][A-Z0-9_]{1,63}$" },
+            providerReference: { type: string, minLength: 1, maxLength: 256 },
+            name: { type: string, minLength: 1, maxLength: 200 },
+            latitude: { type: number, minimum: -90, maximum: 90, multipleOf: 0.0000001 },
+            longitude: { type: number, minimum: -180, maximum: 180, multipleOf: 0.0000001 },
+            timezone: { type: string, minLength: 1, maxLength: 64 },
+            accessibility: { $ref: "#/components/schemas/Accessibility" },
+            sourceVersion: { type: integer, minimum: 1 },
+          },
+      }
+    RouteUpsertRequest:
+      {
+        type: object,
+        additionalProperties: false,
+        required:
+          [
+            provider,
+            providerReference,
+            originDestinationId,
+            destinationId,
+            travelMode,
+            distanceMeters,
+            durationSeconds,
+            polyline,
+            accessibility,
+            validFrom,
+            sourceVersion,
+          ],
+        properties:
+          {
+            provider: { type: string, pattern: "^[A-Z][A-Z0-9_]{1,63}$" },
+            providerReference: { type: string, minLength: 1, maxLength: 256 },
+            originDestinationId: { $ref: "#/components/schemas/Uuid" },
+            destinationId: { $ref: "#/components/schemas/Uuid" },
+            travelMode: { enum: [WALKING, CYCLING, DRIVING, TRANSIT, OTHER] },
+            distanceMeters: { type: integer, minimum: 0, maximum: 100000000 },
+            durationSeconds: { type: integer, minimum: 0, maximum: 604800 },
+            polyline: { type: string, minLength: 1, maxLength: 1000000 },
+            accessibility: { $ref: "#/components/schemas/Accessibility" },
+            validFrom: { type: string, format: date-time },
+            validUntil: { oneOf: [{ type: string, format: date-time }, { type: "null" }] },
+            sourceVersion: { type: integer, minimum: 1 },
+          },
+      }
+    Provenance:
+      {
+        type: object,
+        additionalProperties: false,
+        required: [producer, sourceType, sourceVersion],
+        properties:
+          {
+            producer: { type: string, pattern: "^[a-z][a-z0-9-]{2,63}$" },
+            sourceType: { enum: [USER_ACTION, SERVICE_EVENT, IMPORT, TEST_FIXTURE] },
+            sourceResourceId: { oneOf: [{ $ref: "#/components/schemas/Uuid" }, { type: "null" }] },
+            sourceVersion: { type: integer, minimum: 1 },
+          },
+      }
+    RecommendationScore:
+      {
+        type: object,
+        additionalProperties: false,
+        required: [factor, score],
+        properties:
+          {
+            factor:
+              {
+                enum:
+                  [
+                    SAFETY,
+                    EDUCATIONAL_VALUE,
+                    RELEVANCE,
+                    USER_INTEREST,
+                    TIMING,
+                    ACCESSIBILITY,
+                    CONFIDENCE,
+                    URGENCY,
+                  ],
+              },
+            score: { type: number, minimum: 0, maximum: 1 },
+          },
+      }
+    CreateRecommendationCommand:
+      {
+        type: object,
+        additionalProperties: false,
+        required:
+          [
+            ownerId,
+            category,
+            title,
+            summary,
+            rationale,
+            confidence,
+            availableAt,
+            provenance,
+            scores,
+          ],
+        properties:
+          {
+            ownerId: { $ref: "#/components/schemas/Uuid" },
+            category: { type: string, pattern: "^[A-Z][A-Z0-9_]{1,63}$" },
+            title: { type: string, minLength: 1, maxLength: 200 },
+            summary: { type: string, minLength: 1, maxLength: 5000 },
+            rationale: { type: string, minLength: 1, maxLength: 5000 },
+            confidence: { type: number, minimum: 0, maximum: 1 },
+            availableAt: { type: string, format: date-time },
+            expiresAt: { oneOf: [{ type: string, format: date-time }, { type: "null" }] },
+            provenance: { $ref: "#/components/schemas/Provenance" },
+            scores:
+              {
+                type: array,
+                maxItems: 8,
+                uniqueItems: true,
+                items: { $ref: "#/components/schemas/RecommendationScore" },
+              },
+          },
+      }
+    ScheduleNotificationCommand:
+      {
+        type: object,
+        additionalProperties: false,
+        required:
+          [
+            ownerId,
+            kind,
+            channel,
+            recipientRef,
+            title,
+            body,
+            scheduledFor,
+            provenance,
+            permissionPolicyRef,
+            permissionPolicyVersion,
+          ],
+        properties:
+          {
+            ownerId: { $ref: "#/components/schemas/Uuid" },
+            kind: { type: string, pattern: "^[A-Z][A-Z0-9_]{1,63}$" },
+            channel: { enum: [PUSH, EMAIL, SMS] },
+            recipientRef: { type: string, minLength: 1, maxLength: 256 },
+            title: { type: string, minLength: 1, maxLength: 200 },
+            body: { type: string, minLength: 1, maxLength: 10000 },
+            scheduledFor: { type: string, format: date-time },
+            expiresAt: { oneOf: [{ type: string, format: date-time }, { type: "null" }] },
+            provenance: { $ref: "#/components/schemas/Provenance" },
+            permissionPolicyRef: { type: string, minLength: 1, maxLength: 128 },
+            permissionPolicyVersion: { type: integer, minimum: 1 },
+          },
+      }
+    LegalHoldResourceReference:
+      {
+        type: object,
+        additionalProperties: false,
+        required: [resourceType, resourceId],
+        properties:
+          {
+            resourceType: { type: string, pattern: "^[A-Z][A-Z0-9_]{1,63}$" },
+            resourceId: { $ref: "#/components/schemas/Uuid" },
+          },
+      }
+    CreateLegalHoldCommand:
+      {
+        type: object,
+        additionalProperties: false,
+        required: [authorityRef, reasonCategory, resources, actorId],
+        properties:
+          {
+            authorityRef: { type: string, minLength: 1, maxLength: 128 },
+            reasonCategory:
+              { enum: [LITIGATION, REGULATORY_REQUEST, SECURITY_INVESTIGATION, OTHER_AUTHORIZED] },
+            expiresAt: { oneOf: [{ type: string, format: date-time }, { type: "null" }] },
+            resources:
+              {
+                type: array,
+                minItems: 1,
+                maxItems: 100,
+                uniqueItems: true,
+                items: { $ref: "#/components/schemas/LegalHoldResourceReference" },
+              },
+            actorId: { $ref: "#/components/schemas/Uuid" },
+          },
+      }
+    LegalHoldResource:
+      {
+        type: object,
+        additionalProperties: false,
+        required: [id, authorityRef, reasonCategory, expiresAt, resources, createdAt, version],
+        properties:
+          {
+            id: { $ref: "#/components/schemas/Uuid" },
+            authorityRef: { type: string, maxLength: 128 },
+            reasonCategory:
+              { enum: [LITIGATION, REGULATORY_REQUEST, SECURITY_INVESTIGATION, OTHER_AUTHORIZED] },
+            expiresAt: { oneOf: [{ type: string, format: date-time }, { type: "null" }] },
+            resources:
+              {
+                type: array,
+                minItems: 1,
+                maxItems: 100,
+                items: { $ref: "#/components/schemas/LegalHoldResourceReference" },
+              },
+            createdAt: { type: string, format: date-time },
+            version: { type: integer, minimum: 1 },
+          },
+      }
+    LegalHoldEnvelope:
+      {
+        type: object,
+        additionalProperties: false,
+        required: [success, data, metadata],
+        properties:
+          {
+            success: { const: true },
+            data: { $ref: "#/components/schemas/LegalHoldResource" },
+            metadata: { $ref: "#/components/schemas/EmptyMetadata" },
+          },
+      }
+    GenericResourceEnvelope:
+      {
+        type: object,
+        additionalProperties: false,
+        required: [success, data, metadata],
+        properties:
+          {
+            success: { const: true },
+            data:
+              {
+                type: object,
+                required: [id, version],
+                properties:
+                  {
+                    id: { $ref: "#/components/schemas/Uuid" },
+                    version: { type: integer, minimum: 1 },
+                  },
+              },
+            metadata: { $ref: "#/components/schemas/EmptyMetadata" },
+          },
+      }

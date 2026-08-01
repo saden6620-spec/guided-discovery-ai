@@ -21,7 +21,7 @@
     "lint:workspaces": "turbo lint",
     "typecheck": "tsc --project tsconfig.node.json && turbo typecheck",
     "test": "pnpm test:javascript && pnpm test:python && pnpm test:workspaces",
-    "test:javascript": "jest --runInBand",
+    "test:javascript": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand",
     "test:python": "python -m pytest",
     "test:workspaces": "turbo test",
     "test:e2e": "playwright test",

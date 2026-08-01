@@ -1,0 +1,733 @@
+asyncapi: 3.1.0
+info:
+  title: Guided Discovery AI M2 Domain Events
+  version: 1.0.0
+  description: >-
+    Authoritative M2 event contract under ADR-0001 through ADR-0011. Delivery is
+    at least once through transactional outbox and idempotent inbox processing.
+    Channels are partitioned by subjectId. A consumer applies only increasing
+    subjectVersion values, deduplicates eventId, and fails closed for current
+    permission or deletion uncertainty. Five retry attempts use 1, 5, 30, 120,
+    and 600 second delays with jitter, then dead-letter. Major schema changes use
+    a new channel version; additive optional fields are compatible within v1.
+defaultContentType: application/json
+servers:
+  development:
+    host: event-bus:9092
+    protocol: kafka
+    description: Logical development event bus; broker choice is adapter-controlled.
+channels:
+  permissionChanged:
+    address: m2.permission.changed.v1
+    messages:
+      PermissionChanged: { $ref: "#/components/messages/PermissionChanged" }
+  memorySaved:
+    address: m2.memory.saved.v1
+    messages:
+      MemorySaved: { $ref: "#/components/messages/MemorySaved" }
+  memoryArchived:
+    address: m2.memory.archived.v1
+    messages:
+      MemoryArchived: { $ref: "#/components/messages/MemoryArchived" }
+  memoryRestored:
+    address: m2.memory.restored.v1
+    messages:
+      MemoryRestored: { $ref: "#/components/messages/MemoryRestored" }
+  memoryDeletionRequired:
+    address: m2.memory.deletion-required.v1
+    messages:
+      MemoryDeletionRequired: { $ref: "#/components/messages/MemoryDeletionRequired" }
+  memoryDeletionAcknowledged:
+    address: m2.memory.deletion-acknowledged.v1
+    messages:
+      MemoryDeletionAcknowledged: { $ref: "#/components/messages/MemoryDeletionAcknowledged" }
+  memoryPurged:
+    address: m2.memory.purged.v1
+    messages:
+      MemoryPurged: { $ref: "#/components/messages/MemoryPurged" }
+  memoryLinkChanged:
+    address: m2.memory.link-lifecycle.v1
+    messages:
+      MemoryLinkCreated: { $ref: "#/components/messages/MemoryLinkCreated" }
+      MemoryLinkDeleted: { $ref: "#/components/messages/MemoryLinkDeleted" }
+  planChanged:
+    address: m2.planning.plan-changed.v1
+    messages:
+      PlanChanged: { $ref: "#/components/messages/PlanChanged" }
+  tripStarted:
+    address: m2.navigation.trip-started.v1
+    messages:
+      TripStarted: { $ref: "#/components/messages/TripStarted" }
+  navigationRerouted:
+    address: m2.navigation.rerouted.v1
+    messages:
+      NavigationRerouted: { $ref: "#/components/messages/NavigationRerouted" }
+  navigationStopped:
+    address: m2.navigation.stopped.v1
+    messages:
+      NavigationStopped: { $ref: "#/components/messages/NavigationStopped" }
+  tripCompleted:
+    address: m2.navigation.trip-completed.v1
+    messages:
+      TripCompleted: { $ref: "#/components/messages/TripCompleted" }
+  tripCancelled:
+    address: m2.navigation.trip-cancelled.v1
+    messages:
+      TripCancelled: { $ref: "#/components/messages/TripCancelled" }
+  recommendationChanged:
+    address: m2.recommendation.lifecycle.v1
+    messages:
+      RecommendationAccepted: { $ref: "#/components/messages/RecommendationAccepted" }
+      RecommendationDismissed: { $ref: "#/components/messages/RecommendationDismissed" }
+      RecommendationExpired: { $ref: "#/components/messages/RecommendationExpired" }
+  journalChanged:
+    address: m2.documentation.journal-changed.v1
+    messages:
+      JournalChanged: { $ref: "#/components/messages/JournalChanged" }
+  notificationChanged:
+    address: m2.notification.lifecycle.v1
+    messages:
+      NotificationScheduled: { $ref: "#/components/messages/NotificationScheduled" }
+      NotificationQueued: { $ref: "#/components/messages/NotificationQueued" }
+      NotificationCancelled: { $ref: "#/components/messages/NotificationCancelled" }
+      NotificationExpired: { $ref: "#/components/messages/NotificationExpired" }
+  searchDocumentUpserted:
+    address: m2.search.document-upserted.v1
+    messages:
+      SearchDocumentUpserted: { $ref: "#/components/messages/SearchDocumentUpserted" }
+  searchDocumentDeleted:
+    address: m2.search.document-deleted.v1
+    messages:
+      SearchDocumentDeleted: { $ref: "#/components/messages/SearchDocumentDeleted" }
+  searchIndexChanged:
+    address: m2.search.index-changed.v1
+    messages:
+      SearchIndexChanged: { $ref: "#/components/messages/SearchIndexChanged" }
+  deadLetter:
+    address: m2.dead-letter.v1
+    messages:
+      DeadLetterRecorded: { $ref: "#/components/messages/DeadLetterRecorded" }
+operations:
+  permissionPublishesChanged:
+    action: send
+    channel: { $ref: "#/channels/permissionChanged" }
+    summary: Permission Service publishes; all protected-data services and Search consume.
+  memoryPublishesSaved:
+    action: send
+    channel: { $ref: "#/channels/memorySaved" }
+    summary: Memory Service publishes; Search and audit projections consume.
+  memoryPublishesArchived:
+    action: send
+    channel: { $ref: "#/channels/memoryArchived" }
+    summary: Memory Service publishes; Search consumes.
+  memoryPublishesRestored:
+    action: send
+    channel: { $ref: "#/channels/memoryRestored" }
+    summary: Memory Service publishes; Search consumes after current authorization.
+  memoryPublishesDeletion:
+    action: send
+    channel: { $ref: "#/channels/memoryDeletionRequired" }
+    summary: Memory Service publishes; Search, analytics, caches, and registered derived consumers consume.
+  consumersAcknowledgeDeletion:
+    action: send
+    channel: { $ref: "#/channels/memoryDeletionAcknowledged" }
+    summary: Registered deletion consumers publish; Memory Service consumes.
+  memoryPublishesPurged:
+    action: send
+    channel: { $ref: "#/channels/memoryPurged" }
+    summary: Memory Service publishes content-free purge completion; audit consumes.
+  memoryPublishesLinkChange:
+    action: send
+    channel: { $ref: "#/channels/memoryLinkChanged" }
+    summary: Memory Service publishes; audit consumes. Search does not index links in M2.
+  planningPublishesPlanChange:
+    action: send
+    channel: { $ref: "#/channels/planChanged" }
+    summary: Planning Service publishes; audit consumes.
+  navigationPublishesTripStarted:
+    action: send
+    channel: { $ref: "#/channels/tripStarted" }
+    summary: Navigation Service publishes; Search and Documentation projections consume.
+  navigationPublishesReroute:
+    action: send
+    channel: { $ref: "#/channels/navigationRerouted" }
+  navigationPublishesStopped:
+    action: send
+    channel: { $ref: "#/channels/navigationStopped" }
+  navigationPublishesTripCompleted:
+    action: send
+    channel: { $ref: "#/channels/tripCompleted" }
+    summary: Navigation Service publishes only for completed outcome; Search consumes.
+  navigationPublishesTripCancelled:
+    action: send
+    channel: { $ref: "#/channels/tripCancelled" }
+  recommendationPublishesChange:
+    action: send
+    channel: { $ref: "#/channels/recommendationChanged" }
+    summary: Recommendation Service publishes canonical disposition changes; audit consumes.
+  documentationPublishesJournalChange:
+    action: send
+    channel: { $ref: "#/channels/journalChanged" }
+    summary: Documentation Service publishes; Search consumes.
+  notificationPublishesChange:
+    action: send
+    channel: { $ref: "#/channels/notificationChanged" }
+    summary: Notification Service publishes; audit consumes.
+  sourcePublishesSearchUpsert:
+    action: send
+    channel: { $ref: "#/channels/searchDocumentUpserted" }
+    summary: Approved Memory, Navigation, and Documentation producers publish; Search consumes.
+  sourcePublishesSearchDelete:
+    action: send
+    channel: { $ref: "#/channels/searchDocumentDeleted" }
+    summary: Approved Memory, Navigation, and Documentation producers publish; Search consumes.
+  searchPublishesIndexChange:
+    action: send
+    channel: { $ref: "#/channels/searchIndexChanged" }
+    summary: Search Service publishes; operational monitoring consumes.
+  brokerRecordsDeadLetter:
+    action: send
+    channel: { $ref: "#/channels/deadLetter" }
+    summary: The consuming service records exhausted or non-retryable failures; restricted operations tooling consumes.
+components:
+  messages:
+    PermissionChanged:
+      name: PermissionChanged
+      payload: { $ref: "#/components/schemas/PermissionChangedEvent" }
+    MemorySaved:
+      name: MemorySaved
+      payload: { $ref: "#/components/schemas/MemorySavedEvent" }
+    MemoryArchived:
+      name: MemoryArchived
+      payload: { $ref: "#/components/schemas/MemoryStateEvent" }
+    MemoryRestored:
+      name: MemoryRestored
+      payload: { $ref: "#/components/schemas/MemoryStateEvent" }
+    MemoryDeletionRequired:
+      name: MemoryDeletionRequired
+      payload: { $ref: "#/components/schemas/MemoryDeletionRequiredEvent" }
+    MemoryDeletionAcknowledged:
+      name: MemoryDeletionAcknowledged
+      payload: { $ref: "#/components/schemas/MemoryDeletionAcknowledgedEvent" }
+    MemoryPurged:
+      name: MemoryPurged
+      payload: { $ref: "#/components/schemas/MemoryPurgedEvent" }
+    MemoryLinkCreated:
+      name: MemoryLinkCreated
+      payload: { $ref: "#/components/schemas/MemoryLinkCreatedEvent" }
+    MemoryLinkDeleted:
+      name: MemoryLinkDeleted
+      payload: { $ref: "#/components/schemas/MemoryLinkDeletedEvent" }
+    PlanChanged:
+      name: PlanChanged
+      payload: { $ref: "#/components/schemas/PlanChangedEvent" }
+    TripStarted:
+      name: TripStarted
+      payload: { $ref: "#/components/schemas/TripStartedEvent" }
+    NavigationRerouted:
+      name: NavigationRerouted
+      payload: { $ref: "#/components/schemas/NavigationReroutedEvent" }
+    NavigationStopped:
+      name: NavigationStopped
+      payload: { $ref: "#/components/schemas/NavigationStoppedEvent" }
+    TripCompleted:
+      name: TripCompleted
+      payload: { $ref: "#/components/schemas/TripTerminalEvent" }
+    TripCancelled:
+      name: TripCancelled
+      payload: { $ref: "#/components/schemas/TripTerminalEvent" }
+    RecommendationAccepted:
+      name: RecommendationAccepted
+      payload: { $ref: "#/components/schemas/RecommendationAcceptedEvent" }
+    RecommendationDismissed:
+      name: RecommendationDismissed
+      payload: { $ref: "#/components/schemas/RecommendationDismissedEvent" }
+    RecommendationExpired:
+      name: RecommendationExpired
+      payload: { $ref: "#/components/schemas/RecommendationExpiredEvent" }
+    JournalChanged:
+      name: JournalChanged
+      payload: { $ref: "#/components/schemas/JournalChangedEvent" }
+    NotificationScheduled:
+      name: NotificationScheduled
+      payload: { $ref: "#/components/schemas/NotificationScheduledEvent" }
+    NotificationQueued:
+      name: NotificationQueued
+      payload: { $ref: "#/components/schemas/NotificationQueuedEvent" }
+    NotificationCancelled:
+      name: NotificationCancelled
+      payload: { $ref: "#/components/schemas/NotificationCancelledEvent" }
+    NotificationExpired:
+      name: NotificationExpired
+      payload: { $ref: "#/components/schemas/NotificationExpiredEvent" }
+    SearchDocumentUpserted:
+      name: SearchDocumentUpserted
+      payload: { $ref: "#/components/schemas/SearchDocumentUpsertedEvent" }
+    SearchDocumentDeleted:
+      name: SearchDocumentDeleted
+      payload: { $ref: "#/components/schemas/SearchDocumentDeletedEvent" }
+    SearchIndexChanged:
+      name: SearchIndexChanged
+      payload: { $ref: "#/components/schemas/SearchIndexChangedEvent" }
+    DeadLetterRecorded:
+      name: DeadLetterRecorded
+      payload: { $ref: "#/components/schemas/DeadLetterRecordedEvent" }
+  schemas:
+    Uuid:
+      type: string
+      format: uuid
+      pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+    Timestamp: { type: string, format: date-time }
+    EventBase:
+      type: object
+      additionalProperties: false
+      required:
+        [
+          eventId,
+          eventType,
+          eventVersion,
+          occurredAt,
+          producer,
+          subjectType,
+          subjectId,
+          subjectVersion,
+          correlationId,
+          payload,
+        ]
+      properties:
+        eventId: { $ref: "#/components/schemas/Uuid" }
+        eventType: { type: string, pattern: "^[A-Z][A-Za-z0-9]{2,127}$" }
+        eventVersion: { type: integer, const: 1 }
+        occurredAt: { $ref: "#/components/schemas/Timestamp" }
+        producer: { type: string, pattern: "^[a-z][a-z0-9-]{2,63}$" }
+        subjectType: { type: string, pattern: "^[A-Z][A-Z0-9_]{1,63}$" }
+        subjectId: { $ref: "#/components/schemas/Uuid" }
+        subjectVersion: { type: integer, minimum: 1 }
+        actorId: { oneOf: [{ $ref: "#/components/schemas/Uuid" }, { type: "null" }] }
+        ownerId: { oneOf: [{ $ref: "#/components/schemas/Uuid" }, { type: "null" }] }
+        correlationId: { type: string, minLength: 1, maxLength: 128 }
+        causationId: { oneOf: [{ $ref: "#/components/schemas/Uuid" }, { type: "null" }] }
+        permissionVersion: { oneOf: [{ type: integer, minimum: 1 }, { type: "null" }] }
+        deletionVersion: { oneOf: [{ type: integer, minimum: 1 }, { type: "null" }] }
+        payload: { type: object }
+    PermissionChangedEvent:
+      allOf:
+        - $ref: "#/components/schemas/EventBase"
+        - type: object
+          properties:
+            eventType: { const: PermissionChanged }
+            payload:
+              type: object
+              additionalProperties: false
+              required:
+                [resourceType, resourceId, policyRef, policyVersion, permissionVersion, changeType]
+              properties:
+                resourceType: { type: string, maxLength: 64 }
+                resourceId: { $ref: "#/components/schemas/Uuid" }
+                policyRef: { type: string, maxLength: 128 }
+                policyVersion: { type: integer, minimum: 1 }
+                permissionVersion: { type: integer, minimum: 1 }
+                changeType: { enum: [GRANTED, CHANGED, REVOKED] }
+    MemorySavedEvent:
+      allOf:
+        - $ref: "#/components/schemas/EventBase"
+        - type: object
+          properties:
+            eventType: { const: MemorySaved }
+            payload:
+              type: object
+              additionalProperties: false
+              required:
+                [memoryId, categoryId, operation, sensitivity, verificationStatus, currentVersionId]
+              properties:
+                memoryId: { $ref: "#/components/schemas/Uuid" }
+                categoryId: { $ref: "#/components/schemas/Uuid" }
+                operation: { enum: [CREATED, UPDATED] }
+                sensitivity: { enum: [STANDARD, SENSITIVE, HIGHLY_SENSITIVE] }
+                verificationStatus:
+                  { enum: [UNVERIFIED, USER_CONFIRMED, SOURCE_VERIFIED, CORRECTED] }
+                currentVersionId: { $ref: "#/components/schemas/Uuid" }
+    MemoryStateEvent:
+      allOf:
+        - $ref: "#/components/schemas/EventBase"
+        - type: object
+          properties:
+            payload:
+              type: object
+              additionalProperties: false
+              required: [memoryId, state, changedAt]
+              properties:
+                memoryId: { $ref: "#/components/schemas/Uuid" }
+                state: { enum: [ACTIVE, ARCHIVED] }
+                changedAt: { $ref: "#/components/schemas/Timestamp" }
+    MemoryDeletionRequiredEvent:
+      allOf:
+        - $ref: "#/components/schemas/EventBase"
+        - type: object
+          properties:
+            eventType: { const: MemoryDeletionRequired }
+            payload:
+              type: object
+              additionalProperties: false
+              required: [memoryId, deletionVersion, deletedAt, purgeAfter]
+              properties:
+                memoryId: { $ref: "#/components/schemas/Uuid" }
+                deletionVersion: { type: integer, minimum: 1 }
+                deletedAt: { $ref: "#/components/schemas/Timestamp" }
+                purgeAfter: { $ref: "#/components/schemas/Timestamp" }
+    MemoryDeletionAcknowledgedEvent:
+      allOf:
+        - $ref: "#/components/schemas/EventBase"
+        - type: object
+          properties:
+            eventType: { const: MemoryDeletionAcknowledged }
+            payload:
+              type: object
+              additionalProperties: false
+              required: [memoryId, deletionVersion, consumer, acknowledgedAt]
+              properties:
+                memoryId: { $ref: "#/components/schemas/Uuid" }
+                deletionVersion: { type: integer, minimum: 1 }
+                consumer: { type: string, pattern: "^[a-z][a-z0-9-]{2,63}$" }
+                acknowledgedAt: { $ref: "#/components/schemas/Timestamp" }
+    MemoryPurgedEvent:
+      allOf:
+        - $ref: "#/components/schemas/EventBase"
+        - type: object
+          properties:
+            eventType: { const: MemoryPurged }
+            payload:
+              type: object
+              additionalProperties: false
+              required: [memoryId, deletionVersion, purgedAt]
+              properties:
+                memoryId: { $ref: "#/components/schemas/Uuid" }
+                deletionVersion: { type: integer, minimum: 1 }
+                purgedAt: { $ref: "#/components/schemas/Timestamp" }
+    MemoryLinkChangedEvent:
+      allOf:
+        - $ref: "#/components/schemas/EventBase"
+        - type: object
+          properties:
+            payload:
+              type: object
+              additionalProperties: false
+              required: [memoryLinkId, sourceMemoryId, targetMemoryId, relationshipType, operation]
+              properties:
+                memoryLinkId: { $ref: "#/components/schemas/Uuid" }
+                sourceMemoryId: { $ref: "#/components/schemas/Uuid" }
+                targetMemoryId: { $ref: "#/components/schemas/Uuid" }
+                relationshipType: { enum: [RELATED_TO, SUPERSEDES, SUPPORTS, CONTRADICTS, PART_OF] }
+                operation: { enum: [CREATED, DELETED] }
+    MemoryLinkCreatedEvent:
+      allOf:
+        - $ref: "#/components/schemas/MemoryLinkChangedEvent"
+        - type: object
+          properties: { eventType: { const: MemoryLinkCreated } }
+    MemoryLinkDeletedEvent:
+      allOf:
+        - $ref: "#/components/schemas/MemoryLinkChangedEvent"
+        - type: object
+          properties: { eventType: { const: MemoryLinkDeleted } }
+    PlanChangedEvent:
+      allOf:
+        - $ref: "#/components/schemas/EventBase"
+        - type: object
+          properties:
+            eventType: { const: PlanChanged }
+            payload:
+              type: object
+              additionalProperties: false
+              required: [planId, operation, status]
+              properties:
+                planId: { $ref: "#/components/schemas/Uuid" }
+                operation: { enum: [CREATED, UPDATED, DELETED] }
+                status: { enum: [DRAFT, ACCEPTED, COMPLETED, CANCELLED] }
+    TripStartedEvent:
+      allOf:
+        - $ref: "#/components/schemas/EventBase"
+        - type: object
+          properties:
+            eventType: { const: TripStarted }
+            payload:
+              type: object
+              additionalProperties: false
+              required: [tripId, navigationSessionId, destinationId, routeId, travelMode, startedAt]
+              properties:
+                tripId: { $ref: "#/components/schemas/Uuid" }
+                navigationSessionId: { $ref: "#/components/schemas/Uuid" }
+                destinationId: { $ref: "#/components/schemas/Uuid" }
+                routeId: { $ref: "#/components/schemas/Uuid" }
+                travelMode: { enum: [WALKING, CYCLING, DRIVING, TRANSIT, OTHER] }
+                startedAt: { $ref: "#/components/schemas/Timestamp" }
+    NavigationReroutedEvent:
+      allOf:
+        - $ref: "#/components/schemas/EventBase"
+        - type: object
+          properties:
+            eventType: { const: NavigationRerouted }
+            payload:
+              type: object
+              additionalProperties: false
+              required: [tripId, navigationSessionId, previousRouteId, routeId, reroutedAt]
+              properties:
+                tripId: { $ref: "#/components/schemas/Uuid" }
+                navigationSessionId: { $ref: "#/components/schemas/Uuid" }
+                previousRouteId: { $ref: "#/components/schemas/Uuid" }
+                routeId: { $ref: "#/components/schemas/Uuid" }
+                reroutedAt: { $ref: "#/components/schemas/Timestamp" }
+    NavigationStoppedEvent:
+      allOf:
+        - $ref: "#/components/schemas/EventBase"
+        - type: object
+          properties:
+            eventType: { const: NavigationStopped }
+            payload:
+              type: object
+              additionalProperties: false
+              required: [tripId, navigationSessionId, outcome, stoppedAt]
+              properties:
+                tripId: { $ref: "#/components/schemas/Uuid" }
+                navigationSessionId: { $ref: "#/components/schemas/Uuid" }
+                outcome: { enum: [COMPLETED, CANCELLED] }
+                stoppedAt: { $ref: "#/components/schemas/Timestamp" }
+    TripTerminalEvent:
+      allOf:
+        - $ref: "#/components/schemas/EventBase"
+        - type: object
+          properties:
+            payload:
+              type: object
+              additionalProperties: false
+              required: [tripId, outcome, endedAt]
+              properties:
+                tripId: { $ref: "#/components/schemas/Uuid" }
+                outcome: { enum: [COMPLETED, CANCELLED] }
+                endedAt: { $ref: "#/components/schemas/Timestamp" }
+    RecommendationChangedEvent:
+      allOf:
+        - $ref: "#/components/schemas/EventBase"
+        - type: object
+          properties:
+            payload:
+              type: object
+              additionalProperties: false
+              required: [recommendationId, fromStatus, toStatus, actorType, changedAt]
+              properties:
+                recommendationId: { $ref: "#/components/schemas/Uuid" }
+                fromStatus:
+                  {
+                    oneOf:
+                      [
+                        { enum: [AVAILABLE, ACCEPTED, REJECTED, DISMISSED, IGNORED, EXPIRED] },
+                        { type: "null" },
+                      ],
+                  }
+                toStatus: { enum: [AVAILABLE, ACCEPTED, REJECTED, DISMISSED, IGNORED, EXPIRED] }
+                actorType: { enum: [USER, SYSTEM, SERVICE] }
+                changedAt: { $ref: "#/components/schemas/Timestamp" }
+    RecommendationAcceptedEvent:
+      allOf:
+        - $ref: "#/components/schemas/RecommendationChangedEvent"
+        - type: object
+          properties: { eventType: { const: RecommendationAccepted } }
+    RecommendationDismissedEvent:
+      allOf:
+        - $ref: "#/components/schemas/RecommendationChangedEvent"
+        - type: object
+          properties: { eventType: { const: RecommendationDismissed } }
+    RecommendationExpiredEvent:
+      allOf:
+        - $ref: "#/components/schemas/RecommendationChangedEvent"
+        - type: object
+          properties: { eventType: { const: RecommendationExpired } }
+    JournalChangedEvent:
+      allOf:
+        - $ref: "#/components/schemas/EventBase"
+        - type: object
+          properties:
+            eventType: { const: JournalChanged }
+            payload:
+              type: object
+              additionalProperties: false
+              required: [journalId, operation, tripId, changedAt]
+              properties:
+                journalId: { $ref: "#/components/schemas/Uuid" }
+                operation: { enum: [CREATED, UPDATED, DELETED] }
+                tripId: { oneOf: [{ $ref: "#/components/schemas/Uuid" }, { type: "null" }] }
+                changedAt: { $ref: "#/components/schemas/Timestamp" }
+    NotificationChangedEvent:
+      allOf:
+        - $ref: "#/components/schemas/EventBase"
+        - type: object
+          properties:
+            payload:
+              type: object
+              additionalProperties: false
+              required: [notificationId, fromStatus, toStatus, changedAt]
+              properties:
+                notificationId: { $ref: "#/components/schemas/Uuid" }
+                fromStatus:
+                  {
+                    oneOf:
+                      [
+                        {
+                          enum:
+                            [
+                              DRAFT,
+                              SCHEDULED,
+                              QUEUED,
+                              PROCESSING,
+                              DELIVERED,
+                              FAILED,
+                              CANCELLED,
+                              EXPIRED,
+                            ],
+                        },
+                        { type: "null" },
+                      ],
+                  }
+                toStatus:
+                  {
+                    enum:
+                      [DRAFT, SCHEDULED, QUEUED, PROCESSING, DELIVERED, FAILED, CANCELLED, EXPIRED],
+                  }
+                changedAt: { $ref: "#/components/schemas/Timestamp" }
+                errorCode: { oneOf: [{ type: string, maxLength: 64 }, { type: "null" }] }
+    NotificationScheduledEvent:
+      allOf:
+        - $ref: "#/components/schemas/NotificationChangedEvent"
+        - type: object
+          properties: { eventType: { const: NotificationScheduled } }
+    NotificationQueuedEvent:
+      allOf:
+        - $ref: "#/components/schemas/NotificationChangedEvent"
+        - type: object
+          properties: { eventType: { const: NotificationQueued } }
+    NotificationCancelledEvent:
+      allOf:
+        - $ref: "#/components/schemas/NotificationChangedEvent"
+        - type: object
+          properties: { eventType: { const: NotificationCancelled } }
+    NotificationExpiredEvent:
+      allOf:
+        - $ref: "#/components/schemas/NotificationChangedEvent"
+        - type: object
+          properties: { eventType: { const: NotificationExpired } }
+    SearchDocumentUpsertedEvent:
+      allOf:
+        - $ref: "#/components/schemas/EventBase"
+        - type: object
+          properties:
+            eventType: { const: SearchDocumentUpserted }
+            payload:
+              type: object
+              additionalProperties: false
+              required:
+                [
+                  resourceType,
+                  sourceResourceId,
+                  sourceVersion,
+                  schemaVersion,
+                  ownerId,
+                  visibility,
+                  sensitivity,
+                  permissionPolicyRef,
+                  permissionVersion,
+                  deletionVersion,
+                  title,
+                  body,
+                  updatedAt,
+                ]
+              properties:
+                resourceType: { enum: [MEMORY, TRIP, JOURNAL, LANDMARK] }
+                sourceResourceId: { $ref: "#/components/schemas/Uuid" }
+                sourceVersion: { type: integer, minimum: 1 }
+                schemaVersion: { type: integer, const: 1 }
+                ownerId: { oneOf: [{ $ref: "#/components/schemas/Uuid" }, { type: "null" }] }
+                visibility: { enum: [PRIVATE, PUBLIC] }
+                sensitivity: { enum: [STANDARD, SENSITIVE, HIGHLY_SENSITIVE] }
+                permissionPolicyRef: { type: string, maxLength: 128 }
+                permissionVersion: { type: integer, minimum: 1 }
+                deletionVersion: { type: integer, minimum: 0 }
+                title: { type: string, minLength: 1, maxLength: 200 }
+                body: { type: string, maxLength: 10000 }
+                updatedAt: { $ref: "#/components/schemas/Timestamp" }
+    SearchDocumentDeletedEvent:
+      allOf:
+        - $ref: "#/components/schemas/EventBase"
+        - type: object
+          properties:
+            eventType: { const: SearchDocumentDeleted }
+            payload:
+              type: object
+              additionalProperties: false
+              required:
+                [
+                  resourceType,
+                  sourceResourceId,
+                  sourceVersion,
+                  schemaVersion,
+                  ownerId,
+                  visibility,
+                  sensitivity,
+                  permissionPolicyRef,
+                  permissionVersion,
+                  deletionVersion,
+                  deletedAt,
+                ]
+              properties:
+                resourceType: { enum: [MEMORY, TRIP, JOURNAL, LANDMARK] }
+                sourceResourceId: { $ref: "#/components/schemas/Uuid" }
+                sourceVersion: { type: integer, minimum: 1 }
+                schemaVersion: { type: integer, const: 1 }
+                ownerId: { oneOf: [{ $ref: "#/components/schemas/Uuid" }, { type: "null" }] }
+                visibility: { enum: [PRIVATE, PUBLIC] }
+                sensitivity: { enum: [STANDARD, SENSITIVE, HIGHLY_SENSITIVE] }
+                permissionPolicyRef: { type: string, maxLength: 128 }
+                permissionVersion: { type: integer, minimum: 1 }
+                deletionVersion: { type: integer, minimum: 1 }
+                deletedAt: { $ref: "#/components/schemas/Timestamp" }
+    SearchIndexChangedEvent:
+      allOf:
+        - $ref: "#/components/schemas/EventBase"
+        - type: object
+          properties:
+            eventType: { const: SearchIndexChanged }
+            payload:
+              type: object
+              additionalProperties: false
+              required: [resourceType, schemaVersion, rankingProfileVersion, status, changedAt]
+              properties:
+                resourceType: { enum: [MEMORY, TRIP, JOURNAL, LANDMARK] }
+                schemaVersion: { type: integer, minimum: 1 }
+                rankingProfileVersion: { type: integer, minimum: 1 }
+                status: { enum: [PENDING, BUILDING, READY, FAILED, REBUILDING] }
+                changedAt: { $ref: "#/components/schemas/Timestamp" }
+    DeadLetterRecordedEvent:
+      allOf:
+        - $ref: "#/components/schemas/EventBase"
+        - type: object
+          properties:
+            eventType: { const: DeadLetterRecorded }
+            payload:
+              type: object
+              additionalProperties: false
+              required:
+                [
+                  originalEventId,
+                  consumer,
+                  originalEventType,
+                  originalEventVersion,
+                  failureCode,
+                  attemptCount,
+                  failedAt,
+                ]
+              properties:
+                originalEventId: { $ref: "#/components/schemas/Uuid" }
+                consumer: { type: string, pattern: "^[a-z][a-z0-9-]{2,63}$" }
+                originalEventType: { type: string, maxLength: 128 }
+                originalEventVersion: { type: integer, minimum: 1 }
+                failureCode: { type: string, pattern: "^[A-Z][A-Z0-9_]{2,63}$" }
+                attemptCount: { type: integer, minimum: 1, maximum: 5 }
+                failedAt: { $ref: "#/components/schemas/Timestamp" }

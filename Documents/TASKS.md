@@ -14,15 +14,15 @@ Only the active milestone may be implemented. Work outside the active milestone 
 
 # Current Status
 
-- Active phase: Phase 1 — Platform Foundation
-- Phase status: Complete
-- Active milestone: M1 — Platform Skeleton
-- Milestone status: Complete
+- Active phase: Phase 2 — Core Backend
+- Phase status: In progress
+- Active milestone: M2.1 — Shared Backend Foundation
+- Milestone status: In progress
 - Hosted CI validation date: July 31, 2026
 - Hosted CI tested branch: `main`
-- Next milestone: M2 — Core Backend
+- Next milestone: M2.2 — Memory Service
 - Next milestone status: Not started
-- Last reviewed: 2026-07-31
+- Last reviewed: 2026-08-01
 
 Allowed status values:
 
@@ -204,6 +204,65 @@ M1 may be marked complete only after all skeleton processes build and start, loc
 - GitHub-hosted CI tested branch: `main`
 - M1 milestone status: Complete
 - M2 — Core Backend: Not started
+
+---
+
+# M2.1 — Shared Backend Foundation
+
+## Objective
+
+Implement only reusable backend infrastructure shared by backend services. Domain services and product behavior remain deferred.
+
+## Included Tasks
+
+| Task | Status |
+| --- | --- |
+| Shared configuration package | Complete |
+| Shared types package | Complete |
+| Shared error framework | Complete |
+| Shared validation framework | Complete |
+| Shared logging framework | Complete |
+| Shared telemetry framework | Complete |
+| Shared health framework | Complete |
+| Shared database abstractions | Complete |
+| Shared event abstractions | Complete |
+| Shared testing utilities | Complete |
+| Package documentation and exports | Complete |
+| Complete local validation | Complete |
+| GitHub-hosted CI validation | Not started |
+
+## Explicitly Out of Scope
+
+- Memory, Planning, Navigation, Recommendation, Documentation, Notification, and Search Service implementation
+- AI orchestration or AI behavior
+- Authentication business logic
+- PostgreSQL entities or domain migrations
+- Event broker implementation
+- External telemetry providers
+- Client applications or user-facing product behavior
+- M2.2 and later milestones
+
+## Completion Rule
+
+M2.1 is complete only when every shared package is documented, strictly typed, exported, unit tested, and all formatting, lint, type checking, Jest, Turborepo, Docker, local CI-equivalent, and GitHub-hosted CI checks pass. M2.2 remains not started until separately approved.
+
+## Validation Record
+
+- Local validation date: August 1, 2026
+- Tested branch: `main`
+- Frozen dependency installation: Passed
+- Turborepo build: Passed for all 34 TypeScript workspaces
+- Formatting, ESLint, Ruff, and type checking: Passed
+- Jest: 67 tests passed across 11 suites
+- Pytest: 2 tests passed
+- Workspace tests and Playwright: Passed
+- Docker Compose configuration: Passed
+- Docker Compose startup: All M1 skeleton containers became healthy
+- Skeleton health and environment verification: Passed
+- Container runtimes: Node.js 24.18.0, pnpm 11.4.0, Python 3.13.14
+- GitHub-hosted CI: Pending
+- M2.1 milestone status: In progress pending hosted CI
+- M2.2 — Memory Service: Not started
 
 ---
 
