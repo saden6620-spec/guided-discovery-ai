@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
+import { format, resolveConfig } from "prettier";
 import { parse } from "yaml";
 
 async function generate(): Promise<void> {
@@ -28,11 +29,12 @@ async function generate(): Promise<void> {
   };
   const outputDirectory = resolve(process.cwd(), "openapi");
   await mkdir(outputDirectory, { recursive: true });
-  await writeFile(
-    resolve(outputDirectory, "memory-service.openapi.json"),
-    `${JSON.stringify(memoryDocument, null, 2)}\n`,
-    `utf8`,
-  );
+  const prettierConfig = await resolveConfig(resolve(repositoryRoot, "package.json"));
+  const output = await format(JSON.stringify(memoryDocument), {
+    ...prettierConfig,
+    parser: "json",
+  });
+  await writeFile(resolve(outputDirectory, "memory-service.openapi.json"), output, `utf8`);
 }
 
 void generate();

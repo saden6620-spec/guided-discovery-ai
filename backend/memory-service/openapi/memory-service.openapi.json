@@ -5,354 +5,172 @@
     "version": "1.0.0",
     "description": "Authoritative public M2 HTTP contract under ADR-0001 through ADR-0011. Every operation accepts X-Request-ID, traceparent, and optional tracestate; the gateway returns the effective X-Request-ID. Cross-field and lifecycle rules are identified in validation-specification.md and are contract-tested."
   },
-  "servers": [
-    {
-      "url": "/api/v1"
-    }
-  ],
-  "security": [
-    {
-      "bearerAuth": []
-    }
-  ],
-  "tags": [
-    {
-      "name": "Memory"
-    }
-  ],
+  "servers": [{ "url": "/api/v1" }],
+  "security": [{ "bearerAuth": [] }],
+  "tags": [{ "name": "Memory" }],
   "paths": {
     "/memories": {
       "parameters": [
-        {
-          "$ref": "#/components/parameters/RequestId"
-        },
-        {
-          "$ref": "#/components/parameters/Traceparent"
-        },
-        {
-          "$ref": "#/components/parameters/Tracestate"
-        }
+        { "$ref": "#/components/parameters/RequestId" },
+        { "$ref": "#/components/parameters/Traceparent" },
+        { "$ref": "#/components/parameters/Tracestate" }
       ],
       "get": {
         "summary": "List memories",
-        "tags": [
-          "Memory"
-        ],
+        "tags": ["Memory"],
         "operationId": "listMemories",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/Cursor"
-          },
-          {
-            "$ref": "#/components/parameters/Limit"
-          },
+          { "$ref": "#/components/parameters/Cursor" },
+          { "$ref": "#/components/parameters/Limit" },
           {
             "name": "categoryId",
             "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/ResourceId"
-            }
+            "schema": { "$ref": "#/components/schemas/ResourceId" }
           },
           {
             "name": "sort",
             "in": "query",
-            "schema": {
-              "type": "string",
-              "const": "createdAt",
-              "default": "createdAt"
-            }
+            "schema": { "type": "string", "const": "createdAt", "default": "createdAt" }
           },
           {
             "name": "order",
             "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "asc",
-                "desc"
-              ],
-              "default": "desc"
-            }
+            "schema": { "type": "string", "enum": ["asc", "desc"], "default": "desc" }
           }
         ],
         "responses": {
           "200": {
             "description": "Owner-visible memories",
             "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MemoryPage"
-                }
-              }
+              "application/json": { "schema": { "$ref": "#/components/schemas/MemoryPage" } }
             }
           },
-          "400": {
-            "$ref": "#/components/responses/Error"
-          },
-          "401": {
-            "$ref": "#/components/responses/Error"
-          },
-          "403": {
-            "$ref": "#/components/responses/Error"
-          },
-          "404": {
-            "$ref": "#/components/responses/Error"
-          },
-          "409": {
-            "$ref": "#/components/responses/Error"
-          },
-          "422": {
-            "$ref": "#/components/responses/Error"
-          },
-          "429": {
-            "$ref": "#/components/responses/RateLimited"
-          },
-          "500": {
-            "$ref": "#/components/responses/Error"
-          },
-          "503": {
-            "$ref": "#/components/responses/Error"
-          }
+          "400": { "$ref": "#/components/responses/Error" },
+          "401": { "$ref": "#/components/responses/Error" },
+          "403": { "$ref": "#/components/responses/Error" },
+          "404": { "$ref": "#/components/responses/Error" },
+          "409": { "$ref": "#/components/responses/Error" },
+          "422": { "$ref": "#/components/responses/Error" },
+          "429": { "$ref": "#/components/responses/RateLimited" },
+          "500": { "$ref": "#/components/responses/Error" },
+          "503": { "$ref": "#/components/responses/Error" }
         }
       },
       "post": {
         "summary": "Create a memory",
-        "tags": [
-          "Memory"
-        ],
+        "tags": ["Memory"],
         "operationId": "createMemory",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/IdempotencyKey"
-          }
-        ],
+        "parameters": [{ "$ref": "#/components/parameters/IdempotencyKey" }],
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateMemoryRequest"
-              }
-            }
+            "application/json": { "schema": { "$ref": "#/components/schemas/CreateMemoryRequest" } }
           }
         },
         "responses": {
           "201": {
             "description": "Memory created",
             "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MemoryResponse"
-                }
-              }
+              "application/json": { "schema": { "$ref": "#/components/schemas/MemoryResponse" } }
             }
           },
-          "400": {
-            "$ref": "#/components/responses/Error"
-          },
-          "401": {
-            "$ref": "#/components/responses/Error"
-          },
-          "403": {
-            "$ref": "#/components/responses/Error"
-          },
-          "404": {
-            "$ref": "#/components/responses/Error"
-          },
-          "409": {
-            "$ref": "#/components/responses/Error"
-          },
-          "422": {
-            "$ref": "#/components/responses/Error"
-          },
-          "429": {
-            "$ref": "#/components/responses/RateLimited"
-          },
-          "500": {
-            "$ref": "#/components/responses/Error"
-          },
-          "503": {
-            "$ref": "#/components/responses/Error"
-          }
+          "400": { "$ref": "#/components/responses/Error" },
+          "401": { "$ref": "#/components/responses/Error" },
+          "403": { "$ref": "#/components/responses/Error" },
+          "404": { "$ref": "#/components/responses/Error" },
+          "409": { "$ref": "#/components/responses/Error" },
+          "422": { "$ref": "#/components/responses/Error" },
+          "429": { "$ref": "#/components/responses/RateLimited" },
+          "500": { "$ref": "#/components/responses/Error" },
+          "503": { "$ref": "#/components/responses/Error" }
         }
       }
     },
     "/memories/{id}": {
       "parameters": [
-        {
-          "$ref": "#/components/parameters/RequestId"
-        },
-        {
-          "$ref": "#/components/parameters/Traceparent"
-        },
-        {
-          "$ref": "#/components/parameters/Tracestate"
-        },
-        {
-          "$ref": "#/components/parameters/ResourceIdPath"
-        }
+        { "$ref": "#/components/parameters/RequestId" },
+        { "$ref": "#/components/parameters/Traceparent" },
+        { "$ref": "#/components/parameters/Tracestate" },
+        { "$ref": "#/components/parameters/ResourceIdPath" }
       ],
       "get": {
         "summary": "Get a memory",
-        "tags": [
-          "Memory"
-        ],
+        "tags": ["Memory"],
         "operationId": "getMemory",
         "responses": {
           "200": {
             "description": "Memory",
             "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MemoryResponse"
-                }
-              }
+              "application/json": { "schema": { "$ref": "#/components/schemas/MemoryResponse" } }
             }
           },
-          "400": {
-            "$ref": "#/components/responses/Error"
-          },
-          "401": {
-            "$ref": "#/components/responses/Error"
-          },
-          "403": {
-            "$ref": "#/components/responses/Error"
-          },
-          "404": {
-            "$ref": "#/components/responses/Error"
-          },
-          "409": {
-            "$ref": "#/components/responses/Error"
-          },
-          "422": {
-            "$ref": "#/components/responses/Error"
-          },
-          "429": {
-            "$ref": "#/components/responses/RateLimited"
-          },
-          "500": {
-            "$ref": "#/components/responses/Error"
-          },
-          "503": {
-            "$ref": "#/components/responses/Error"
-          }
+          "400": { "$ref": "#/components/responses/Error" },
+          "401": { "$ref": "#/components/responses/Error" },
+          "403": { "$ref": "#/components/responses/Error" },
+          "404": { "$ref": "#/components/responses/Error" },
+          "409": { "$ref": "#/components/responses/Error" },
+          "422": { "$ref": "#/components/responses/Error" },
+          "429": { "$ref": "#/components/responses/RateLimited" },
+          "500": { "$ref": "#/components/responses/Error" },
+          "503": { "$ref": "#/components/responses/Error" }
         }
       },
       "patch": {
         "summary": "Update a memory",
-        "tags": [
-          "Memory"
-        ],
+        "tags": ["Memory"],
         "operationId": "updateMemory",
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateMemoryRequest"
-              }
-            }
+            "application/json": { "schema": { "$ref": "#/components/schemas/UpdateMemoryRequest" } }
           }
         },
         "responses": {
           "200": {
             "description": "Memory updated",
             "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MemoryResponse"
-                }
-              }
+              "application/json": { "schema": { "$ref": "#/components/schemas/MemoryResponse" } }
             }
           },
-          "400": {
-            "$ref": "#/components/responses/Error"
-          },
-          "401": {
-            "$ref": "#/components/responses/Error"
-          },
-          "403": {
-            "$ref": "#/components/responses/Error"
-          },
-          "404": {
-            "$ref": "#/components/responses/Error"
-          },
-          "409": {
-            "$ref": "#/components/responses/Error"
-          },
-          "422": {
-            "$ref": "#/components/responses/Error"
-          },
-          "429": {
-            "$ref": "#/components/responses/RateLimited"
-          },
-          "500": {
-            "$ref": "#/components/responses/Error"
-          },
-          "503": {
-            "$ref": "#/components/responses/Error"
-          }
+          "400": { "$ref": "#/components/responses/Error" },
+          "401": { "$ref": "#/components/responses/Error" },
+          "403": { "$ref": "#/components/responses/Error" },
+          "404": { "$ref": "#/components/responses/Error" },
+          "409": { "$ref": "#/components/responses/Error" },
+          "422": { "$ref": "#/components/responses/Error" },
+          "429": { "$ref": "#/components/responses/RateLimited" },
+          "500": { "$ref": "#/components/responses/Error" },
+          "503": { "$ref": "#/components/responses/Error" }
         }
       },
       "delete": {
         "summary": "Delete a memory",
-        "tags": [
-          "Memory"
-        ],
+        "tags": ["Memory"],
         "operationId": "deleteMemory",
         "responses": {
-          "204": {
-            "description": "Memory immediately removed from normal behavior"
-          },
-          "400": {
-            "$ref": "#/components/responses/Error"
-          },
-          "401": {
-            "$ref": "#/components/responses/Error"
-          },
-          "403": {
-            "$ref": "#/components/responses/Error"
-          },
-          "404": {
-            "$ref": "#/components/responses/Error"
-          },
-          "409": {
-            "$ref": "#/components/responses/Error"
-          },
-          "422": {
-            "$ref": "#/components/responses/Error"
-          },
-          "429": {
-            "$ref": "#/components/responses/RateLimited"
-          },
-          "500": {
-            "$ref": "#/components/responses/Error"
-          },
-          "503": {
-            "$ref": "#/components/responses/Error"
-          }
+          "204": { "description": "Memory immediately removed from normal behavior" },
+          "400": { "$ref": "#/components/responses/Error" },
+          "401": { "$ref": "#/components/responses/Error" },
+          "403": { "$ref": "#/components/responses/Error" },
+          "404": { "$ref": "#/components/responses/Error" },
+          "409": { "$ref": "#/components/responses/Error" },
+          "422": { "$ref": "#/components/responses/Error" },
+          "429": { "$ref": "#/components/responses/RateLimited" },
+          "500": { "$ref": "#/components/responses/Error" },
+          "503": { "$ref": "#/components/responses/Error" }
         }
       }
     }
   },
   "components": {
     "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
-      }
+      "bearerAuth": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" }
     },
     "parameters": {
       "RequestId": {
         "name": "X-Request-ID",
         "in": "header",
-        "schema": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 128,
-          "pattern": "^[!-~]+$"
-        }
+        "schema": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[!-~]+$" }
       },
       "Traceparent": {
         "name": "traceparent",
@@ -365,165 +183,78 @@
       "Tracestate": {
         "name": "tracestate",
         "in": "header",
-        "schema": {
-          "type": "string",
-          "maxLength": 512
-        }
+        "schema": { "type": "string", "maxLength": 512 }
       },
       "Cursor": {
         "name": "cursor",
         "in": "query",
-        "schema": {
-          "type": "string",
-          "minLength": 16,
-          "maxLength": 4096
-        }
+        "schema": { "type": "string", "minLength": 16, "maxLength": 4096 }
       },
       "Limit": {
         "name": "limit",
         "in": "query",
-        "schema": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 100,
-          "default": 25
-        }
+        "schema": { "type": "integer", "minimum": 1, "maximum": 100, "default": 25 }
       },
       "IdempotencyKey": {
         "name": "Idempotency-Key",
         "in": "header",
         "required": true,
-        "schema": {
-          "type": "string",
-          "minLength": 16,
-          "maxLength": 128,
-          "pattern": "^[!-~]+$"
-        }
+        "schema": { "type": "string", "minLength": 16, "maxLength": 128, "pattern": "^[!-~]+$" }
       },
       "ResourceIdPath": {
         "name": "id",
         "in": "path",
         "required": true,
-        "schema": {
-          "$ref": "#/components/schemas/ResourceId"
-        }
+        "schema": { "$ref": "#/components/schemas/ResourceId" }
       }
     },
     "responses": {
       "Error": {
         "description": "Standard API error",
         "headers": {
-          "X-Request-ID": {
-            "$ref": "#/components/headers/RequestId"
-          },
-          "RateLimit-Limit": {
-            "$ref": "#/components/headers/RateLimitLimit"
-          },
-          "RateLimit-Remaining": {
-            "$ref": "#/components/headers/RateLimitRemaining"
-          },
-          "RateLimit-Reset": {
-            "$ref": "#/components/headers/RateLimitReset"
-          }
+          "X-Request-ID": { "$ref": "#/components/headers/RequestId" },
+          "RateLimit-Limit": { "$ref": "#/components/headers/RateLimitLimit" },
+          "RateLimit-Remaining": { "$ref": "#/components/headers/RateLimitRemaining" },
+          "RateLimit-Reset": { "$ref": "#/components/headers/RateLimitReset" }
         },
         "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ApiErrorResponse"
-            }
-          }
+          "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } }
         }
       },
       "RateLimited": {
         "description": "Request rate limit exceeded",
         "headers": {
-          "X-Request-ID": {
-            "$ref": "#/components/headers/RequestId"
-          },
-          "RateLimit-Limit": {
-            "$ref": "#/components/headers/RateLimitLimit"
-          },
-          "RateLimit-Remaining": {
-            "$ref": "#/components/headers/RateLimitRemaining"
-          },
-          "RateLimit-Reset": {
-            "$ref": "#/components/headers/RateLimitReset"
-          },
-          "Retry-After": {
-            "$ref": "#/components/headers/RetryAfter"
-          }
+          "X-Request-ID": { "$ref": "#/components/headers/RequestId" },
+          "RateLimit-Limit": { "$ref": "#/components/headers/RateLimitLimit" },
+          "RateLimit-Remaining": { "$ref": "#/components/headers/RateLimitRemaining" },
+          "RateLimit-Reset": { "$ref": "#/components/headers/RateLimitReset" },
+          "Retry-After": { "$ref": "#/components/headers/RetryAfter" }
         },
         "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ApiErrorResponse"
-            }
-          }
+          "application/json": { "schema": { "$ref": "#/components/schemas/ApiErrorResponse" } }
         }
       }
     },
     "headers": {
       "RequestId": {
         "required": true,
-        "schema": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 128
-        }
+        "schema": { "type": "string", "minLength": 1, "maxLength": 128 }
       },
-      "RateLimitLimit": {
-        "required": true,
-        "schema": {
-          "type": "integer",
-          "minimum": 0
-        }
-      },
-      "RateLimitRemaining": {
-        "required": true,
-        "schema": {
-          "type": "integer",
-          "minimum": 0
-        }
-      },
-      "RateLimitReset": {
-        "required": true,
-        "schema": {
-          "type": "integer",
-          "minimum": 0
-        }
-      },
-      "RetryAfter": {
-        "required": true,
-        "schema": {
-          "type": "integer",
-          "minimum": 1
-        }
-      }
+      "RateLimitLimit": { "required": true, "schema": { "type": "integer", "minimum": 0 } },
+      "RateLimitRemaining": { "required": true, "schema": { "type": "integer", "minimum": 0 } },
+      "RateLimitReset": { "required": true, "schema": { "type": "integer", "minimum": 0 } },
+      "RetryAfter": { "required": true, "schema": { "type": "integer", "minimum": 1 } }
     },
     "schemas": {
-      "EmptyMetadata": {
-        "type": "object",
-        "additionalProperties": false
-      },
+      "EmptyMetadata": { "type": "object", "additionalProperties": false },
       "ErrorMetadata": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "currentState": {
-            "type": "string",
-            "maxLength": 64
-          },
-          "requestedAction": {
-            "type": "string",
-            "maxLength": 64
-          },
-          "retryable": {
-            "type": "boolean"
-          },
-          "dependency": {
-            "type": "string",
-            "maxLength": 64
-          }
+          "currentState": { "type": "string", "maxLength": 64 },
+          "requestedAction": { "type": "string", "maxLength": 64 },
+          "retryable": { "type": "boolean" },
+          "dependency": { "type": "string", "maxLength": 64 }
         }
       },
       "ResourceId": {
@@ -534,120 +265,56 @@
       "VersionRequest": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "expectedVersion"
-        ],
+        "required": ["expectedVersion"],
         "properties": {
-          "expectedVersion": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 2147483647
-          }
+          "expectedVersion": { "type": "integer", "minimum": 1, "maximum": 2147483647 }
         }
       },
       "ApiErrorResponse": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "success",
-          "error",
-          "metadata"
-        ],
+        "required": ["success", "error", "metadata"],
         "properties": {
-          "success": {
-            "type": "boolean",
-            "const": false
-          },
+          "success": { "type": "boolean", "const": false },
           "error": {
             "type": "object",
             "additionalProperties": false,
-            "required": [
-              "code",
-              "message",
-              "requestId"
-            ],
+            "required": ["code", "message", "requestId"],
             "properties": {
-              "code": {
-                "type": "string",
-                "pattern": "^[A-Z][A-Z0-9_]*$"
-              },
-              "message": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 500
-              },
-              "requestId": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 128
-              },
+              "code": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]*$" },
+              "message": { "type": "string", "minLength": 1, "maxLength": 500 },
+              "requestId": { "type": "string", "minLength": 1, "maxLength": 128 },
               "fields": {
                 "type": "array",
                 "items": {
                   "type": "object",
                   "additionalProperties": false,
-                  "required": [
-                    "field",
-                    "code",
-                    "message"
-                  ],
+                  "required": ["field", "code", "message"],
                   "properties": {
-                    "field": {
-                      "type": "string",
-                      "minLength": 1,
-                      "maxLength": 256
-                    },
-                    "code": {
-                      "type": "string",
-                      "pattern": "^[A-Z][A-Z0-9_]{2,63}$"
-                    },
-                    "message": {
-                      "type": "string",
-                      "minLength": 1,
-                      "maxLength": 500
-                    }
+                    "field": { "type": "string", "minLength": 1, "maxLength": 256 },
+                    "code": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]{2,63}$" },
+                    "message": { "type": "string", "minLength": 1, "maxLength": 500 }
                   }
                 }
               }
             }
           },
-          "metadata": {
-            "$ref": "#/components/schemas/ErrorMetadata"
-          }
+          "metadata": { "$ref": "#/components/schemas/ErrorMetadata" }
         }
       },
       "PageMetadata": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "nextCursor",
-          "hasMore",
-          "limit"
-        ],
+        "required": ["nextCursor", "hasMore", "limit"],
         "properties": {
-          "nextCursor": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "hasMore": {
-            "type": "boolean"
-          },
-          "limit": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 100
-          }
+          "nextCursor": { "type": ["string", "null"] },
+          "hasMore": { "type": "boolean" },
+          "limit": { "type": "integer", "minimum": 1, "maximum": 100 }
         }
       },
       "MemorySensitivity": {
         "type": "string",
-        "enum": [
-          "STANDARD",
-          "SENSITIVE",
-          "HIGHLY_SENSITIVE"
-        ]
+        "enum": ["STANDARD", "SENSITIVE", "HIGHLY_SENSITIVE"]
       },
       "MemoryResource": {
         "type": "object",
@@ -675,27 +342,15 @@
           "version"
         ],
         "properties": {
-          "id": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "title": {
-            "type": "string"
-          },
-          "summary": {
-            "type": "string"
-          },
+          "id": { "$ref": "#/components/schemas/ResourceId" },
+          "title": { "type": "string" },
+          "summary": { "type": "string" },
           "category": {
             "type": "object",
             "additionalProperties": false,
-            "required": [
-              "id",
-              "key",
-              "displayName"
-            ],
+            "required": ["id", "key", "displayName"],
             "properties": {
-              "id": {
-                "$ref": "#/components/schemas/ResourceId"
-              },
+              "id": { "$ref": "#/components/schemas/ResourceId" },
               "key": {
                 "type": "string",
                 "enum": [
@@ -712,218 +367,72 @@
                   "SAFETY_PREFERENCE"
                 ]
               },
-              "displayName": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 100
-              }
+              "displayName": { "type": "string", "minLength": 1, "maxLength": 100 }
             }
           },
-          "importance": {
-            "type": [
-              "number",
-              "null"
-            ],
-            "minimum": 0,
-            "maximum": 1
-          },
-          "state": {
-            "type": "string",
-            "enum": [
-              "ACTIVE",
-              "ARCHIVED"
-            ]
-          },
-          "sensitivity": {
-            "$ref": "#/components/schemas/MemorySensitivity"
-          },
+          "importance": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+          "state": { "type": "string", "enum": ["ACTIVE", "ARCHIVED"] },
+          "sensitivity": { "$ref": "#/components/schemas/MemorySensitivity" },
           "verificationStatus": {
             "type": "string",
-            "enum": [
-              "UNVERIFIED",
-              "USER_CONFIRMED",
-              "SOURCE_VERIFIED",
-              "CORRECTED"
-            ]
+            "enum": ["UNVERIFIED", "USER_CONFIRMED", "SOURCE_VERIFIED", "CORRECTED"]
           },
-          "purpose": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 1000
-          },
+          "purpose": { "type": "string", "minLength": 1, "maxLength": 1000 },
           "sourceType": {
             "type": "string",
-            "enum": [
-              "USER_EXPLICIT",
-              "USER_CONFIRMED",
-              "IMPORT",
-              "SERVICE_EVENT"
-            ]
+            "enum": ["USER_EXPLICIT", "USER_CONFIRMED", "IMPORT", "SERVICE_EVENT"]
           },
-          "sourceRef": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "maxLength": 256
-          },
-          "originatedAt": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time"
-          },
-          "confidence": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1
-          },
-          "userConfirmedAt": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time"
-          },
+          "sourceRef": { "type": ["string", "null"], "maxLength": 256 },
+          "originatedAt": { "type": ["string", "null"], "format": "date-time" },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+          "userConfirmedAt": { "type": ["string", "null"], "format": "date-time" },
           "links": {
             "type": "array",
             "maxItems": 100,
-            "items": {
-              "$ref": "#/components/schemas/MemoryLinkResource"
-            }
+            "items": { "$ref": "#/components/schemas/MemoryLinkResource" }
           },
-          "visibility": {
-            "type": "string",
-            "const": "PRIVATE"
-          },
-          "retentionPolicyRef": {
-            "type": "string",
-            "enum": [
-              "U0_ACTIVE"
-            ]
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "version": {
-            "type": "integer",
-            "minimum": 1
-          }
+          "visibility": { "type": "string", "const": "PRIVATE" },
+          "retentionPolicyRef": { "type": "string", "enum": ["U0_ACTIVE"] },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "version": { "type": "integer", "minimum": 1 }
         }
       },
       "CreateMemoryRequest": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "title",
-          "summary",
-          "purpose",
-          "categoryId",
-          "sensitivity"
-        ],
+        "required": ["title", "summary", "purpose", "categoryId", "sensitivity"],
         "properties": {
-          "title": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200
-          },
-          "summary": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 10000
-          },
-          "purpose": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 1000
-          },
-          "categoryId": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "importance": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1,
-            "default": 0.5
-          },
-          "sensitivity": {
-            "$ref": "#/components/schemas/MemorySensitivity"
-          },
-          "originatedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "userConfirmed": {
-            "type": "boolean",
-            "default": false
-          }
+          "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+          "summary": { "type": "string", "minLength": 1, "maxLength": 10000 },
+          "purpose": { "type": "string", "minLength": 1, "maxLength": 1000 },
+          "categoryId": { "$ref": "#/components/schemas/ResourceId" },
+          "importance": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.5 },
+          "sensitivity": { "$ref": "#/components/schemas/MemorySensitivity" },
+          "originatedAt": { "type": "string", "format": "date-time" },
+          "userConfirmed": { "type": "boolean", "default": false }
         }
       },
       "UpdateMemoryRequest": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "expectedVersion"
-        ],
+        "required": ["expectedVersion"],
         "minProperties": 2,
         "properties": {
-          "expectedVersion": {
-            "type": "integer",
-            "minimum": 1
-          },
-          "title": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200
-          },
-          "summary": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 10000
-          },
-          "purpose": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 1000
-          },
-          "categoryId": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "importance": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1
-          },
-          "sensitivity": {
-            "$ref": "#/components/schemas/MemorySensitivity"
-          },
-          "userConfirmed": {
-            "type": "boolean"
-          },
-          "correctionReason": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 1000
-          },
-          "state": {
-            "type": "string",
-            "enum": [
-              "ACTIVE",
-              "ARCHIVED"
-            ]
-          },
+          "expectedVersion": { "type": "integer", "minimum": 1 },
+          "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+          "summary": { "type": "string", "minLength": 1, "maxLength": 10000 },
+          "purpose": { "type": "string", "minLength": 1, "maxLength": 1000 },
+          "categoryId": { "$ref": "#/components/schemas/ResourceId" },
+          "importance": { "type": "number", "minimum": 0, "maximum": 1 },
+          "sensitivity": { "$ref": "#/components/schemas/MemorySensitivity" },
+          "userConfirmed": { "type": "boolean" },
+          "correctionReason": { "type": "string", "minLength": 1, "maxLength": 1000 },
+          "state": { "type": "string", "enum": ["ACTIVE", "ARCHIVED"] },
           "linkOperations": {
             "type": "array",
             "maxItems": 100,
-            "items": {
-              "$ref": "#/components/schemas/MemoryLinkOperation"
-            }
+            "items": { "$ref": "#/components/schemas/MemoryLinkOperation" }
           }
         }
       },
@@ -932,55 +441,25 @@
           {
             "type": "object",
             "additionalProperties": false,
-            "required": [
-              "operation",
-              "clientReference",
-              "targetMemoryId",
-              "relationshipType"
-            ],
+            "required": ["operation", "clientReference", "targetMemoryId", "relationshipType"],
             "properties": {
-              "operation": {
-                "const": "CREATE"
-              },
-              "clientReference": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 64
-              },
-              "targetMemoryId": {
-                "$ref": "#/components/schemas/ResourceId"
-              },
+              "operation": { "const": "CREATE" },
+              "clientReference": { "type": "string", "minLength": 1, "maxLength": 64 },
+              "targetMemoryId": { "$ref": "#/components/schemas/ResourceId" },
               "relationshipType": {
                 "type": "string",
-                "enum": [
-                  "RELATED_TO",
-                  "SUPERSEDES",
-                  "SUPPORTS",
-                  "CONTRADICTS",
-                  "PART_OF"
-                ]
+                "enum": ["RELATED_TO", "SUPERSEDES", "SUPPORTS", "CONTRADICTS", "PART_OF"]
               }
             }
           },
           {
             "type": "object",
             "additionalProperties": false,
-            "required": [
-              "operation",
-              "id",
-              "expectedVersion"
-            ],
+            "required": ["operation", "id", "expectedVersion"],
             "properties": {
-              "operation": {
-                "const": "DELETE"
-              },
-              "id": {
-                "$ref": "#/components/schemas/ResourceId"
-              },
-              "expectedVersion": {
-                "type": "integer",
-                "minimum": 1
-              }
+              "operation": { "const": "DELETE" },
+              "id": { "$ref": "#/components/schemas/ResourceId" },
+              "expectedVersion": { "type": "integer", "minimum": 1 }
             }
           }
         ]
@@ -997,276 +476,89 @@
           "version"
         ],
         "properties": {
-          "id": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "sourceMemoryId": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "targetMemoryId": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
+          "id": { "$ref": "#/components/schemas/ResourceId" },
+          "sourceMemoryId": { "$ref": "#/components/schemas/ResourceId" },
+          "targetMemoryId": { "$ref": "#/components/schemas/ResourceId" },
           "relationshipType": {
             "type": "string",
-            "enum": [
-              "RELATED_TO",
-              "SUPERSEDES",
-              "SUPPORTS",
-              "CONTRADICTS",
-              "PART_OF"
-            ]
+            "enum": ["RELATED_TO", "SUPERSEDES", "SUPPORTS", "CONTRADICTS", "PART_OF"]
           },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "version": {
-            "type": "integer",
-            "minimum": 1
-          }
+          "createdAt": { "type": "string", "format": "date-time" },
+          "version": { "type": "integer", "minimum": 1 }
         }
       },
-      "MemoryResponse": {
-        "$ref": "#/components/schemas/SingleMemoryEnvelope"
-      },
+      "MemoryResponse": { "$ref": "#/components/schemas/SingleMemoryEnvelope" },
       "SingleMemoryEnvelope": {
         "type": "object",
-        "required": [
-          "success",
-          "data",
-          "metadata"
-        ],
+        "required": ["success", "data", "metadata"],
         "properties": {
-          "success": {
-            "type": "boolean",
-            "const": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/MemoryResource"
-          },
-          "metadata": {
-            "$ref": "#/components/schemas/EmptyMetadata"
-          }
+          "success": { "type": "boolean", "const": true },
+          "data": { "$ref": "#/components/schemas/MemoryResource" },
+          "metadata": { "$ref": "#/components/schemas/EmptyMetadata" }
         }
       },
       "MemoryPage": {
         "type": "object",
-        "required": [
-          "success",
-          "data",
-          "metadata"
-        ],
+        "required": ["success", "data", "metadata"],
         "properties": {
-          "success": {
-            "type": "boolean",
-            "const": true
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/MemoryResource"
-            }
-          },
-          "metadata": {
-            "$ref": "#/components/schemas/PageMetadata"
-          }
+          "success": { "type": "boolean", "const": true },
+          "data": { "type": "array", "items": { "$ref": "#/components/schemas/MemoryResource" } },
+          "metadata": { "$ref": "#/components/schemas/PageMetadata" }
         }
       },
-      "PlanStatus": {
-        "type": "string",
-        "enum": [
-          "DRAFT",
-          "ACCEPTED",
-          "COMPLETED",
-          "CANCELLED"
-        ]
-      },
+      "PlanStatus": { "type": "string", "enum": ["DRAFT", "ACCEPTED", "COMPLETED", "CANCELLED"] },
       "PlanItem": {
         "type": "object",
-        "required": [
-          "id",
-          "title",
-          "status",
-          "position",
-          "version"
-        ],
+        "required": ["id", "title", "status", "position", "version"],
         "properties": {
-          "id": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "title": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200
-          },
-          "startsAt": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time"
-          },
-          "endsAt": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time"
-          },
-          "locationReference": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "maxLength": 500
-          },
-          "notes": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "maxLength": 10000
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "PLANNED",
-              "COMPLETED",
-              "CANCELLED"
-            ]
-          },
-          "position": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "version": {
-            "type": "integer",
-            "minimum": 1
-          }
+          "id": { "$ref": "#/components/schemas/ResourceId" },
+          "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+          "startsAt": { "type": ["string", "null"], "format": "date-time" },
+          "endsAt": { "type": ["string", "null"], "format": "date-time" },
+          "locationReference": { "type": ["string", "null"], "maxLength": 500 },
+          "notes": { "type": ["string", "null"], "maxLength": 10000 },
+          "status": { "type": "string", "enum": ["PLANNED", "COMPLETED", "CANCELLED"] },
+          "position": { "type": "integer", "minimum": 0 },
+          "version": { "type": "integer", "minimum": 1 }
         }
       },
       "Reservation": {
         "type": "object",
-        "required": [
-          "id",
-          "providerName",
-          "status",
-          "version"
-        ],
+        "required": ["id", "providerName", "status", "version"],
         "properties": {
-          "id": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "providerName": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200
-          },
-          "reference": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "maxLength": 500
-          },
-          "startsAt": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time"
-          },
-          "endsAt": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "PLANNED",
-              "CONFIRMED",
-              "CANCELLED"
-            ]
-          },
-          "version": {
-            "type": "integer",
-            "minimum": 1
-          }
+          "id": { "$ref": "#/components/schemas/ResourceId" },
+          "providerName": { "type": "string", "minLength": 1, "maxLength": 200 },
+          "reference": { "type": ["string", "null"], "maxLength": 500 },
+          "startsAt": { "type": ["string", "null"], "format": "date-time" },
+          "endsAt": { "type": ["string", "null"], "format": "date-time" },
+          "status": { "type": "string", "enum": ["PLANNED", "CONFIRMED", "CANCELLED"] },
+          "version": { "type": "integer", "minimum": 1 }
         }
       },
       "ChecklistItem": {
         "type": "object",
-        "required": [
-          "id",
-          "title",
-          "status",
-          "position",
-          "version"
-        ],
+        "required": ["id", "title", "status", "position", "version"],
         "properties": {
-          "id": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "title": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "PENDING",
-              "COMPLETE"
-            ]
-          },
-          "position": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "version": {
-            "type": "integer",
-            "minimum": 1
-          }
+          "id": { "$ref": "#/components/schemas/ResourceId" },
+          "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+          "status": { "type": "string", "enum": ["PENDING", "COMPLETE"] },
+          "position": { "type": "integer", "minimum": 0 },
+          "version": { "type": "integer", "minimum": 1 }
         }
       },
       "PlanItemInput": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "title"
-        ],
+        "required": ["title"],
         "properties": {
-          "title": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200
-          },
-          "startsAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "endsAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "locationReference": {
-            "type": "string",
-            "maxLength": 500
-          },
-          "notes": {
-            "type": "string",
-            "maxLength": 10000
-          },
+          "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+          "startsAt": { "type": "string", "format": "date-time" },
+          "endsAt": { "type": "string", "format": "date-time" },
+          "locationReference": { "type": "string", "maxLength": 500 },
+          "notes": { "type": "string", "maxLength": 10000 },
           "status": {
             "type": "string",
-            "enum": [
-              "PLANNED",
-              "COMPLETED",
-              "CANCELLED"
-            ],
+            "enum": ["PLANNED", "COMPLETED", "CANCELLED"],
             "default": "PLANNED"
           }
         }
@@ -1274,34 +566,15 @@
       "ReservationInput": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "providerName"
-        ],
+        "required": ["providerName"],
         "properties": {
-          "providerName": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200
-          },
-          "reference": {
-            "type": "string",
-            "maxLength": 500
-          },
-          "startsAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "endsAt": {
-            "type": "string",
-            "format": "date-time"
-          },
+          "providerName": { "type": "string", "minLength": 1, "maxLength": 200 },
+          "reference": { "type": "string", "maxLength": 500 },
+          "startsAt": { "type": "string", "format": "date-time" },
+          "endsAt": { "type": "string", "format": "date-time" },
           "status": {
             "type": "string",
-            "enum": [
-              "PLANNED",
-              "CONFIRMED",
-              "CANCELLED"
-            ],
+            "enum": ["PLANNED", "CONFIRMED", "CANCELLED"],
             "default": "PLANNED"
           }
         }
@@ -1309,23 +582,10 @@
       "ChecklistItemInput": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "title"
-        ],
+        "required": ["title"],
         "properties": {
-          "title": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "PENDING",
-              "COMPLETE"
-            ],
-            "default": "PENDING"
-          }
+          "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+          "status": { "type": "string", "enum": ["PENDING", "COMPLETE"], "default": "PENDING" }
         }
       },
       "PlanResource": {
@@ -1346,307 +606,143 @@
           "version"
         ],
         "properties": {
-          "id": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "title": {
-            "type": "string"
-          },
-          "status": {
-            "$ref": "#/components/schemas/PlanStatus"
-          },
-          "startDate": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date"
-          },
-          "endDate": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date"
-          },
+          "id": { "$ref": "#/components/schemas/ResourceId" },
+          "title": { "type": "string" },
+          "status": { "$ref": "#/components/schemas/PlanStatus" },
+          "startDate": { "type": ["string", "null"], "format": "date" },
+          "endDate": { "type": ["string", "null"], "format": "date" },
           "budget": {
             "oneOf": [
-              {
-                "type": "null"
-              },
+              { "type": "null" },
               {
                 "type": "object",
-                "required": [
-                  "amount",
-                  "currency"
-                ],
+                "required": ["amount", "currency"],
                 "properties": {
-                  "amount": {
-                    "type": "string",
-                    "pattern": "^[0-9]+(\\.[0-9]+)?$"
-                  },
-                  "currency": {
-                    "type": "string",
-                    "pattern": "^[A-Z]{3}$"
-                  }
+                  "amount": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?$" },
+                  "currency": { "type": "string", "pattern": "^[A-Z]{3}$" }
                 }
               }
             ]
           },
-          "notes": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PlanItem"
-            }
-          },
+          "notes": { "type": ["string", "null"] },
+          "items": { "type": "array", "items": { "$ref": "#/components/schemas/PlanItem" } },
           "reservations": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Reservation"
-            }
+            "items": { "$ref": "#/components/schemas/Reservation" }
           },
           "checklistItems": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ChecklistItem"
-            }
+            "items": { "$ref": "#/components/schemas/ChecklistItem" }
           },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "version": {
-            "type": "integer",
-            "minimum": 1
-          }
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "version": { "type": "integer", "minimum": 1 }
         }
       },
       "CreatePlanRequest": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "title"
-        ],
+        "required": ["title"],
         "dependentRequired": {
-          "budgetAmount": [
-            "budgetCurrency"
-          ],
-          "budgetCurrency": [
-            "budgetAmount"
-          ]
+          "budgetAmount": ["budgetCurrency"],
+          "budgetCurrency": ["budgetAmount"]
         },
         "properties": {
-          "title": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200
-          },
-          "startDate": {
-            "type": "string",
-            "format": "date"
-          },
-          "endDate": {
-            "type": "string",
-            "format": "date"
-          },
-          "budgetAmount": {
-            "type": "string",
-            "pattern": "^[0-9]+(\\.[0-9]+)?$"
-          },
-          "budgetCurrency": {
-            "type": "string",
-            "pattern": "^[A-Z]{3}$"
-          },
-          "notes": {
-            "type": "string",
-            "maxLength": 10000
-          },
+          "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+          "startDate": { "type": "string", "format": "date" },
+          "endDate": { "type": "string", "format": "date" },
+          "budgetAmount": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?$" },
+          "budgetCurrency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+          "notes": { "type": "string", "maxLength": 10000 },
           "items": {
             "type": "array",
             "maxItems": 500,
-            "items": {
-              "$ref": "#/components/schemas/PlanItemInput"
-            }
+            "items": { "$ref": "#/components/schemas/PlanItemInput" }
           },
           "reservations": {
             "type": "array",
             "maxItems": 100,
-            "items": {
-              "$ref": "#/components/schemas/ReservationInput"
-            }
+            "items": { "$ref": "#/components/schemas/ReservationInput" }
           },
           "checklistItems": {
             "type": "array",
             "maxItems": 500,
-            "items": {
-              "$ref": "#/components/schemas/ChecklistItemInput"
-            }
+            "items": { "$ref": "#/components/schemas/ChecklistItemInput" }
           }
         }
       },
       "UpdatePlanRequest": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "expectedVersion"
-        ],
+        "required": ["expectedVersion"],
         "minProperties": 2,
         "dependentRequired": {
-          "budgetAmount": [
-            "budgetCurrency"
-          ],
-          "budgetCurrency": [
-            "budgetAmount"
-          ]
+          "budgetAmount": ["budgetCurrency"],
+          "budgetCurrency": ["budgetAmount"]
         },
         "properties": {
-          "expectedVersion": {
-            "type": "integer",
-            "minimum": 1
-          },
-          "title": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200
-          },
-          "status": {
-            "$ref": "#/components/schemas/PlanStatus"
-          },
-          "startDate": {
-            "type": "string",
-            "format": "date"
-          },
-          "endDate": {
-            "type": "string",
-            "format": "date"
-          },
-          "budgetAmount": {
-            "type": "string",
-            "pattern": "^[0-9]+(\\.[0-9]+)?$"
-          },
-          "budgetCurrency": {
-            "type": "string",
-            "pattern": "^[A-Z]{3}$"
-          },
-          "notes": {
-            "type": "string",
-            "maxLength": 10000
-          },
+          "expectedVersion": { "type": "integer", "minimum": 1 },
+          "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+          "status": { "$ref": "#/components/schemas/PlanStatus" },
+          "startDate": { "type": "string", "format": "date" },
+          "endDate": { "type": "string", "format": "date" },
+          "budgetAmount": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?$" },
+          "budgetCurrency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+          "notes": { "type": "string", "maxLength": 10000 },
           "itemOperations": {
             "type": "array",
             "maxItems": 500,
-            "items": {
-              "$ref": "#/components/schemas/PlanItemOperation"
-            }
+            "items": { "$ref": "#/components/schemas/PlanItemOperation" }
           },
           "reservationOperations": {
             "type": "array",
             "maxItems": 100,
-            "items": {
-              "$ref": "#/components/schemas/ReservationOperation"
-            }
+            "items": { "$ref": "#/components/schemas/ReservationOperation" }
           },
           "checklistOperations": {
             "type": "array",
             "maxItems": 500,
-            "items": {
-              "$ref": "#/components/schemas/ChecklistOperation"
-            }
+            "items": { "$ref": "#/components/schemas/ChecklistOperation" }
           }
         }
       },
       "PlanItemOperation": {
         "oneOf": [
-          {
-            "$ref": "#/components/schemas/CreatePlanItemOperation"
-          },
-          {
-            "$ref": "#/components/schemas/UpdatePlanItemOperation"
-          },
-          {
-            "$ref": "#/components/schemas/DeleteChildOperation"
-          }
+          { "$ref": "#/components/schemas/CreatePlanItemOperation" },
+          { "$ref": "#/components/schemas/UpdatePlanItemOperation" },
+          { "$ref": "#/components/schemas/DeleteChildOperation" }
         ],
-        "discriminator": {
-          "propertyName": "operation"
-        }
+        "discriminator": { "propertyName": "operation" }
       },
       "CreatePlanItemOperation": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "operation",
-          "clientReference",
-          "value"
-        ],
+        "required": ["operation", "clientReference", "value"],
         "properties": {
-          "operation": {
-            "const": "CREATE"
-          },
-          "clientReference": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 64
-          },
-          "value": {
-            "$ref": "#/components/schemas/PlanItemInput"
-          }
+          "operation": { "const": "CREATE" },
+          "clientReference": { "type": "string", "minLength": 1, "maxLength": 64 },
+          "value": { "$ref": "#/components/schemas/PlanItemInput" }
         }
       },
       "UpdatePlanItemOperation": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "operation",
-          "id",
-          "expectedVersion",
-          "value"
-        ],
+        "required": ["operation", "id", "expectedVersion", "value"],
         "properties": {
-          "operation": {
-            "const": "UPDATE"
-          },
-          "id": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "expectedVersion": {
-            "type": "integer",
-            "minimum": 1
-          },
-          "value": {
-            "$ref": "#/components/schemas/PlanItemInput"
-          }
+          "operation": { "const": "UPDATE" },
+          "id": { "$ref": "#/components/schemas/ResourceId" },
+          "expectedVersion": { "type": "integer", "minimum": 1 },
+          "value": { "$ref": "#/components/schemas/PlanItemInput" }
         }
       },
       "DeleteChildOperation": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "operation",
-          "id",
-          "expectedVersion"
-        ],
+        "required": ["operation", "id", "expectedVersion"],
         "properties": {
-          "operation": {
-            "const": "DELETE"
-          },
-          "id": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "expectedVersion": {
-            "type": "integer",
-            "minimum": 1
-          }
+          "operation": { "const": "DELETE" },
+          "id": { "$ref": "#/components/schemas/ResourceId" },
+          "expectedVersion": { "type": "integer", "minimum": 1 }
         }
       },
       "ReservationOperation": {
@@ -1654,53 +750,25 @@
           {
             "type": "object",
             "additionalProperties": false,
-            "required": [
-              "operation",
-              "clientReference",
-              "value"
-            ],
+            "required": ["operation", "clientReference", "value"],
             "properties": {
-              "operation": {
-                "const": "CREATE"
-              },
-              "clientReference": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 64
-              },
-              "value": {
-                "$ref": "#/components/schemas/ReservationInput"
-              }
+              "operation": { "const": "CREATE" },
+              "clientReference": { "type": "string", "minLength": 1, "maxLength": 64 },
+              "value": { "$ref": "#/components/schemas/ReservationInput" }
             }
           },
           {
             "type": "object",
             "additionalProperties": false,
-            "required": [
-              "operation",
-              "id",
-              "expectedVersion",
-              "value"
-            ],
+            "required": ["operation", "id", "expectedVersion", "value"],
             "properties": {
-              "operation": {
-                "const": "UPDATE"
-              },
-              "id": {
-                "$ref": "#/components/schemas/ResourceId"
-              },
-              "expectedVersion": {
-                "type": "integer",
-                "minimum": 1
-              },
-              "value": {
-                "$ref": "#/components/schemas/ReservationInput"
-              }
+              "operation": { "const": "UPDATE" },
+              "id": { "$ref": "#/components/schemas/ResourceId" },
+              "expectedVersion": { "type": "integer", "minimum": 1 },
+              "value": { "$ref": "#/components/schemas/ReservationInput" }
             }
           },
-          {
-            "$ref": "#/components/schemas/DeleteChildOperation"
-          }
+          { "$ref": "#/components/schemas/DeleteChildOperation" }
         ]
       },
       "ChecklistOperation": {
@@ -1708,107 +776,48 @@
           {
             "type": "object",
             "additionalProperties": false,
-            "required": [
-              "operation",
-              "clientReference",
-              "value"
-            ],
+            "required": ["operation", "clientReference", "value"],
             "properties": {
-              "operation": {
-                "const": "CREATE"
-              },
-              "clientReference": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 64
-              },
-              "value": {
-                "$ref": "#/components/schemas/ChecklistItemInput"
-              }
+              "operation": { "const": "CREATE" },
+              "clientReference": { "type": "string", "minLength": 1, "maxLength": 64 },
+              "value": { "$ref": "#/components/schemas/ChecklistItemInput" }
             }
           },
           {
             "type": "object",
             "additionalProperties": false,
-            "required": [
-              "operation",
-              "id",
-              "expectedVersion",
-              "value"
-            ],
+            "required": ["operation", "id", "expectedVersion", "value"],
             "properties": {
-              "operation": {
-                "const": "UPDATE"
-              },
-              "id": {
-                "$ref": "#/components/schemas/ResourceId"
-              },
-              "expectedVersion": {
-                "type": "integer",
-                "minimum": 1
-              },
-              "value": {
-                "$ref": "#/components/schemas/ChecklistItemInput"
-              }
+              "operation": { "const": "UPDATE" },
+              "id": { "$ref": "#/components/schemas/ResourceId" },
+              "expectedVersion": { "type": "integer", "minimum": 1 },
+              "value": { "$ref": "#/components/schemas/ChecklistItemInput" }
             }
           },
-          {
-            "$ref": "#/components/schemas/DeleteChildOperation"
-          }
+          { "$ref": "#/components/schemas/DeleteChildOperation" }
         ]
       },
       "PlanResponse": {
         "type": "object",
-        "required": [
-          "success",
-          "data",
-          "metadata"
-        ],
+        "required": ["success", "data", "metadata"],
         "properties": {
-          "success": {
-            "type": "boolean",
-            "const": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/PlanResource"
-          },
-          "metadata": {
-            "$ref": "#/components/schemas/EmptyMetadata"
-          }
+          "success": { "type": "boolean", "const": true },
+          "data": { "$ref": "#/components/schemas/PlanResource" },
+          "metadata": { "$ref": "#/components/schemas/EmptyMetadata" }
         }
       },
       "PlanPage": {
         "type": "object",
-        "required": [
-          "success",
-          "data",
-          "metadata"
-        ],
+        "required": ["success", "data", "metadata"],
         "properties": {
-          "success": {
-            "type": "boolean",
-            "const": true
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PlanResource"
-            }
-          },
-          "metadata": {
-            "$ref": "#/components/schemas/PageMetadata"
-          }
+          "success": { "type": "boolean", "const": true },
+          "data": { "type": "array", "items": { "$ref": "#/components/schemas/PlanResource" } },
+          "metadata": { "$ref": "#/components/schemas/PageMetadata" }
         }
       },
       "TravelMode": {
         "type": "string",
-        "enum": [
-          "WALKING",
-          "CYCLING",
-          "DRIVING",
-          "TRANSIT",
-          "OTHER"
-        ]
+        "enum": ["WALKING", "CYCLING", "DRIVING", "TRANSIT", "OTHER"]
       },
       "NavigationResource": {
         "type": "object",
@@ -1828,175 +837,64 @@
           "version"
         ],
         "properties": {
-          "id": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "tripId": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "destinationId": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "routeId": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "travelMode": {
-            "$ref": "#/components/schemas/TravelMode"
-          },
-          "tripState": {
-            "type": "string",
-            "enum": [
-              "ACTIVE",
-              "COMPLETED",
-              "CANCELLED"
-            ]
-          },
-          "sessionState": {
-            "type": "string",
-            "enum": [
-              "ACTIVE",
-              "COMPLETED",
-              "CANCELLED"
-            ]
-          },
-          "startedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "stoppedAt": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time"
-          },
-          "stopReason": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "enum": [
-              "COMPLETED",
-              "CANCELLED",
-              null
-            ]
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "version": {
-            "type": "integer",
-            "minimum": 1
-          }
+          "id": { "$ref": "#/components/schemas/ResourceId" },
+          "tripId": { "$ref": "#/components/schemas/ResourceId" },
+          "destinationId": { "$ref": "#/components/schemas/ResourceId" },
+          "routeId": { "$ref": "#/components/schemas/ResourceId" },
+          "travelMode": { "$ref": "#/components/schemas/TravelMode" },
+          "tripState": { "type": "string", "enum": ["ACTIVE", "COMPLETED", "CANCELLED"] },
+          "sessionState": { "type": "string", "enum": ["ACTIVE", "COMPLETED", "CANCELLED"] },
+          "startedAt": { "type": "string", "format": "date-time" },
+          "stoppedAt": { "type": ["string", "null"], "format": "date-time" },
+          "stopReason": { "type": ["string", "null"], "enum": ["COMPLETED", "CANCELLED", null] },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "version": { "type": "integer", "minimum": 1 }
         }
       },
       "StartNavigationRequest": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "destinationId",
-          "routeId",
-          "travelMode"
-        ],
+        "required": ["destinationId", "routeId", "travelMode"],
         "properties": {
-          "destinationId": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "routeId": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "travelMode": {
-            "$ref": "#/components/schemas/TravelMode"
-          }
+          "destinationId": { "$ref": "#/components/schemas/ResourceId" },
+          "routeId": { "$ref": "#/components/schemas/ResourceId" },
+          "travelMode": { "$ref": "#/components/schemas/TravelMode" }
         }
       },
       "StopNavigationRequest": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "sessionId",
-          "outcome",
-          "expectedVersion"
-        ],
+        "required": ["sessionId", "outcome", "expectedVersion"],
         "properties": {
-          "sessionId": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "outcome": {
-            "type": "string",
-            "enum": [
-              "COMPLETED",
-              "CANCELLED"
-            ]
-          },
-          "expectedVersion": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 2147483647
-          }
+          "sessionId": { "$ref": "#/components/schemas/ResourceId" },
+          "outcome": { "type": "string", "enum": ["COMPLETED", "CANCELLED"] },
+          "expectedVersion": { "type": "integer", "minimum": 1, "maximum": 2147483647 }
         }
       },
       "RerouteNavigationRequest": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "sessionId",
-          "replacementRouteId",
-          "expectedVersion"
-        ],
+        "required": ["sessionId", "replacementRouteId", "expectedVersion"],
         "properties": {
-          "sessionId": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "replacementRouteId": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "reason": {
-            "type": "string",
-            "maxLength": 500
-          },
-          "expectedVersion": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 2147483647
-          }
+          "sessionId": { "$ref": "#/components/schemas/ResourceId" },
+          "replacementRouteId": { "$ref": "#/components/schemas/ResourceId" },
+          "reason": { "type": "string", "maxLength": 500 },
+          "expectedVersion": { "type": "integer", "minimum": 1, "maximum": 2147483647 }
         }
       },
       "NavigationResponse": {
         "type": "object",
-        "required": [
-          "success",
-          "data",
-          "metadata"
-        ],
+        "required": ["success", "data", "metadata"],
         "properties": {
-          "success": {
-            "type": "boolean",
-            "const": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/NavigationResource"
-          },
-          "metadata": {
-            "$ref": "#/components/schemas/EmptyMetadata"
-          }
+          "success": { "type": "boolean", "const": true },
+          "data": { "$ref": "#/components/schemas/NavigationResource" },
+          "metadata": { "$ref": "#/components/schemas/EmptyMetadata" }
         }
       },
       "RecommendationStatus": {
         "type": "string",
-        "enum": [
-          "AVAILABLE",
-          "ACCEPTED",
-          "REJECTED",
-          "DISMISSED",
-          "IGNORED",
-          "EXPIRED"
-        ]
+        "enum": ["AVAILABLE", "ACCEPTED", "REJECTED", "DISMISSED", "IGNORED", "EXPIRED"]
       },
       "RecommendationResource": {
         "type": "object",
@@ -2014,249 +912,89 @@
           "version"
         ],
         "properties": {
-          "id": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "category": {
-            "type": "string",
-            "pattern": "^[A-Z][A-Z0-9_]{1,63}$"
-          },
-          "title": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200
-          },
-          "summary": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 5000
-          },
-          "rationale": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 5000
-          },
-          "status": {
-            "$ref": "#/components/schemas/RecommendationStatus"
-          },
-          "confidence": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1
-          },
-          "availableAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "expiresAt": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "version": {
-            "type": "integer",
-            "minimum": 1
-          }
+          "id": { "$ref": "#/components/schemas/ResourceId" },
+          "category": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]{1,63}$" },
+          "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+          "summary": { "type": "string", "minLength": 1, "maxLength": 5000 },
+          "rationale": { "type": "string", "minLength": 1, "maxLength": 5000 },
+          "status": { "$ref": "#/components/schemas/RecommendationStatus" },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+          "availableAt": { "type": "string", "format": "date-time" },
+          "expiresAt": { "type": ["string", "null"], "format": "date-time" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "version": { "type": "integer", "minimum": 1 }
         }
       },
       "RecommendationResponse": {
         "type": "object",
-        "required": [
-          "success",
-          "data",
-          "metadata"
-        ],
+        "required": ["success", "data", "metadata"],
         "properties": {
-          "success": {
-            "type": "boolean",
-            "const": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/RecommendationResource"
-          },
-          "metadata": {
-            "$ref": "#/components/schemas/EmptyMetadata"
-          }
+          "success": { "type": "boolean", "const": true },
+          "data": { "$ref": "#/components/schemas/RecommendationResource" },
+          "metadata": { "$ref": "#/components/schemas/EmptyMetadata" }
         }
       },
       "RecommendationPage": {
         "type": "object",
-        "required": [
-          "success",
-          "data",
-          "metadata"
-        ],
+        "required": ["success", "data", "metadata"],
         "properties": {
-          "success": {
-            "type": "boolean",
-            "const": true
-          },
+          "success": { "type": "boolean", "const": true },
           "data": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RecommendationResource"
-            }
+            "items": { "$ref": "#/components/schemas/RecommendationResource" }
           },
-          "metadata": {
-            "$ref": "#/components/schemas/PageMetadata"
-          }
+          "metadata": { "$ref": "#/components/schemas/PageMetadata" }
         }
       },
       "JournalEntry": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "id",
-          "type",
-          "content",
-          "mediaId",
-          "occurredAt",
-          "position",
-          "version"
-        ],
+        "required": ["id", "type", "content", "mediaId", "occurredAt", "position", "version"],
         "properties": {
-          "id": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
+          "id": { "$ref": "#/components/schemas/ResourceId" },
           "type": {
             "type": "string",
-            "enum": [
-              "TEXT",
-              "VOICE_REFERENCE",
-              "PHOTO_REFERENCE",
-              "VIDEO_REFERENCE"
-            ]
+            "enum": ["TEXT", "VOICE_REFERENCE", "PHOTO_REFERENCE", "VIDEO_REFERENCE"]
           },
-          "content": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "maxLength": 50000
-          },
+          "content": { "type": ["string", "null"], "maxLength": 50000 },
           "mediaId": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/ResourceId"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "oneOf": [{ "$ref": "#/components/schemas/ResourceId" }, { "type": "null" }]
           },
-          "occurredAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "locationReference": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "maxLength": 500
-          },
-          "position": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "version": {
-            "type": "integer",
-            "minimum": 1
-          }
+          "occurredAt": { "type": "string", "format": "date-time" },
+          "locationReference": { "type": ["string", "null"], "maxLength": 500 },
+          "position": { "type": "integer", "minimum": 0 },
+          "version": { "type": "integer", "minimum": 1 }
         }
       },
       "JournalEntryInput": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "type",
-          "occurredAt"
-        ],
+        "required": ["type", "occurredAt"],
         "allOf": [
           {
-            "if": {
-              "properties": {
-                "type": {
-                  "const": "TEXT"
-                }
-              },
-              "required": [
-                "type"
-              ]
-            },
-            "then": {
-              "required": [
-                "content"
-              ],
-              "not": {
-                "required": [
-                  "mediaId"
-                ]
-              }
-            }
+            "if": { "properties": { "type": { "const": "TEXT" } }, "required": ["type"] },
+            "then": { "required": ["content"], "not": { "required": ["mediaId"] } }
           },
           {
             "if": {
               "properties": {
-                "type": {
-                  "enum": [
-                    "VOICE_REFERENCE",
-                    "PHOTO_REFERENCE",
-                    "VIDEO_REFERENCE"
-                  ]
-                }
+                "type": { "enum": ["VOICE_REFERENCE", "PHOTO_REFERENCE", "VIDEO_REFERENCE"] }
               },
-              "required": [
-                "type"
-              ]
+              "required": ["type"]
             },
-            "then": {
-              "required": [
-                "mediaId"
-              ],
-              "not": {
-                "required": [
-                  "content"
-                ]
-              }
-            }
+            "then": { "required": ["mediaId"], "not": { "required": ["content"] } }
           }
         ],
         "properties": {
           "type": {
             "type": "string",
-            "enum": [
-              "TEXT",
-              "VOICE_REFERENCE",
-              "PHOTO_REFERENCE",
-              "VIDEO_REFERENCE"
-            ]
+            "enum": ["TEXT", "VOICE_REFERENCE", "PHOTO_REFERENCE", "VIDEO_REFERENCE"]
           },
-          "content": {
-            "type": "string",
-            "maxLength": 50000
-          },
-          "mediaId": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "occurredAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "locationReference": {
-            "type": "string",
-            "maxLength": 500
-          }
+          "content": { "type": "string", "maxLength": 50000 },
+          "mediaId": { "$ref": "#/components/schemas/ResourceId" },
+          "occurredAt": { "type": "string", "format": "date-time" },
+          "locationReference": { "type": "string", "maxLength": 500 }
         }
       },
       "JournalResource": {
@@ -2277,265 +1015,104 @@
           "version"
         ],
         "properties": {
-          "id": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "title": {
-            "type": "string"
-          },
-          "description": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
+          "id": { "$ref": "#/components/schemas/ResourceId" },
+          "title": { "type": "string" },
+          "description": { "type": ["string", "null"] },
           "tripId": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/ResourceId"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "oneOf": [{ "$ref": "#/components/schemas/ResourceId" }, { "type": "null" }]
           },
-          "visibility": {
-            "type": "string",
-            "const": "PRIVATE"
-          },
-          "startedAt": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time"
-          },
-          "endedAt": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time"
-          },
-          "entries": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/JournalEntry"
-            }
-          },
+          "visibility": { "type": "string", "const": "PRIVATE" },
+          "startedAt": { "type": ["string", "null"], "format": "date-time" },
+          "endedAt": { "type": ["string", "null"], "format": "date-time" },
+          "entries": { "type": "array", "items": { "$ref": "#/components/schemas/JournalEntry" } },
           "reflections": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ReflectionResource"
-            }
+            "items": { "$ref": "#/components/schemas/ReflectionResource" }
           },
           "media": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/JournalMediaReference"
-            }
+            "items": { "$ref": "#/components/schemas/JournalMediaReference" }
           },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "version": {
-            "type": "integer",
-            "minimum": 1
-          }
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "version": { "type": "integer", "minimum": 1 }
         }
       },
       "CreateJournalRequest": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "title"
-        ],
+        "required": ["title"],
         "properties": {
-          "title": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200
-          },
-          "description": {
-            "type": "string",
-            "maxLength": 10000
-          },
-          "tripId": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "startedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "endedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
+          "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+          "description": { "type": "string", "maxLength": 10000 },
+          "tripId": { "$ref": "#/components/schemas/ResourceId" },
+          "startedAt": { "type": "string", "format": "date-time" },
+          "endedAt": { "type": "string", "format": "date-time" },
           "entries": {
             "type": "array",
             "maxItems": 500,
-            "items": {
-              "$ref": "#/components/schemas/JournalEntryInput"
-            }
+            "items": { "$ref": "#/components/schemas/JournalEntryInput" }
           }
         }
       },
       "UpdateJournalRequest": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "expectedVersion"
-        ],
+        "required": ["expectedVersion"],
         "minProperties": 2,
         "properties": {
-          "expectedVersion": {
-            "type": "integer",
-            "minimum": 1
-          },
-          "title": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200
-          },
-          "description": {
-            "type": "string",
-            "maxLength": 10000
-          },
-          "tripId": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "startedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "endedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
+          "expectedVersion": { "type": "integer", "minimum": 1 },
+          "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+          "description": { "type": "string", "maxLength": 10000 },
+          "tripId": { "$ref": "#/components/schemas/ResourceId" },
+          "startedAt": { "type": "string", "format": "date-time" },
+          "endedAt": { "type": "string", "format": "date-time" },
           "entryOperations": {
             "type": "array",
             "maxItems": 500,
-            "items": {
-              "$ref": "#/components/schemas/JournalEntryOperation"
-            }
+            "items": { "$ref": "#/components/schemas/JournalEntryOperation" }
           },
           "reflectionOperations": {
             "type": "array",
             "maxItems": 500,
-            "items": {
-              "$ref": "#/components/schemas/ReflectionOperation"
-            }
+            "items": { "$ref": "#/components/schemas/ReflectionOperation" }
           },
           "mediaOperations": {
             "type": "array",
             "maxItems": 500,
-            "items": {
-              "$ref": "#/components/schemas/MediaOperation"
-            }
+            "items": { "$ref": "#/components/schemas/MediaOperation" }
           }
         }
       },
       "ReflectionResource": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "id",
-          "entryId",
-          "text",
-          "occurredAt",
-          "position",
-          "version"
-        ],
+        "required": ["id", "entryId", "text", "occurredAt", "position", "version"],
         "properties": {
-          "id": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
+          "id": { "$ref": "#/components/schemas/ResourceId" },
           "entryId": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/ResourceId"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "oneOf": [{ "$ref": "#/components/schemas/ResourceId" }, { "type": "null" }]
           },
-          "text": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 10000
-          },
-          "occurredAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "position": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "version": {
-            "type": "integer",
-            "minimum": 1
-          }
+          "text": { "type": "string", "minLength": 1, "maxLength": 10000 },
+          "occurredAt": { "type": "string", "format": "date-time" },
+          "position": { "type": "integer", "minimum": 0 },
+          "version": { "type": "integer", "minimum": 1 }
         }
       },
       "JournalMediaReference": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "id",
-          "entryId",
-          "mediaId",
-          "mediaKind",
-          "caption",
-          "position",
-          "version"
-        ],
+        "required": ["id", "entryId", "mediaId", "mediaKind", "caption", "position", "version"],
         "properties": {
-          "id": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
+          "id": { "$ref": "#/components/schemas/ResourceId" },
           "entryId": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/ResourceId"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "oneOf": [{ "$ref": "#/components/schemas/ResourceId" }, { "type": "null" }]
           },
-          "mediaId": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "mediaKind": {
-            "type": "string",
-            "enum": [
-              "VOICE",
-              "PHOTO",
-              "VIDEO"
-            ]
-          },
-          "caption": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "maxLength": 1000
-          },
-          "position": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "version": {
-            "type": "integer",
-            "minimum": 1
-          }
+          "mediaId": { "$ref": "#/components/schemas/ResourceId" },
+          "mediaKind": { "type": "string", "enum": ["VOICE", "PHOTO", "VIDEO"] },
+          "caption": { "type": ["string", "null"], "maxLength": 1000 },
+          "position": { "type": "integer", "minimum": 0 },
+          "version": { "type": "integer", "minimum": 1 }
         }
       },
       "JournalEntryOperation": {
@@ -2543,79 +1120,36 @@
           {
             "type": "object",
             "additionalProperties": false,
-            "required": [
-              "operation",
-              "clientReference",
-              "value"
-            ],
+            "required": ["operation", "clientReference", "value"],
             "properties": {
-              "operation": {
-                "const": "CREATE"
-              },
-              "clientReference": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 64
-              },
-              "value": {
-                "$ref": "#/components/schemas/JournalEntryInput"
-              }
+              "operation": { "const": "CREATE" },
+              "clientReference": { "type": "string", "minLength": 1, "maxLength": 64 },
+              "value": { "$ref": "#/components/schemas/JournalEntryInput" }
             }
           },
           {
             "type": "object",
             "additionalProperties": false,
-            "required": [
-              "operation",
-              "id",
-              "expectedVersion",
-              "value"
-            ],
+            "required": ["operation", "id", "expectedVersion", "value"],
             "properties": {
-              "operation": {
-                "const": "UPDATE"
-              },
-              "id": {
-                "$ref": "#/components/schemas/ResourceId"
-              },
-              "expectedVersion": {
-                "type": "integer",
-                "minimum": 1
-              },
-              "value": {
-                "$ref": "#/components/schemas/JournalEntryInput"
-              }
+              "operation": { "const": "UPDATE" },
+              "id": { "$ref": "#/components/schemas/ResourceId" },
+              "expectedVersion": { "type": "integer", "minimum": 1 },
+              "value": { "$ref": "#/components/schemas/JournalEntryInput" }
             }
           },
-          {
-            "$ref": "#/components/schemas/DeleteChildOperation"
-          }
+          { "$ref": "#/components/schemas/DeleteChildOperation" }
         ]
       },
       "ReflectionInput": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "text",
-          "occurredAt"
-        ],
+        "required": ["text", "occurredAt"],
         "properties": {
-          "entryId": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "text": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 10000
-          },
-          "occurredAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "position": {
-            "type": "integer",
-            "minimum": 0
-          }
+          "entryId": { "$ref": "#/components/schemas/ResourceId" },
+          "text": { "type": "string", "minLength": 1, "maxLength": 10000 },
+          "occurredAt": { "type": "string", "format": "date-time" },
+          "position": { "type": "integer", "minimum": 0 }
         }
       },
       "ReflectionOperation": {
@@ -2623,85 +1157,37 @@
           {
             "type": "object",
             "additionalProperties": false,
-            "required": [
-              "operation",
-              "clientReference",
-              "value"
-            ],
+            "required": ["operation", "clientReference", "value"],
             "properties": {
-              "operation": {
-                "const": "CREATE"
-              },
-              "clientReference": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 64
-              },
-              "value": {
-                "$ref": "#/components/schemas/ReflectionInput"
-              }
+              "operation": { "const": "CREATE" },
+              "clientReference": { "type": "string", "minLength": 1, "maxLength": 64 },
+              "value": { "$ref": "#/components/schemas/ReflectionInput" }
             }
           },
           {
             "type": "object",
             "additionalProperties": false,
-            "required": [
-              "operation",
-              "id",
-              "expectedVersion",
-              "value"
-            ],
+            "required": ["operation", "id", "expectedVersion", "value"],
             "properties": {
-              "operation": {
-                "const": "UPDATE"
-              },
-              "id": {
-                "$ref": "#/components/schemas/ResourceId"
-              },
-              "expectedVersion": {
-                "type": "integer",
-                "minimum": 1
-              },
-              "value": {
-                "$ref": "#/components/schemas/ReflectionInput"
-              }
+              "operation": { "const": "UPDATE" },
+              "id": { "$ref": "#/components/schemas/ResourceId" },
+              "expectedVersion": { "type": "integer", "minimum": 1 },
+              "value": { "$ref": "#/components/schemas/ReflectionInput" }
             }
           },
-          {
-            "$ref": "#/components/schemas/DeleteChildOperation"
-          }
+          { "$ref": "#/components/schemas/DeleteChildOperation" }
         ]
       },
       "MediaReferenceInput": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "mediaId",
-          "mediaKind",
-          "position"
-        ],
+        "required": ["mediaId", "mediaKind", "position"],
         "properties": {
-          "entryId": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "mediaId": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "mediaKind": {
-            "enum": [
-              "VOICE",
-              "PHOTO",
-              "VIDEO"
-            ]
-          },
-          "caption": {
-            "type": "string",
-            "maxLength": 1000
-          },
-          "position": {
-            "type": "integer",
-            "minimum": 0
-          }
+          "entryId": { "$ref": "#/components/schemas/ResourceId" },
+          "mediaId": { "$ref": "#/components/schemas/ResourceId" },
+          "mediaKind": { "enum": ["VOICE", "PHOTO", "VIDEO"] },
+          "caption": { "type": "string", "maxLength": 1000 },
+          "position": { "type": "integer", "minimum": 0 }
         }
       },
       "MediaOperation": {
@@ -2709,106 +1195,46 @@
           {
             "type": "object",
             "additionalProperties": false,
-            "required": [
-              "operation",
-              "clientReference",
-              "value"
-            ],
+            "required": ["operation", "clientReference", "value"],
             "properties": {
-              "operation": {
-                "const": "CREATE"
-              },
-              "clientReference": {
-                "type": "string",
-                "minLength": 1,
-                "maxLength": 64
-              },
-              "value": {
-                "$ref": "#/components/schemas/MediaReferenceInput"
-              }
+              "operation": { "const": "CREATE" },
+              "clientReference": { "type": "string", "minLength": 1, "maxLength": 64 },
+              "value": { "$ref": "#/components/schemas/MediaReferenceInput" }
             }
           },
           {
             "type": "object",
             "additionalProperties": false,
-            "required": [
-              "operation",
-              "id",
-              "expectedVersion",
-              "value"
-            ],
+            "required": ["operation", "id", "expectedVersion", "value"],
             "properties": {
-              "operation": {
-                "const": "UPDATE"
-              },
-              "id": {
-                "$ref": "#/components/schemas/ResourceId"
-              },
-              "expectedVersion": {
-                "type": "integer",
-                "minimum": 1
-              },
-              "value": {
-                "$ref": "#/components/schemas/MediaReferenceInput"
-              }
+              "operation": { "const": "UPDATE" },
+              "id": { "$ref": "#/components/schemas/ResourceId" },
+              "expectedVersion": { "type": "integer", "minimum": 1 },
+              "value": { "$ref": "#/components/schemas/MediaReferenceInput" }
             }
           },
-          {
-            "$ref": "#/components/schemas/DeleteChildOperation"
-          }
+          { "$ref": "#/components/schemas/DeleteChildOperation" }
         ]
       },
       "JournalResponse": {
         "type": "object",
-        "required": [
-          "success",
-          "data",
-          "metadata"
-        ],
+        "required": ["success", "data", "metadata"],
         "properties": {
-          "success": {
-            "type": "boolean",
-            "const": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/JournalResource"
-          },
-          "metadata": {
-            "$ref": "#/components/schemas/EmptyMetadata"
-          }
+          "success": { "type": "boolean", "const": true },
+          "data": { "$ref": "#/components/schemas/JournalResource" },
+          "metadata": { "$ref": "#/components/schemas/EmptyMetadata" }
         }
       },
       "JournalPage": {
         "type": "object",
-        "required": [
-          "success",
-          "data",
-          "metadata"
-        ],
+        "required": ["success", "data", "metadata"],
         "properties": {
-          "success": {
-            "type": "boolean",
-            "const": true
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/JournalResource"
-            }
-          },
-          "metadata": {
-            "$ref": "#/components/schemas/PageMetadata"
-          }
+          "success": { "type": "boolean", "const": true },
+          "data": { "type": "array", "items": { "$ref": "#/components/schemas/JournalResource" } },
+          "metadata": { "$ref": "#/components/schemas/PageMetadata" }
         }
       },
-      "NotificationChannel": {
-        "type": "string",
-        "enum": [
-          "PUSH",
-          "EMAIL",
-          "SMS"
-        ]
-      },
+      "NotificationChannel": { "type": "string", "enum": ["PUSH", "EMAIL", "SMS"] },
       "NotificationStatus": {
         "type": "string",
         "enum": [
@@ -2839,186 +1265,76 @@
           "version"
         ],
         "properties": {
-          "id": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "kind": {
-            "type": "string"
-          },
-          "channel": {
-            "$ref": "#/components/schemas/NotificationChannel"
-          },
-          "title": {
-            "type": "string"
-          },
-          "body": {
-            "type": "string"
-          },
-          "status": {
-            "$ref": "#/components/schemas/NotificationStatus"
-          },
-          "scheduledFor": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time"
-          },
-          "deliveredAt": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time"
-          },
-          "readAt": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "version": {
-            "type": "integer",
-            "minimum": 1
-          }
+          "id": { "$ref": "#/components/schemas/ResourceId" },
+          "kind": { "type": "string" },
+          "channel": { "$ref": "#/components/schemas/NotificationChannel" },
+          "title": { "type": "string" },
+          "body": { "type": "string" },
+          "status": { "$ref": "#/components/schemas/NotificationStatus" },
+          "scheduledFor": { "type": ["string", "null"], "format": "date-time" },
+          "deliveredAt": { "type": ["string", "null"], "format": "date-time" },
+          "readAt": { "type": ["string", "null"], "format": "date-time" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "version": { "type": "integer", "minimum": 1 }
         }
       },
       "UpdateNotificationRequest": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "expectedVersion"
-        ],
+        "required": ["expectedVersion"],
         "minProperties": 2,
         "properties": {
-          "expectedVersion": {
-            "type": "integer",
-            "minimum": 1
-          },
-          "read": {
-            "type": "boolean"
-          },
-          "status": {
-            "type": "string",
-            "const": "CANCELLED"
-          }
+          "expectedVersion": { "type": "integer", "minimum": 1 },
+          "read": { "type": "boolean" },
+          "status": { "type": "string", "const": "CANCELLED" }
         }
       },
       "NotificationResponse": {
         "type": "object",
-        "required": [
-          "success",
-          "data",
-          "metadata"
-        ],
+        "required": ["success", "data", "metadata"],
         "properties": {
-          "success": {
-            "type": "boolean",
-            "const": true
-          },
-          "data": {
-            "$ref": "#/components/schemas/NotificationResource"
-          },
-          "metadata": {
-            "$ref": "#/components/schemas/EmptyMetadata"
-          }
+          "success": { "type": "boolean", "const": true },
+          "data": { "$ref": "#/components/schemas/NotificationResource" },
+          "metadata": { "$ref": "#/components/schemas/EmptyMetadata" }
         }
       },
       "NotificationPage": {
         "type": "object",
-        "required": [
-          "success",
-          "data",
-          "metadata"
-        ],
+        "required": ["success", "data", "metadata"],
         "properties": {
-          "success": {
-            "type": "boolean",
-            "const": true
-          },
+          "success": { "type": "boolean", "const": true },
           "data": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/NotificationResource"
-            }
+            "items": { "$ref": "#/components/schemas/NotificationResource" }
           },
-          "metadata": {
-            "$ref": "#/components/schemas/PageMetadata"
-          }
+          "metadata": { "$ref": "#/components/schemas/PageMetadata" }
         }
       },
       "SearchResourceType": {
         "type": "string",
-        "enum": [
-          "MEMORY",
-          "TRIP",
-          "JOURNAL",
-          "LANDMARK",
-          "LEARNING",
-          "COMMUNITY"
-        ]
+        "enum": ["MEMORY", "TRIP", "JOURNAL", "LANDMARK", "LEARNING", "COMMUNITY"]
       },
       "SearchResultResource": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "type",
-          "sourceResourceId",
-          "title",
-          "snippet",
-          "updatedAt"
-        ],
+        "required": ["type", "sourceResourceId", "title", "snippet", "updatedAt"],
         "properties": {
-          "type": {
-            "$ref": "#/components/schemas/SearchResourceType"
-          },
-          "sourceResourceId": {
-            "$ref": "#/components/schemas/ResourceId"
-          },
-          "title": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200
-          },
-          "snippet": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "maxLength": 500
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
+          "type": { "$ref": "#/components/schemas/SearchResourceType" },
+          "sourceResourceId": { "$ref": "#/components/schemas/ResourceId" },
+          "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+          "snippet": { "type": ["string", "null"], "maxLength": 500 },
+          "updatedAt": { "type": "string", "format": "date-time" }
         }
       },
       "SearchResultPage": {
         "type": "object",
-        "required": [
-          "success",
-          "data",
-          "metadata"
-        ],
+        "required": ["success", "data", "metadata"],
         "properties": {
-          "success": {
-            "type": "boolean",
-            "const": true
-          },
+          "success": { "type": "boolean", "const": true },
           "data": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SearchResultResource"
-            }
+            "items": { "$ref": "#/components/schemas/SearchResultResource" }
           },
           "metadata": {
             "type": "object",
@@ -3033,57 +1349,22 @@
               "indexVersions"
             ],
             "properties": {
-              "nextCursor": {
-                "type": [
-                  "string",
-                  "null"
-                ]
-              },
-              "hasMore": {
-                "type": "boolean"
-              },
-              "limit": {
-                "type": "integer",
-                "minimum": 1,
-                "maximum": 100
-              },
-              "partial": {
-                "type": "boolean"
-              },
-              "rankingProfileVersion": {
-                "type": "integer",
-                "minimum": 1
-              },
+              "nextCursor": { "type": ["string", "null"] },
+              "hasMore": { "type": "boolean" },
+              "limit": { "type": "integer", "minimum": 1, "maximum": 100 },
+              "partial": { "type": "boolean" },
+              "rankingProfileVersion": { "type": "integer", "minimum": 1 },
               "indexVersions": {
                 "type": "array",
                 "maxItems": 4,
                 "items": {
                   "type": "object",
                   "additionalProperties": false,
-                  "required": [
-                    "type",
-                    "schemaVersion",
-                    "generation"
-                  ],
+                  "required": ["type", "schemaVersion", "generation"],
                   "properties": {
-                    "type": {
-                      "type": "string",
-                      "enum": [
-                        "MEMORY",
-                        "TRIP",
-                        "JOURNAL",
-                        "LANDMARK"
-                      ]
-                    },
-                    "schemaVersion": {
-                      "type": "integer",
-                      "minimum": 1
-                    },
-                    "generation": {
-                      "type": "string",
-                      "minLength": 1,
-                      "maxLength": 128
-                    }
+                    "type": { "type": "string", "enum": ["MEMORY", "TRIP", "JOURNAL", "LANDMARK"] },
+                    "schemaVersion": { "type": "integer", "minimum": 1 },
+                    "generation": { "type": "string", "minLength": 1, "maxLength": 128 }
                   }
                 }
               },
@@ -3093,21 +1374,12 @@
                 "items": {
                   "type": "object",
                   "additionalProperties": false,
-                  "required": [
-                    "type",
-                    "status"
-                  ],
+                  "required": ["type", "status"],
                   "properties": {
-                    "type": {
-                      "$ref": "#/components/schemas/SearchResourceType"
-                    },
+                    "type": { "$ref": "#/components/schemas/SearchResourceType" },
                     "status": {
                       "type": "string",
-                      "enum": [
-                        "AVAILABLE",
-                        "UNAVAILABLE",
-                        "UNAUTHORIZED"
-                      ]
+                      "enum": ["AVAILABLE", "UNAVAILABLE", "UNAUTHORIZED"]
                     }
                   }
                 }
