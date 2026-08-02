@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS idempotency_records; DROP TABLE IF EXISTS dead_letter_events; DROP TABLE IF EXISTS inbox_events; DROP TABLE IF EXISTS outbox_events; DROP TABLE IF EXISTS recommendation_history; DROP TABLE IF EXISTS recommendation_scores; DROP TABLE IF EXISTS recommendations;

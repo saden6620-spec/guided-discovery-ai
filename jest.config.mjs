@@ -8,6 +8,7 @@ const config = {
     "<rootDir>/backend/memory-service/__tests__/**/*.test.cjs",
     "<rootDir>/backend/planning-service/__tests__/**/*.test.cjs",
     "<rootDir>/backend/navigation-service/__tests__/**/*.test.cjs",
+    "<rootDir>/backend/recommendation-service/__tests__/**/*.test.cjs",
   ],
 };
 

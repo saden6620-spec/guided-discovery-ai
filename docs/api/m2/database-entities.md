@@ -87,7 +87,9 @@ This ledger is the sole physical persistence for memory deletion tombstones. “
 
 ### `recommendations`
 
-`id`, `owner_id`, `category varchar(64)`, encrypted `title_ciphertext`, encrypted `summary_ciphertext`, encrypted `rationale_ciphertext`, `status` (`AVAILABLE|ACCEPTED|REJECTED|DISMISSED|IGNORED|EXPIRED`), `confidence numeric(4,3)`, `available_at`, `expires_at null`, `provenance jsonb`, common timestamps, `deleted_at`, `purge_after`, `version`. Index `(owner_id,status,available_at desc,id desc)` and expiry work `(status,expires_at)`.
+`id`, `owner_id`, `category varchar(64)`, encrypted `title_ciphertext`, encrypted `summary_ciphertext`, encrypted `rationale_ciphertext`, `status` (`AVAILABLE|ACCEPTED|REJECTED|DISMISSED|IGNORED|EXPIRED`), `confidence numeric(4,3)`, `available_at`, `expires_at null`, `permission_policy_ref varchar(128) not null`, `permission_version integer not null check (permission_version > 0)`, `provenance jsonb`, common timestamps, `deleted_at`, `purge_after`, `version`. Index `(owner_id,status,available_at desc,id desc)` and expiry work `(status,expires_at)`.
+
+The policy reference and version are resolved authoritatively through Permission Service before insertion and do not independently grant access. Structured safety and accessibility metadata is not persisted in M2.5; only the approved scalar score factors are stored in `recommendation_scores`.
 
 ### `recommendation_history`
 

@@ -725,6 +725,8 @@ components:
             rationale,
             confidence,
             availableAt,
+            permissionPolicyRef,
+            permissionVersion,
             provenance,
             scores,
           ],
@@ -738,6 +740,8 @@ components:
             confidence: { type: number, minimum: 0, maximum: 1 },
             availableAt: { type: string, format: date-time },
             expiresAt: { oneOf: [{ type: string, format: date-time }, { type: "null" }] },
+            permissionPolicyRef: { type: string, minLength: 1, maxLength: 128 },
+            permissionVersion: { type: integer, minimum: 1 },
             provenance: { $ref: "#/components/schemas/Provenance" },
             scores:
               {

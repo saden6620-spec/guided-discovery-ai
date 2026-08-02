@@ -16,13 +16,13 @@ Only the active milestone may be implemented. Work outside the active milestone 
 
 - Active phase: Phase 2 — Core Backend
 - Phase status: In progress
-- Active milestone: M2.4 — Navigation Service
-- Milestone status: Complete
-- Hosted CI validation: Passed on August 1, 2026
+- Active milestone: M2.5 — Recommendation Service
+- Milestone status: In progress — local validation complete, hosted CI pending
+- Hosted CI validation: Pending
 - Hosted CI tested branch: `main`
-- Next milestone: M2.5 — Recommendation Service
+- Next milestone: M2.6 — Documentation Service
 - Next milestone status: Not started
-- Last reviewed: 2026-08-01
+- Last reviewed: 2026-08-02
 
 Allowed status values:
 
@@ -424,7 +424,63 @@ M2.5 and later work remains not started. M2.4 excludes Recommendation Service be
 - GitHub-hosted CI run `30707288568`: Passed
 - GitHub-hosted CI tested branch: `main`
 - M2.4 milestone status: Complete
-- M2.5 — Recommendation Service: Not started
+- M2.5 — Recommendation Service: In progress
+
+---
+
+# M2.5 — Recommendation Service
+
+## Objective
+
+Implement the approved Recommendation Service ingestion, persistence, disposition lifecycle, reliability, privacy, and operational contracts without implementing recommendation generation, AI, personalization, ranking logic, external providers, client interfaces, Documentation Service, or another later milestone.
+
+## Included Tasks
+
+| Task | Status |
+| --- | --- |
+| Resolve approved permission-policy persistence and scalar score specifications | Complete |
+| NestJS module organization and configuration | Complete |
+| Public list, accept, and dismiss API | Complete |
+| Private authenticated recommendation-ingestion API | Complete |
+| Recommendation-owned entities, constraints, indexes, and Prisma migration | Complete |
+| AVAILABLE, ACCEPTED, DISMISSED, and EXPIRED M2.5 lifecycle enforcement | Complete |
+| Canonical deferred REJECTED and IGNORED storage vocabulary | Complete |
+| Permission Service validation, producer authorization, and fail-closed boundaries | Complete |
+| Encrypted content, immutable provenance, and privacy-safe logging | Complete |
+| Optimistic concurrency, idempotency, append-only history, and expiration handling | Complete |
+| Transactional outbox, inbox, and dead-letter foundations | Complete |
+| Approved RecommendationAccepted, RecommendationDismissed, and RecommendationExpired events | Complete |
+| Health, readiness, version, request IDs, tracing, rate-limit headers, and metrics hooks | Complete |
+| OpenAPI generation and public/internal/AsyncAPI contract validation | Complete |
+| Unit, integration, API, lifecycle, privacy, authorization, event, and migration tests | Complete |
+| Complete repository, migration, Playwright, and Docker validation | Complete |
+| GitHub-hosted CI validation | Pending |
+
+## Scope Control
+
+M2.6 and later work remains not started. M2.5 excludes AI or LLM recommendation generation, personalized ranking, memory retrieval, planning or navigation behavior, external providers, booking, payment, automatic execution, client recommendation screens, community recommendations, structured safety/accessibility attributes, an external event broker adapter, Documentation Service behavior, and all later milestones.
+
+## Validation Record
+
+- Local validation date: August 2, 2026
+- Tested branch: `main`
+- Frozen pnpm installation and dependency resolution: Passed
+- Corrected internal OpenAPI and AsyncAPI parsing and Recommendation contract review: Passed
+- Prisma schema validation and forward migration: Passed
+- Migration clean apply, reviewed reversal, migration-record cleanup, and clean reapplication: Passed against the independently owned Recommendation PostgreSQL database
+- Recommendation Service Jest suites: 6 tests passed across 5 suites
+- Repository Jest suites: 93 tests passed across 31 suites, including Memory, Planning, and Navigation regressions
+- Pytest: Passed
+- Formatting, ESLint, Ruff, strict TypeScript, Turborepo tests, and 34-workspace Turborepo build: Passed
+- Playwright: Passed
+- Docker Compose configuration, current-workspace image build, and complete skeleton startup: Passed
+- Recommendation readiness: Passed with PostgreSQL `UP`
+- Complete skeleton health verification: Passed
+- Container runtimes: Node.js 24.18.0, pnpm 11.4.0, Python 3.13.14
+- Normal clean Docker rebuild attempts were interrupted by external registry transport failures; the exact current lockfile and all 34 workspaces were then rebuilt successfully using the previously validated M2.4 image as an offline dependency cache
+- GitHub-hosted CI validation: Pending
+- M2.5 milestone status: In progress pending hosted CI
+- M2.6 — Documentation Service: Not started
 
 ---
 

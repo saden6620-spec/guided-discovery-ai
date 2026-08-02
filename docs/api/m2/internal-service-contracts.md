@@ -117,22 +117,28 @@ Only `navigation.destination.write` and `navigation.route.write` workload identi
 
 `CreateRecommendationCommand`:
 
-| Field         | Type             | Rules                                                                           |
-| ------------- | ---------------- | ------------------------------------------------------------------------------- |
-| `ownerId`     | UUID             | Required                                                                        |
-| `category`    | string           | Upper snake case, 2–64                                                          |
-| `title`       | string           | 1–200                                                                           |
-| `summary`     | string           | 1–5000                                                                          |
-| `rationale`   | string           | 1–5000; user-readable provenance, not hidden reasoning                          |
-| `confidence`  | decimal          | 0–1                                                                             |
-| `availableAt` | datetime         | Required                                                                        |
-| `expiresAt`   | datetime or null | Must follow `availableAt`                                                       |
-| `provenance`  | object           | `producer`, `sourceType`, optional `sourceResourceId`, positive `sourceVersion` |
-| `scores`      | array            | Exactly one per supplied factor; max 8                                          |
+| Field                 | Type             | Rules                                                                                       |
+| --------------------- | ---------------- | ------------------------------------------------------------------------------------------- |
+| `ownerId`             | UUID             | Required                                                                                    |
+| `category`            | string           | Upper snake case, 2–64                                                                      |
+| `title`               | string           | 1–200                                                                                       |
+| `summary`             | string           | 1–5000                                                                                      |
+| `rationale`           | string           | 1–5000; user-readable provenance, not hidden reasoning                                      |
+| `confidence`          | decimal          | 0–1                                                                                         |
+| `availableAt`         | datetime         | Required                                                                                    |
+| `expiresAt`           | datetime or null | Must follow `availableAt`                                                                   |
+| `permissionPolicyRef` | string           | Required server-resolved policy reference, 1–128 characters                                 |
+| `permissionVersion`   | integer          | Required positive requested version; the service resolves the authoritative current version |
+| `provenance`          | object           | `producer`, `sourceType`, optional `sourceResourceId`, positive `sourceVersion`             |
+| `scores`              | array            | Exactly one per supplied factor; max 8                                                      |
 
 Score factors are `SAFETY`, `EDUCATIONAL_VALUE`, `RELEVANCE`, `USER_INTEREST`, `TIMING`, `ACCESSIBILITY`, `CONFIDENCE`, and `URGENCY`; each score is decimal 0–1. Duplicate factors are invalid. M2 stores supplied values and performs no ranking or generation. Initial state is `AVAILABLE` unless `expiresAt <= now`, which is rejected rather than creating an expired record.
 
 Allowed producers are configured workload identities with `recommendation.ingest`. M2 test fixtures may use a deterministic producer; AI producers are not enabled.
+
+The authenticated producer may request `permissionPolicyRef` only through this private contract. Recommendation Service validates the reference and resolves the authoritative current version through Permission Service before insertion; the supplied version is never itself authorization. Unavailable, invalid, stale, revoked, or denied permission decisions fail closed. The committed policy reference and resolved version are persisted. Permission details are excluded from logs and public responses.
+
+M2.5 safety and accessibility data is limited to the scalar `SAFETY` and `ACCESSIBILITY` score factors. Structured safety or accessibility attributes are deferred and are not part of this command.
 
 ## Notification scheduling
 

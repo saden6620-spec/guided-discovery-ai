@@ -512,7 +512,16 @@ components:
             payload:
               type: object
               additionalProperties: false
-              required: [recommendationId, fromStatus, toStatus, actorType, changedAt]
+              required:
+                [
+                  recommendationId,
+                  fromStatus,
+                  toStatus,
+                  actorType,
+                  permissionPolicyRef,
+                  permissionVersion,
+                  changedAt,
+                ]
               properties:
                 recommendationId: { $ref: "#/components/schemas/Uuid" }
                 fromStatus:
@@ -525,6 +534,8 @@ components:
                   }
                 toStatus: { enum: [AVAILABLE, ACCEPTED, REJECTED, DISMISSED, IGNORED, EXPIRED] }
                 actorType: { enum: [USER, SYSTEM, SERVICE] }
+                permissionPolicyRef: { type: string, minLength: 1, maxLength: 128 }
+                permissionVersion: { type: integer, minimum: 1 }
                 changedAt: { $ref: "#/components/schemas/Timestamp" }
     RecommendationAcceptedEvent:
       allOf:
