@@ -17,8 +17,8 @@ Only the active milestone may be implemented. Work outside the active milestone 
 - Active phase: Phase 2 — Core Backend
 - Phase status: In progress
 - Active milestone: M2.5 — Recommendation Service
-- Milestone status: In progress — local validation complete, hosted CI pending
-- Hosted CI validation: Pending
+- Milestone status: Complete
+- Hosted CI validation: Passed on August 2, 2026
 - Hosted CI tested branch: `main`
 - Next milestone: M2.6 — Documentation Service
 - Next milestone status: Not started
@@ -454,7 +454,7 @@ Implement the approved Recommendation Service ingestion, persistence, dispositio
 | OpenAPI generation and public/internal/AsyncAPI contract validation | Complete |
 | Unit, integration, API, lifecycle, privacy, authorization, event, and migration tests | Complete |
 | Complete repository, migration, Playwright, and Docker validation | Complete |
-| GitHub-hosted CI validation | Pending |
+| GitHub-hosted CI validation | Complete |
 
 ## Scope Control
 
@@ -478,8 +478,11 @@ M2.6 and later work remains not started. M2.5 excludes AI or LLM recommendation 
 - Complete skeleton health verification: Passed
 - Container runtimes: Node.js 24.18.0, pnpm 11.4.0, Python 3.13.14
 - Normal clean Docker rebuild attempts were interrupted by external registry transport failures; the exact current lockfile and all 34 workspaces were then rebuilt successfully using the previously validated M2.4 image as an offline dependency cache
-- GitHub-hosted CI validation: Pending
-- M2.5 milestone status: In progress pending hosted CI
+- GitHub-hosted CI validation date: August 2, 2026
+- GitHub-hosted CI workflow: `CI`
+- GitHub-hosted CI run `30748493190`: Passed
+- GitHub-hosted CI tested branch: `main`
+- M2.5 milestone status: Complete
 - M2.6 — Documentation Service: Not started
 
 ---
