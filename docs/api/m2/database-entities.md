@@ -103,11 +103,11 @@ The policy reference and version are resolved authoritatively through Permission
 
 ### `journals`
 
-`id`, `owner_id`, encrypted `title_ciphertext`, encrypted `description_ciphertext null`, nullable cross-service `trip_id`, `visibility` fixed `PRIVATE`, `started_at null`, `ended_at null`, common timestamps, `deleted_at`, `purge_after`, `version`. Check end after start. Index `(owner_id,created_at desc,id desc)` and `(owner_id,trip_id)` active rows.
+`id`, `owner_id`, encrypted `title_ciphertext`, encrypted `description_ciphertext null`, nullable cross-service `trip_id`, `visibility` fixed `PRIVATE`, `permission_policy_ref varchar(128) not null`, `permission_policy_version integer not null check (permission_policy_version > 0)`, `started_at null`, `ended_at null`, common timestamps, `deleted_at`, `purge_after`, `version`. Check end after start. Index `(owner_id,created_at desc,id desc)` and `(owner_id,trip_id)` active rows. Permission fields are resolved and validated server-side through Permission Service, never accepted from public DTOs, and do not independently grant access.
 
 ### `journal_entries`
 
-`id`, `journal_id FK cascade-on-purge`, `position`, `type`, encrypted `content_ciphertext null`, `occurred_at`, encrypted `location_reference_ciphertext null`, common timestamps, `deleted_at`, `version`. Unique active `(journal_id,position)`.
+`id`, `journal_id FK cascade-on-purge`, `position`, `type`, encrypted `content_ciphertext null`, nullable `media_reference_id FK journal_media_references(id)`, `occurred_at`, encrypted `location_reference_ciphertext null`, common timestamps, `deleted_at`, `version`. Unique active `(journal_id,position)`. Text entries require content and no media-reference ID; reference entries require no content and an active same-journal media-reference ID whose kind matches the entry type. The foreign key is added after both child tables exist and must not permit a cross-journal reference.
 
 ### `journal_media_references`
 

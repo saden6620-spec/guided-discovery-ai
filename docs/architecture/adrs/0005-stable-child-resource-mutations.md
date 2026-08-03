@@ -100,9 +100,15 @@ The same pattern applies to:
 
 Media references contain only a Media Service resource ID and documentation-owned metadata. Cross-service references have no foreign keys.
 
+`JournalMediaReference` is the sole Documentation persistence owner of opaque Media Service IDs. A reference-type journal entry points to the stable Documentation-owned media-reference child ID; it never persists the Media Service ID itself. Within one journal PATCH, an entry create or update may instead identify a media-reference create operation by its request-scoped `clientReference`. These references are unique within the entire request, resolve only to an earlier create operation, are discarded after dependency resolution, and never become or appear as canonical resource IDs.
+
+Journal creation may embed only TEXT entries through the dedicated `CreateJournalEntryInput` contract. It has no media-reference operations. Reference entries are created only through PATCH after the media-reference create phase described below.
+
+Mutation dependencies are processed in the fixed phase order `mediaOperations`, `entryOperations`, then `reflectionOperations`, preserving array order inside each phase, after validating the complete dependency graph. Unknown, duplicate, forward-unresolvable, cyclic, cross-journal, inactive, inaccessible, or media-kind-mismatched references reject the entire request. Position values are required non-negative integers for every journal child create and update, must be unique within each resulting child collection, and are compacted to contiguous values atomically before commit.
+
 ### Transaction rules
 
-1. Validate the entire mutation before writing.
+1. Validate the entire mutation, request-scoped references, and dependency graph before writing.
 2. Verify aggregate and child ownership.
 3. Verify parent and supplied child versions.
 4. Apply all changes in one owning-service database transaction.

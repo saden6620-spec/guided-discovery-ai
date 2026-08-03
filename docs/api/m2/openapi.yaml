@@ -1293,12 +1293,13 @@ components:
     JournalEntry:
       type: object
       additionalProperties: false
-      required: [id, type, content, mediaId, occurredAt, position, version]
+      required: [id, type, content, mediaReferenceId, occurredAt, position, version]
       properties:
         id: { $ref: "#/components/schemas/ResourceId" }
         type: { type: string, enum: [TEXT, VOICE_REFERENCE, PHOTO_REFERENCE, VIDEO_REFERENCE] }
         content: { type: [string, "null"], maxLength: 50000 }
-        mediaId: { oneOf: [{ $ref: "#/components/schemas/ResourceId" }, { type: "null" }] }
+        mediaReferenceId:
+          { oneOf: [{ $ref: "#/components/schemas/ResourceId" }, { type: "null" }] }
         occurredAt: { type: string, format: date-time }
         locationReference: { type: [string, "null"], maxLength: 500 }
         position: { type: integer, minimum: 0 }
@@ -1306,22 +1307,44 @@ components:
     JournalEntryInput:
       type: object
       additionalProperties: false
-      required: [type, occurredAt]
+      required: [type, occurredAt, position]
       allOf:
         - if: { properties: { type: { const: TEXT } }, required: [type] }
-          then: { required: [content], not: { required: [mediaId] } }
+          then:
+            allOf:
+              - required: [content]
+              - not: { anyOf: [{ required: [mediaReferenceId] }, { required: [mediaReferenceClientReference] }] }
         - if:
             {
               properties: { type: { enum: [VOICE_REFERENCE, PHOTO_REFERENCE, VIDEO_REFERENCE] } },
               required: [type],
             }
-          then: { required: [mediaId], not: { required: [content] } }
+          then:
+            allOf:
+              - oneOf:
+                  - required: [mediaReferenceId]
+                    not: { required: [mediaReferenceClientReference] }
+                  - required: [mediaReferenceClientReference]
+                    not: { required: [mediaReferenceId] }
+              - not: { required: [content] }
       properties:
         type: { type: string, enum: [TEXT, VOICE_REFERENCE, PHOTO_REFERENCE, VIDEO_REFERENCE] }
         content: { type: string, maxLength: 50000 }
-        mediaId: { $ref: "#/components/schemas/ResourceId" }
+        mediaReferenceId: { $ref: "#/components/schemas/ResourceId" }
+        mediaReferenceClientReference: { type: string, minLength: 1, maxLength: 64 }
         occurredAt: { type: string, format: date-time }
         locationReference: { type: string, maxLength: 500 }
+        position: { type: integer, minimum: 0 }
+    CreateJournalEntryInput:
+      type: object
+      additionalProperties: false
+      required: [type, content, occurredAt, position]
+      properties:
+        type: { type: string, const: TEXT }
+        content: { type: string, minLength: 1, maxLength: 50000 }
+        occurredAt: { type: string, format: date-time }
+        locationReference: { type: string, maxLength: 500 }
+        position: { type: integer, minimum: 0 }
     JournalResource:
       type: object
       required:
@@ -1365,7 +1388,11 @@ components:
         startedAt: { type: string, format: date-time }
         endedAt: { type: string, format: date-time }
         entries:
-          { type: array, maxItems: 500, items: { $ref: "#/components/schemas/JournalEntryInput" } }
+          {
+            type: array,
+            maxItems: 500,
+            items: { $ref: "#/components/schemas/CreateJournalEntryInput" },
+          }
     UpdateJournalRequest:
       type: object
       additionalProperties: false
@@ -1440,7 +1467,7 @@ components:
     ReflectionInput:
       type: object
       additionalProperties: false
-      required: [text, occurredAt]
+      required: [text, occurredAt, position]
       properties:
         {
           entryId: { $ref: "#/components/schemas/ResourceId" },
