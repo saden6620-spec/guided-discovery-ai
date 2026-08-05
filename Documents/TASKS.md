@@ -17,8 +17,8 @@ Only the active milestone may be implemented. Work outside the active milestone 
 - Active phase: Phase 2 — Core Backend
 - Phase status: In progress
 - Active milestone: M2.6 — Documentation Service
-- Milestone status: In progress
-- Hosted CI validation: Pending
+- Milestone status: Complete
+- Hosted CI validation: Passed on August 5, 2026
 - Hosted CI tested branch: `main`
 - Next milestone: M2.7 — Notification Service
 - Next milestone status: Not started
@@ -512,7 +512,7 @@ Implement the approved Documentation Service journal, entry, reflection, and opa
 | OpenAPI generation and public/internal/AsyncAPI contract validation | Complete |
 | Unit, integration, API contract, migration, and regression tests | Complete |
 | Complete repository, migration, Playwright, and Docker validation | Complete |
-| GitHub-hosted CI validation | In progress |
+| GitHub-hosted CI validation | Complete |
 
 ## Scope Control
 
@@ -534,8 +534,11 @@ M2.7 and later work remains not started. M2.6 excludes raw media handling, file 
 - Documentation readiness: Passed with PostgreSQL `UP`
 - Complete skeleton health verification: Passed
 - Container runtimes: Node.js 24.18.0, pnpm 11.4.0, Python 3.13.14
-- GitHub-hosted CI validation: Pending
-- M2.6 milestone status: In progress
+- GitHub-hosted CI validation date: August 5, 2026
+- GitHub-hosted CI workflow: `CI`
+- GitHub-hosted CI run `31038611697`: Passed
+- GitHub-hosted CI tested branch: `main`
+- M2.6 milestone status: Complete
 - M2.7 — Notification Service: Not started
 
 ---
