@@ -1298,8 +1298,7 @@ components:
         id: { $ref: "#/components/schemas/ResourceId" }
         type: { type: string, enum: [TEXT, VOICE_REFERENCE, PHOTO_REFERENCE, VIDEO_REFERENCE] }
         content: { type: [string, "null"], maxLength: 50000 }
-        mediaReferenceId:
-          { oneOf: [{ $ref: "#/components/schemas/ResourceId" }, { type: "null" }] }
+        mediaReferenceId: { oneOf: [{ $ref: "#/components/schemas/ResourceId" }, { type: "null" }] }
         occurredAt: { type: string, format: date-time }
         locationReference: { type: [string, "null"], maxLength: 500 }
         position: { type: integer, minimum: 0 }
@@ -1313,7 +1312,14 @@ components:
           then:
             allOf:
               - required: [content]
-              - not: { anyOf: [{ required: [mediaReferenceId] }, { required: [mediaReferenceClientReference] }] }
+              - not:
+                  {
+                    anyOf:
+                      [
+                        { required: [mediaReferenceId] },
+                        { required: [mediaReferenceClientReference] },
+                      ],
+                  }
         - if:
             {
               properties: { type: { enum: [VOICE_REFERENCE, PHOTO_REFERENCE, VIDEO_REFERENCE] } },
@@ -1433,10 +1439,9 @@ components:
     JournalMediaReference:
       type: object
       additionalProperties: false
-      required: [id, entryId, mediaId, mediaKind, caption, position, version]
+      required: [id, mediaId, mediaKind, caption, position, version]
       properties:
         id: { $ref: "#/components/schemas/ResourceId" }
-        entryId: { oneOf: [{ $ref: "#/components/schemas/ResourceId" }, { type: "null" }] }
         mediaId: { $ref: "#/components/schemas/ResourceId" }
         mediaKind: { type: string, enum: [VOICE, PHOTO, VIDEO] }
         caption: { type: [string, "null"], maxLength: 1000 }
@@ -1503,7 +1508,6 @@ components:
       required: [mediaId, mediaKind, position]
       properties:
         {
-          entryId: { $ref: "#/components/schemas/ResourceId" },
           mediaId: { $ref: "#/components/schemas/ResourceId" },
           mediaKind: { enum: [VOICE, PHOTO, VIDEO] },
           caption: { type: string, maxLength: 1000 },

@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS legal_hold_resources,legal_holds,idempotency_records,dead_letter_events,inbox_events,outbox_events,reflections,journal_entries,journal_media_references,journals CASCADE;

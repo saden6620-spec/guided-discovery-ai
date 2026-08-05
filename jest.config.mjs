@@ -9,6 +9,7 @@ const config = {
     "<rootDir>/backend/planning-service/__tests__/**/*.test.cjs",
     "<rootDir>/backend/navigation-service/__tests__/**/*.test.cjs",
     "<rootDir>/backend/recommendation-service/__tests__/**/*.test.cjs",
+    "<rootDir>/backend/documentation-service/__tests__/**/*.test.cjs",
   ],
 };
 

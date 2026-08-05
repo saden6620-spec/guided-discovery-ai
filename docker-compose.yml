@@ -83,6 +83,22 @@ services:
     volumes:
       - recommendation-postgres-data:/var/lib/postgresql/data
 
+  documentation-database:
+    image: postgres:17.6-alpine
+    environment:
+      POSTGRES_DB: documentation_service
+      POSTGRES_USER: documentation_service
+      POSTGRES_PASSWORD: documentation_service_local
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U documentation_service -d documentation_service"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    ports:
+      - "55437:5432"
+    volumes:
+      - documentation-postgres-data:/var/lib/postgresql/data
+
   workspace:
     build:
       context: .
@@ -202,12 +218,18 @@ services:
 
   documentation-service:
     <<: *backend-service
-    command: pnpm --filter @guided-discovery/documentation-service start
+    command: sh -c "pnpm --filter @guided-discovery/documentation-service migrate:deploy && pnpm --filter @guided-discovery/documentation-service start"
+    depends_on:
+      documentation-database:
+        condition: service_healthy
     environment:
       SERVICE_NAME: ${DOCUMENTATION_SERVICE_NAME:-documentation-service}
       SERVICE_PORT: "3008"
-      SERVICE_VERSION: "${SERVICE_VERSION:-0.1.0}"
-      DATABASE_URL: "${DATABASE_URL:-postgresql://placeholder:placeholder@database.invalid:5432/documentation_service}"
+      SERVICE_VERSION: "${SERVICE_VERSION:-0.2.0}"
+      DATABASE_URL: "${DOCUMENTATION_DATABASE_URL:-postgresql://documentation_service:documentation_service_local@documentation-database:5432/documentation_service}"
+      DOCUMENTATION_DATABASE_URL: "${DOCUMENTATION_DATABASE_URL:-postgresql://documentation_service:documentation_service_local@documentation-database:5432/documentation_service}"
+      APP_ENV: development
+      PERMISSION_TEST_ALLOW: "true"
     ports:
       - "3008:3008"
 
@@ -338,3 +360,4 @@ volumes:
   planning-postgres-data:
   navigation-postgres-data:
   recommendation-postgres-data:
+  documentation-postgres-data:

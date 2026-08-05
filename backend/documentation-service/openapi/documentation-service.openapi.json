@@ -1,0 +1,2675 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "Guided Discovery Documentation Service API",
+    "version": "1.0.0",
+    "description": "Authoritative public M2 HTTP contract under ADR-0001 through ADR-0011. Every operation accepts X-Request-ID, traceparent, and optional tracestate; the gateway returns the effective X-Request-ID. Cross-field and lifecycle rules are identified in validation-specification.md and are contract-tested."
+  },
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Memory"
+    },
+    {
+      "name": "Planning"
+    },
+    {
+      "name": "Navigation"
+    },
+    {
+      "name": "Recommendations"
+    },
+    {
+      "name": "Documentation"
+    },
+    {
+      "name": "Notifications"
+    },
+    {
+      "name": "Search"
+    }
+  ],
+  "paths": {
+    "/journals": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/RequestId"
+        },
+        {
+          "$ref": "#/components/parameters/Traceparent"
+        },
+        {
+          "$ref": "#/components/parameters/Tracestate"
+        }
+      ],
+      "get": {
+        "summary": "List journals",
+        "tags": ["Documentation"],
+        "operationId": "listJournals",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Cursor"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "name": "tripId",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ResourceId"
+            }
+          },
+          {
+            "name": "startedFrom",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "startedTo",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Journals",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a journal",
+        "tags": ["Documentation"],
+        "operationId": "createJournal",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateJournalRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Journal created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    },
+    "/journals/{id}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/RequestId"
+        },
+        {
+          "$ref": "#/components/parameters/Traceparent"
+        },
+        {
+          "$ref": "#/components/parameters/Tracestate"
+        },
+        {
+          "$ref": "#/components/parameters/ResourceIdPath"
+        }
+      ],
+      "patch": {
+        "summary": "Update a journal",
+        "tags": ["Documentation"],
+        "operationId": "updateJournal",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateJournalRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Journal updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JournalResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a journal",
+        "tags": ["Documentation"],
+        "operationId": "deleteJournal",
+        "responses": {
+          "204": {
+            "description": "Journal deleted"
+          },
+          "400": {
+            "$ref": "#/components/responses/Error"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "parameters": {
+      "RequestId": {
+        "name": "X-Request-ID",
+        "in": "header",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[!-~]+$"
+        }
+      },
+      "Traceparent": {
+        "name": "traceparent",
+        "in": "header",
+        "schema": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{2}-[0-9a-f]{32}-[0-9a-f]{16}-[0-9a-f]{2}$"
+        }
+      },
+      "Tracestate": {
+        "name": "tracestate",
+        "in": "header",
+        "schema": {
+          "type": "string",
+          "maxLength": 512
+        }
+      },
+      "Cursor": {
+        "name": "cursor",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 4096
+        }
+      },
+      "Limit": {
+        "name": "limit",
+        "in": "query",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        }
+      },
+      "IdempotencyKey": {
+        "name": "Idempotency-Key",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 128,
+          "pattern": "^[!-~]+$"
+        }
+      },
+      "ResourceIdPath": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/ResourceId"
+        }
+      }
+    },
+    "responses": {
+      "Error": {
+        "description": "Standard API error",
+        "headers": {
+          "X-Request-ID": {
+            "$ref": "#/components/headers/RequestId"
+          },
+          "RateLimit-Limit": {
+            "$ref": "#/components/headers/RateLimitLimit"
+          },
+          "RateLimit-Remaining": {
+            "$ref": "#/components/headers/RateLimitRemaining"
+          },
+          "RateLimit-Reset": {
+            "$ref": "#/components/headers/RateLimitReset"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiErrorResponse"
+            }
+          }
+        }
+      },
+      "RateLimited": {
+        "description": "Request rate limit exceeded",
+        "headers": {
+          "X-Request-ID": {
+            "$ref": "#/components/headers/RequestId"
+          },
+          "RateLimit-Limit": {
+            "$ref": "#/components/headers/RateLimitLimit"
+          },
+          "RateLimit-Remaining": {
+            "$ref": "#/components/headers/RateLimitRemaining"
+          },
+          "RateLimit-Reset": {
+            "$ref": "#/components/headers/RateLimitReset"
+          },
+          "Retry-After": {
+            "$ref": "#/components/headers/RetryAfter"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ApiErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "headers": {
+      "RequestId": {
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        }
+      },
+      "RateLimitLimit": {
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "RateLimitRemaining": {
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "RateLimitReset": {
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "RetryAfter": {
+        "required": true,
+        "schema": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "schemas": {
+      "EmptyMetadata": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "ErrorMetadata": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "currentState": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "requestedAction": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "retryable": {
+            "type": "boolean"
+          },
+          "dependency": {
+            "type": "string",
+            "maxLength": 64
+          }
+        }
+      },
+      "ResourceId": {
+        "type": "string",
+        "format": "uuid",
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+      },
+      "VersionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["expectedVersion"],
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          }
+        }
+      },
+      "ApiErrorResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["success", "error", "metadata"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": false
+          },
+          "error": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["code", "message", "requestId"],
+            "properties": {
+              "code": {
+                "type": "string",
+                "pattern": "^[A-Z][A-Z0-9_]*$"
+              },
+              "message": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              },
+              "requestId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128
+              },
+              "fields": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["field", "code", "message"],
+                  "properties": {
+                    "field": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "code": {
+                      "type": "string",
+                      "pattern": "^[A-Z][A-Z0-9_]{2,63}$"
+                    },
+                    "message": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 500
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/ErrorMetadata"
+          }
+        }
+      },
+      "PageMetadata": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["nextCursor", "hasMore", "limit"],
+        "properties": {
+          "nextCursor": {
+            "type": ["string", "null"]
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        }
+      },
+      "MemorySensitivity": {
+        "type": "string",
+        "enum": ["STANDARD", "SENSITIVE", "HIGHLY_SENSITIVE"]
+      },
+      "MemoryResource": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "summary",
+          "category",
+          "importance",
+          "state",
+          "sensitivity",
+          "verificationStatus",
+          "purpose",
+          "sourceType",
+          "sourceRef",
+          "originatedAt",
+          "confidence",
+          "userConfirmedAt",
+          "links",
+          "visibility",
+          "retentionPolicyRef",
+          "createdAt",
+          "updatedAt",
+          "version"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "category": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "key", "displayName"],
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/ResourceId"
+              },
+              "key": {
+                "type": "string",
+                "enum": [
+                  "PROFILE",
+                  "GOAL",
+                  "LEARNING_PROGRESS",
+                  "SKILL",
+                  "PREFERENCE",
+                  "TRAVEL_HISTORY",
+                  "INTEREST",
+                  "JOURNAL",
+                  "EXPERIENCE",
+                  "HEALTH",
+                  "SAFETY_PREFERENCE"
+                ]
+              },
+              "displayName": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              }
+            }
+          },
+          "importance": {
+            "type": ["number", "null"],
+            "minimum": 0,
+            "maximum": 1
+          },
+          "state": {
+            "type": "string",
+            "enum": ["ACTIVE", "ARCHIVED"]
+          },
+          "sensitivity": {
+            "$ref": "#/components/schemas/MemorySensitivity"
+          },
+          "verificationStatus": {
+            "type": "string",
+            "enum": ["UNVERIFIED", "USER_CONFIRMED", "SOURCE_VERIFIED", "CORRECTED"]
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "sourceType": {
+            "type": "string",
+            "enum": ["USER_EXPLICIT", "USER_CONFIRMED", "IMPORT", "SERVICE_EVENT"]
+          },
+          "sourceRef": {
+            "type": ["string", "null"],
+            "maxLength": 256
+          },
+          "originatedAt": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "userConfirmedAt": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "links": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/components/schemas/MemoryLinkResource"
+            }
+          },
+          "visibility": {
+            "type": "string",
+            "const": "PRIVATE"
+          },
+          "retentionPolicyRef": {
+            "type": "string",
+            "enum": ["U0_ACTIVE"]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "CreateMemoryRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "summary", "purpose", "categoryId", "sensitivity"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10000
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "categoryId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "importance": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "default": 0.5
+          },
+          "sensitivity": {
+            "$ref": "#/components/schemas/MemorySensitivity"
+          },
+          "originatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "userConfirmed": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "UpdateMemoryRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["expectedVersion"],
+        "minProperties": 2,
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10000
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "categoryId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "importance": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "sensitivity": {
+            "$ref": "#/components/schemas/MemorySensitivity"
+          },
+          "userConfirmed": {
+            "type": "boolean"
+          },
+          "correctionReason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "state": {
+            "type": "string",
+            "enum": ["ACTIVE", "ARCHIVED"]
+          },
+          "linkOperations": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/components/schemas/MemoryLinkOperation"
+            }
+          }
+        }
+      },
+      "MemoryLinkOperation": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["operation", "clientReference", "targetMemoryId", "relationshipType"],
+            "properties": {
+              "operation": {
+                "const": "CREATE"
+              },
+              "clientReference": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "targetMemoryId": {
+                "$ref": "#/components/schemas/ResourceId"
+              },
+              "relationshipType": {
+                "type": "string",
+                "enum": ["RELATED_TO", "SUPERSEDES", "SUPPORTS", "CONTRADICTS", "PART_OF"]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["operation", "id", "expectedVersion"],
+            "properties": {
+              "operation": {
+                "const": "DELETE"
+              },
+              "id": {
+                "$ref": "#/components/schemas/ResourceId"
+              },
+              "expectedVersion": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          }
+        ]
+      },
+      "MemoryLinkResource": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "sourceMemoryId",
+          "targetMemoryId",
+          "relationshipType",
+          "createdAt",
+          "version"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "sourceMemoryId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "targetMemoryId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "relationshipType": {
+            "type": "string",
+            "enum": ["RELATED_TO", "SUPERSEDES", "SUPPORTS", "CONTRADICTS", "PART_OF"]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "MemoryResponse": {
+        "$ref": "#/components/schemas/SingleMemoryEnvelope"
+      },
+      "SingleMemoryEnvelope": {
+        "type": "object",
+        "required": ["success", "data", "metadata"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/MemoryResource"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/EmptyMetadata"
+          }
+        }
+      },
+      "MemoryPage": {
+        "type": "object",
+        "required": ["success", "data", "metadata"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MemoryResource"
+            }
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/PageMetadata"
+          }
+        }
+      },
+      "PlanStatus": {
+        "type": "string",
+        "enum": ["DRAFT", "ACCEPTED", "COMPLETED", "CANCELLED"]
+      },
+      "PlanItem": {
+        "type": "object",
+        "required": ["id", "title", "status", "position", "version"],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "startsAt": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "endsAt": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "locationReference": {
+            "type": ["string", "null"],
+            "maxLength": 500
+          },
+          "notes": {
+            "type": ["string", "null"],
+            "maxLength": 10000
+          },
+          "status": {
+            "type": "string",
+            "enum": ["PLANNED", "COMPLETED", "CANCELLED"]
+          },
+          "position": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "Reservation": {
+        "type": "object",
+        "required": ["id", "providerName", "status", "version"],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "providerName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "reference": {
+            "type": ["string", "null"],
+            "maxLength": 500
+          },
+          "startsAt": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "endsAt": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["PLANNED", "CONFIRMED", "CANCELLED"]
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "ChecklistItem": {
+        "type": "object",
+        "required": ["id", "title", "status", "position", "version"],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "status": {
+            "type": "string",
+            "enum": ["PENDING", "COMPLETE"]
+          },
+          "position": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "PlanItemInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "position"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "position": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "startsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locationReference": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "notes": {
+            "type": "string",
+            "maxLength": 10000
+          },
+          "status": {
+            "type": "string",
+            "enum": ["PLANNED", "COMPLETED", "CANCELLED"],
+            "default": "PLANNED"
+          }
+        }
+      },
+      "ReservationInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["providerName"],
+        "properties": {
+          "providerName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "reference": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "startsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["PLANNED", "CONFIRMED", "CANCELLED"],
+            "default": "PLANNED"
+          }
+        }
+      },
+      "ChecklistItemInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "position"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "position": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "status": {
+            "type": "string",
+            "enum": ["PENDING", "COMPLETE"],
+            "default": "PENDING"
+          }
+        }
+      },
+      "PlanResource": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "status",
+          "startDate",
+          "endDate",
+          "budget",
+          "notes",
+          "items",
+          "reservations",
+          "checklistItems",
+          "createdAt",
+          "updatedAt",
+          "version"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/PlanStatus"
+          },
+          "startDate": {
+            "type": ["string", "null"],
+            "format": "date"
+          },
+          "endDate": {
+            "type": ["string", "null"],
+            "format": "date"
+          },
+          "budget": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "required": ["amount", "currency"],
+                "properties": {
+                  "amount": {
+                    "type": "string",
+                    "pattern": "^[0-9]+(\\.[0-9]+)?$"
+                  },
+                  "currency": {
+                    "type": "string",
+                    "pattern": "^[A-Z]{3}$"
+                  }
+                }
+              }
+            ]
+          },
+          "notes": {
+            "type": ["string", "null"]
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlanItem"
+            }
+          },
+          "reservations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Reservation"
+            }
+          },
+          "checklistItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChecklistItem"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "CreatePlanRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title"],
+        "dependentRequired": {
+          "budgetAmount": ["budgetCurrency"],
+          "budgetCurrency": ["budgetAmount"]
+        },
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "budgetAmount": {
+            "type": "string",
+            "pattern": "^[0-9]+(\\.[0-9]+)?$"
+          },
+          "budgetCurrency": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$"
+          },
+          "notes": {
+            "type": "string",
+            "maxLength": 10000
+          },
+          "items": {
+            "type": "array",
+            "maxItems": 500,
+            "items": {
+              "$ref": "#/components/schemas/PlanItemInput"
+            }
+          },
+          "reservations": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/components/schemas/ReservationInput"
+            }
+          },
+          "checklistItems": {
+            "type": "array",
+            "maxItems": 500,
+            "items": {
+              "$ref": "#/components/schemas/ChecklistItemInput"
+            }
+          }
+        }
+      },
+      "UpdatePlanRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["expectedVersion"],
+        "minProperties": 2,
+        "dependentRequired": {
+          "budgetAmount": ["budgetCurrency"],
+          "budgetCurrency": ["budgetAmount"]
+        },
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "status": {
+            "$ref": "#/components/schemas/PlanStatus"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "budgetAmount": {
+            "type": "string",
+            "pattern": "^[0-9]+(\\.[0-9]+)?$"
+          },
+          "budgetCurrency": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$"
+          },
+          "notes": {
+            "type": "string",
+            "maxLength": 10000
+          },
+          "itemOperations": {
+            "type": "array",
+            "maxItems": 500,
+            "items": {
+              "$ref": "#/components/schemas/PlanItemOperation"
+            }
+          },
+          "reservationOperations": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/components/schemas/ReservationOperation"
+            }
+          },
+          "checklistOperations": {
+            "type": "array",
+            "maxItems": 500,
+            "items": {
+              "$ref": "#/components/schemas/ChecklistOperation"
+            }
+          }
+        }
+      },
+      "PlanItemOperation": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/CreatePlanItemOperation"
+          },
+          {
+            "$ref": "#/components/schemas/UpdatePlanItemOperation"
+          },
+          {
+            "$ref": "#/components/schemas/DeleteChildOperation"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "operation"
+        }
+      },
+      "CreatePlanItemOperation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["operation", "clientReference", "value"],
+        "properties": {
+          "operation": {
+            "const": "CREATE"
+          },
+          "clientReference": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "value": {
+            "$ref": "#/components/schemas/PlanItemInput"
+          }
+        }
+      },
+      "UpdatePlanItemOperation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["operation", "id", "expectedVersion", "value"],
+        "properties": {
+          "operation": {
+            "const": "UPDATE"
+          },
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "value": {
+            "$ref": "#/components/schemas/PlanItemInput"
+          }
+        }
+      },
+      "DeleteChildOperation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["operation", "id", "expectedVersion"],
+        "properties": {
+          "operation": {
+            "const": "DELETE"
+          },
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "ReservationOperation": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["operation", "clientReference", "value"],
+            "properties": {
+              "operation": {
+                "const": "CREATE"
+              },
+              "clientReference": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "value": {
+                "$ref": "#/components/schemas/ReservationInput"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["operation", "id", "expectedVersion", "value"],
+            "properties": {
+              "operation": {
+                "const": "UPDATE"
+              },
+              "id": {
+                "$ref": "#/components/schemas/ResourceId"
+              },
+              "expectedVersion": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "value": {
+                "$ref": "#/components/schemas/ReservationInput"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/DeleteChildOperation"
+          }
+        ]
+      },
+      "ChecklistOperation": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["operation", "clientReference", "value"],
+            "properties": {
+              "operation": {
+                "const": "CREATE"
+              },
+              "clientReference": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "value": {
+                "$ref": "#/components/schemas/ChecklistItemInput"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["operation", "id", "expectedVersion", "value"],
+            "properties": {
+              "operation": {
+                "const": "UPDATE"
+              },
+              "id": {
+                "$ref": "#/components/schemas/ResourceId"
+              },
+              "expectedVersion": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "value": {
+                "$ref": "#/components/schemas/ChecklistItemInput"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/DeleteChildOperation"
+          }
+        ]
+      },
+      "PlanResponse": {
+        "type": "object",
+        "required": ["success", "data", "metadata"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/PlanResource"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/EmptyMetadata"
+          }
+        }
+      },
+      "PlanPage": {
+        "type": "object",
+        "required": ["success", "data", "metadata"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlanResource"
+            }
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/PageMetadata"
+          }
+        }
+      },
+      "TravelMode": {
+        "type": "string",
+        "enum": ["WALKING", "CYCLING", "DRIVING", "TRANSIT", "OTHER"]
+      },
+      "NavigationResource": {
+        "type": "object",
+        "required": [
+          "id",
+          "tripId",
+          "destinationId",
+          "routeId",
+          "travelMode",
+          "tripState",
+          "sessionState",
+          "startedAt",
+          "stoppedAt",
+          "stopReason",
+          "createdAt",
+          "updatedAt",
+          "version"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "tripId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "destinationId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "routeId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "travelMode": {
+            "$ref": "#/components/schemas/TravelMode"
+          },
+          "tripState": {
+            "type": "string",
+            "enum": ["ACTIVE", "COMPLETED", "CANCELLED"]
+          },
+          "sessionState": {
+            "type": "string",
+            "enum": ["ACTIVE", "COMPLETED", "CANCELLED"]
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "stoppedAt": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "stopReason": {
+            "type": ["string", "null"],
+            "enum": ["COMPLETED", "CANCELLED", null]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "StartNavigationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["destinationId", "routeId", "travelMode"],
+        "properties": {
+          "destinationId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "routeId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "travelMode": {
+            "$ref": "#/components/schemas/TravelMode"
+          }
+        }
+      },
+      "StopNavigationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["sessionId", "outcome", "expectedVersion"],
+        "properties": {
+          "sessionId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "outcome": {
+            "type": "string",
+            "enum": ["COMPLETED", "CANCELLED"]
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          }
+        }
+      },
+      "RerouteNavigationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["sessionId", "replacementRouteId", "expectedVersion"],
+        "properties": {
+          "sessionId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "replacementRouteId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          }
+        }
+      },
+      "NavigationResponse": {
+        "type": "object",
+        "required": ["success", "data", "metadata"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/NavigationResource"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/EmptyMetadata"
+          }
+        }
+      },
+      "RecommendationStatus": {
+        "type": "string",
+        "enum": ["AVAILABLE", "ACCEPTED", "REJECTED", "DISMISSED", "IGNORED", "EXPIRED"]
+      },
+      "RecommendationResource": {
+        "type": "object",
+        "required": [
+          "id",
+          "category",
+          "title",
+          "summary",
+          "status",
+          "confidence",
+          "availableAt",
+          "expiresAt",
+          "createdAt",
+          "updatedAt",
+          "version"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "category": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]{1,63}$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 5000
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 5000
+          },
+          "status": {
+            "$ref": "#/components/schemas/RecommendationStatus"
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "availableAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "RecommendationResponse": {
+        "type": "object",
+        "required": ["success", "data", "metadata"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/RecommendationResource"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/EmptyMetadata"
+          }
+        }
+      },
+      "RecommendationPage": {
+        "type": "object",
+        "required": ["success", "data", "metadata"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecommendationResource"
+            }
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/PageMetadata"
+          }
+        }
+      },
+      "JournalEntry": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "type",
+          "content",
+          "mediaReferenceId",
+          "occurredAt",
+          "position",
+          "version"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["TEXT", "VOICE_REFERENCE", "PHOTO_REFERENCE", "VIDEO_REFERENCE"]
+          },
+          "content": {
+            "type": ["string", "null"],
+            "maxLength": 50000
+          },
+          "mediaReferenceId": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ResourceId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locationReference": {
+            "type": ["string", "null"],
+            "maxLength": 500
+          },
+          "position": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "JournalEntryInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "occurredAt", "position"],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "const": "TEXT"
+                }
+              },
+              "required": ["type"]
+            },
+            "then": {
+              "allOf": [
+                {
+                  "required": ["content"]
+                },
+                {
+                  "not": {
+                    "anyOf": [
+                      {
+                        "required": ["mediaReferenceId"]
+                      },
+                      {
+                        "required": ["mediaReferenceClientReference"]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "enum": ["VOICE_REFERENCE", "PHOTO_REFERENCE", "VIDEO_REFERENCE"]
+                }
+              },
+              "required": ["type"]
+            },
+            "then": {
+              "allOf": [
+                {
+                  "oneOf": [
+                    {
+                      "required": ["mediaReferenceId"],
+                      "not": {
+                        "required": ["mediaReferenceClientReference"]
+                      }
+                    },
+                    {
+                      "required": ["mediaReferenceClientReference"],
+                      "not": {
+                        "required": ["mediaReferenceId"]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "not": {
+                    "required": ["content"]
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["TEXT", "VOICE_REFERENCE", "PHOTO_REFERENCE", "VIDEO_REFERENCE"]
+          },
+          "content": {
+            "type": "string",
+            "maxLength": 50000
+          },
+          "mediaReferenceId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "mediaReferenceClientReference": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locationReference": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "position": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "CreateJournalEntryInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "content", "occurredAt", "position"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "TEXT"
+          },
+          "content": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50000
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "locationReference": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "position": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "JournalResource": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "description",
+          "tripId",
+          "visibility",
+          "startedAt",
+          "endedAt",
+          "entries",
+          "reflections",
+          "media",
+          "createdAt",
+          "updatedAt",
+          "version"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": ["string", "null"]
+          },
+          "tripId": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ResourceId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "visibility": {
+            "type": "string",
+            "const": "PRIVATE"
+          },
+          "startedAt": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "endedAt": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JournalEntry"
+            }
+          },
+          "reflections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReflectionResource"
+            }
+          },
+          "media": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JournalMediaReference"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "CreateJournalRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 10000
+          },
+          "tripId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "entries": {
+            "type": "array",
+            "maxItems": 500,
+            "items": {
+              "$ref": "#/components/schemas/CreateJournalEntryInput"
+            }
+          }
+        }
+      },
+      "UpdateJournalRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["expectedVersion"],
+        "minProperties": 2,
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 10000
+          },
+          "tripId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "entryOperations": {
+            "type": "array",
+            "maxItems": 500,
+            "items": {
+              "$ref": "#/components/schemas/JournalEntryOperation"
+            }
+          },
+          "reflectionOperations": {
+            "type": "array",
+            "maxItems": 500,
+            "items": {
+              "$ref": "#/components/schemas/ReflectionOperation"
+            }
+          },
+          "mediaOperations": {
+            "type": "array",
+            "maxItems": 500,
+            "items": {
+              "$ref": "#/components/schemas/MediaOperation"
+            }
+          }
+        }
+      },
+      "ReflectionResource": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "entryId", "text", "occurredAt", "position", "version"],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "entryId": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ResourceId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10000
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "position": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "JournalMediaReference": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "mediaId", "mediaKind", "caption", "position", "version"],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "mediaId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "mediaKind": {
+            "type": "string",
+            "enum": ["VOICE", "PHOTO", "VIDEO"]
+          },
+          "caption": {
+            "type": ["string", "null"],
+            "maxLength": 1000
+          },
+          "position": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "JournalEntryOperation": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["operation", "clientReference", "value"],
+            "properties": {
+              "operation": {
+                "const": "CREATE"
+              },
+              "clientReference": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "value": {
+                "$ref": "#/components/schemas/JournalEntryInput"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["operation", "id", "expectedVersion", "value"],
+            "properties": {
+              "operation": {
+                "const": "UPDATE"
+              },
+              "id": {
+                "$ref": "#/components/schemas/ResourceId"
+              },
+              "expectedVersion": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "value": {
+                "$ref": "#/components/schemas/JournalEntryInput"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/DeleteChildOperation"
+          }
+        ]
+      },
+      "ReflectionInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["text", "occurredAt", "position"],
+        "properties": {
+          "entryId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10000
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "position": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "ReflectionOperation": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["operation", "clientReference", "value"],
+            "properties": {
+              "operation": {
+                "const": "CREATE"
+              },
+              "clientReference": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "value": {
+                "$ref": "#/components/schemas/ReflectionInput"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["operation", "id", "expectedVersion", "value"],
+            "properties": {
+              "operation": {
+                "const": "UPDATE"
+              },
+              "id": {
+                "$ref": "#/components/schemas/ResourceId"
+              },
+              "expectedVersion": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "value": {
+                "$ref": "#/components/schemas/ReflectionInput"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/DeleteChildOperation"
+          }
+        ]
+      },
+      "MediaReferenceInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["mediaId", "mediaKind", "position"],
+        "properties": {
+          "mediaId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "mediaKind": {
+            "enum": ["VOICE", "PHOTO", "VIDEO"]
+          },
+          "caption": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "position": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "MediaOperation": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["operation", "clientReference", "value"],
+            "properties": {
+              "operation": {
+                "const": "CREATE"
+              },
+              "clientReference": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "value": {
+                "$ref": "#/components/schemas/MediaReferenceInput"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["operation", "id", "expectedVersion", "value"],
+            "properties": {
+              "operation": {
+                "const": "UPDATE"
+              },
+              "id": {
+                "$ref": "#/components/schemas/ResourceId"
+              },
+              "expectedVersion": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "value": {
+                "$ref": "#/components/schemas/MediaReferenceInput"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/DeleteChildOperation"
+          }
+        ]
+      },
+      "JournalResponse": {
+        "type": "object",
+        "required": ["success", "data", "metadata"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/JournalResource"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/EmptyMetadata"
+          }
+        }
+      },
+      "JournalPage": {
+        "type": "object",
+        "required": ["success", "data", "metadata"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JournalResource"
+            }
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/PageMetadata"
+          }
+        }
+      },
+      "NotificationChannel": {
+        "type": "string",
+        "enum": ["PUSH", "EMAIL", "SMS"]
+      },
+      "NotificationStatus": {
+        "type": "string",
+        "enum": [
+          "DRAFT",
+          "SCHEDULED",
+          "QUEUED",
+          "PROCESSING",
+          "DELIVERED",
+          "FAILED",
+          "CANCELLED",
+          "EXPIRED"
+        ]
+      },
+      "NotificationResource": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "channel",
+          "title",
+          "body",
+          "status",
+          "scheduledFor",
+          "deliveredAt",
+          "readAt",
+          "createdAt",
+          "updatedAt",
+          "version"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "channel": {
+            "$ref": "#/components/schemas/NotificationChannel"
+          },
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/NotificationStatus"
+          },
+          "scheduledFor": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "deliveredAt": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "readAt": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "UpdateNotificationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["expectedVersion"],
+        "minProperties": 2,
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "read": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string",
+            "const": "CANCELLED"
+          }
+        }
+      },
+      "NotificationResponse": {
+        "type": "object",
+        "required": ["success", "data", "metadata"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true
+          },
+          "data": {
+            "$ref": "#/components/schemas/NotificationResource"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/EmptyMetadata"
+          }
+        }
+      },
+      "NotificationPage": {
+        "type": "object",
+        "required": ["success", "data", "metadata"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NotificationResource"
+            }
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/PageMetadata"
+          }
+        }
+      },
+      "SearchResourceType": {
+        "type": "string",
+        "enum": ["MEMORY", "TRIP", "JOURNAL", "LANDMARK", "LEARNING", "COMMUNITY"]
+      },
+      "SearchResultResource": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "sourceResourceId", "title", "snippet", "updatedAt"],
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/SearchResourceType"
+          },
+          "sourceResourceId": {
+            "$ref": "#/components/schemas/ResourceId"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "snippet": {
+            "type": ["string", "null"],
+            "maxLength": 500
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SearchResultPage": {
+        "type": "object",
+        "required": ["success", "data", "metadata"],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "const": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SearchResultResource"
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "nextCursor",
+              "hasMore",
+              "limit",
+              "partial",
+              "availability",
+              "rankingProfileVersion",
+              "indexVersions"
+            ],
+            "properties": {
+              "nextCursor": {
+                "type": ["string", "null"]
+              },
+              "hasMore": {
+                "type": "boolean"
+              },
+              "limit": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100
+              },
+              "partial": {
+                "type": "boolean"
+              },
+              "rankingProfileVersion": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "indexVersions": {
+                "type": "array",
+                "maxItems": 4,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["type", "schemaVersion", "generation"],
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": ["MEMORY", "TRIP", "JOURNAL", "LANDMARK"]
+                    },
+                    "schemaVersion": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "generation": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 128
+                    }
+                  }
+                }
+              },
+              "availability": {
+                "type": "array",
+                "maxItems": 6,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["type", "status"],
+                  "properties": {
+                    "type": {
+                      "$ref": "#/components/schemas/SearchResourceType"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": ["AVAILABLE", "UNAVAILABLE", "UNAUTHORIZED"]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

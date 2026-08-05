@@ -16,13 +16,13 @@ Only the active milestone may be implemented. Work outside the active milestone 
 
 - Active phase: Phase 2 — Core Backend
 - Phase status: In progress
-- Active milestone: M2.5 — Recommendation Service
-- Milestone status: Complete
-- Hosted CI validation: Passed on August 2, 2026
+- Active milestone: M2.6 — Documentation Service
+- Milestone status: In progress
+- Hosted CI validation: Pending
 - Hosted CI tested branch: `main`
-- Next milestone: M2.6 — Documentation Service
+- Next milestone: M2.7 — Notification Service
 - Next milestone status: Not started
-- Last reviewed: 2026-08-02
+- Last reviewed: 2026-08-05
 
 Allowed status values:
 
@@ -483,7 +483,60 @@ M2.6 and later work remains not started. M2.5 excludes AI or LLM recommendation 
 - GitHub-hosted CI run `30748493190`: Passed
 - GitHub-hosted CI tested branch: `main`
 - M2.5 milestone status: Complete
-- M2.6 — Documentation Service: Not started
+- M2.6 — Documentation Service: In progress
+
+---
+
+# M2.6 — Documentation Service
+
+## Objective
+
+Implement the approved Documentation Service journal, entry, reflection, and opaque media-reference contracts without implementing raw media handling, file or external-storage access, sharing, AI analysis, Notification Service behavior, or another later milestone.
+
+## Included Tasks
+
+| Task | Status |
+| --- | --- |
+| Resolve the approved child-position, permission-policy, and one-way media-reference specifications | Complete |
+| NestJS module organization and configuration | Complete |
+| Public journal create, list, update, and delete API | Complete |
+| Documentation-owned entities, constraints, indexes, and Prisma migration | Complete |
+| Stable-ID media, entry, and reflection mutation operations | Complete |
+| Deterministic media-first dependency resolution and atomic position compaction | Complete |
+| Permission Service authorization, policy persistence, and fail-closed boundaries | Complete |
+| Encrypted journal content and privacy-safe observability | Complete |
+| Optimistic concurrency, idempotency, soft deletion, and legal-hold metadata | Complete |
+| Transactional outbox, inbox, and dead-letter foundations | Complete |
+| Approved JournalChanged event | Complete |
+| Health, readiness, version, request IDs, tracing, rate-limit headers, and metrics hooks | Complete |
+| OpenAPI generation and public/internal/AsyncAPI contract validation | Complete |
+| Unit, integration, API contract, migration, and regression tests | Complete |
+| Complete repository, migration, Playwright, and Docker validation | Complete |
+| GitHub-hosted CI validation | In progress |
+
+## Scope Control
+
+M2.7 and later work remains not started. M2.6 excludes raw media handling, file access, external storage, device permissions, sharing, AI analysis, embeddings, semantic retrieval, recommendation generation, client applications, Notification Service behavior, and all later milestones.
+
+## Validation Record
+
+- Local validation date: August 5, 2026
+- Tested branch: `main`
+- Corrected public OpenAPI, internal OpenAPI, and AsyncAPI parsing and Documentation contract review: Passed
+- Prisma schema validation and forward migration: Passed
+- Migration clean apply, reversal, migration-record cleanup, and clean reapplication: Passed against the independently owned Documentation PostgreSQL database
+- Documentation Service Jest suites: 9 tests passed across 5 suites
+- Repository Jest suites: 102 tests passed across 36 suites, including Memory, Planning, Navigation, and Recommendation regressions
+- Pytest: Passed
+- Formatting, ESLint, Ruff, strict TypeScript, Turborepo tests, and 34-workspace Turborepo build: Passed
+- Playwright: Passed
+- Docker Compose configuration, image build, and complete skeleton startup: Passed
+- Documentation readiness: Passed with PostgreSQL `UP`
+- Complete skeleton health verification: Passed
+- Container runtimes: Node.js 24.18.0, pnpm 11.4.0, Python 3.13.14
+- GitHub-hosted CI validation: Pending
+- M2.6 milestone status: In progress
+- M2.7 — Notification Service: Not started
 
 ---
 

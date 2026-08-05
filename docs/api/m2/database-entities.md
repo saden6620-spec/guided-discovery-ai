@@ -107,11 +107,11 @@ The policy reference and version are resolved authoritatively through Permission
 
 ### `journal_entries`
 
-`id`, `journal_id FK cascade-on-purge`, `position`, `type`, encrypted `content_ciphertext null`, nullable `media_reference_id FK journal_media_references(id)`, `occurred_at`, encrypted `location_reference_ciphertext null`, common timestamps, `deleted_at`, `version`. Unique active `(journal_id,position)`. Text entries require content and no media-reference ID; reference entries require no content and an active same-journal media-reference ID whose kind matches the entry type. The foreign key is added after both child tables exist and must not permit a cross-journal reference.
+`id`, `journal_id FK cascade-on-purge`, `position`, `type`, encrypted `content_ciphertext null`, nullable `media_reference_id FK journal_media_references(id)`, `occurred_at`, encrypted `location_reference_ciphertext null`, common timestamps, `deleted_at`, `version`. Unique active `(journal_id,position)`. Text entries require content and no media-reference ID; reference entries require exactly one active, accessible, same-journal media-reference ID whose kind matches the entry type. Each entry references at most one media reference. The foreign key is added after both child tables exist and must not permit a cross-journal reference.
 
 ### `journal_media_references`
 
-`id`, `journal_id FK`, nullable `entry_id FK`, cross-service `media_id uuid`, `media_kind` (`VOICE|PHOTO|VIDEO`), encrypted `caption_ciphertext null`, `position`, common timestamps, `deleted_at`, `version`. No object URL or binary. Unique active `(journal_id,media_id,entry_id)`.
+`id`, `journal_id FK cascade-on-purge`, cross-service `media_id uuid`, `media_kind` (`VOICE|PHOTO|VIDEO`), encrypted `caption_ciphertext null`, `position`, common timestamps, `deleted_at`, `version`. No reverse entry reference, object URL, binary, local path, storage credential, or external-provider information. A media reference may exist without an entry. Unique active `(journal_id,media_id)`.
 
 ### `reflections`
 

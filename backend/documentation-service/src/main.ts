@@ -1,38 +1,10 @@
 import "reflect-metadata";
-
-import { Controller, Get, Module } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
-
-const SERVICE_NAME = process.env.SERVICE_NAME ?? "documentation-service";
-const SERVICE_PORT = Number.parseInt(process.env.SERVICE_PORT ?? "3008", 10);
-
-interface HealthResponse {
-  readonly service: string;
-  readonly status: "ok";
-  readonly version: string;
-}
-
-@Controller()
-class HealthController {
-  @Get("health")
-  getHealth(): HealthResponse {
-    return {
-      service: SERVICE_NAME,
-      status: "ok",
-      version: process.env.SERVICE_VERSION ?? "0.1.0",
-    };
-  }
-}
-
-@Module({
-  controllers: [HealthController],
-})
-class AppModule {}
-
-async function bootstrap(): Promise<void> {
-  const application = await NestFactory.create(AppModule);
-  application.enableShutdownHooks();
-  await application.listen(SERVICE_PORT, "0.0.0.0");
-}
-
-void bootstrap();
+import { AppModule } from "./app.module.js";
+import { ApiExceptionFilter } from "./presentation/http.js";
+import { RequestObservabilityInterceptor } from "./presentation/observability.interceptor.js";
+const app = await NestFactory.create(AppModule, { bufferLogs: true });
+app.useGlobalFilters(new ApiExceptionFilter());
+app.useGlobalInterceptors(app.get(RequestObservabilityInterceptor));
+app.enableShutdownHooks();
+await app.listen(Number(process.env.SERVICE_PORT ?? 3008), "0.0.0.0");

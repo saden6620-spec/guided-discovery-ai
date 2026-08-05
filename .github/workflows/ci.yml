@@ -34,6 +34,7 @@ jobs:
       PLANNING_DATABASE_URL: postgresql://memory_service:memory_service_ci@127.0.0.1:5432/planning_service
       NAVIGATION_DATABASE_URL: postgresql://memory_service:memory_service_ci@127.0.0.1:5432/navigation_service
       RECOMMENDATION_DATABASE_URL: postgresql://memory_service:memory_service_ci@127.0.0.1:5432/recommendation_service
+      DOCUMENTATION_DATABASE_URL: postgresql://memory_service:memory_service_ci@127.0.0.1:5432/documentation_service
       APP_ENV: test
       PERMISSION_TEST_ALLOW: "true"
     steps:
@@ -98,6 +99,14 @@ jobs:
           DATABASE_URL: ${{ env.RECOMMENDATION_DATABASE_URL }}
         run: pnpm --filter @guided-discovery/recommendation-service migrate:deploy
 
+      - name: Create Documentation Service database
+        run: PGPASSWORD=memory_service_ci psql -h 127.0.0.1 -U memory_service -d memory_service -c 'CREATE DATABASE documentation_service'
+
+      - name: Apply Documentation Service migrations
+        env:
+          DOCUMENTATION_DATABASE_URL: ${{ env.DOCUMENTATION_DATABASE_URL }}
+        run: pnpm --filter @guided-discovery/documentation-service migrate:deploy
+
       - name: Validate repository
         run: pnpm validate
 
@@ -109,6 +118,7 @@ jobs:
           PLANNING_DATABASE_URL: postgresql://planning_service:planning_service_local@planning-database:5432/planning_service
           NAVIGATION_DATABASE_URL: postgresql://navigation_service:navigation_service_local@navigation-database:5432/navigation_service
           RECOMMENDATION_DATABASE_URL: postgresql://recommendation_service:recommendation_service_local@recommendation-database:5432/recommendation_service
+          DOCUMENTATION_DATABASE_URL: postgresql://documentation_service:documentation_service_local@documentation-database:5432/documentation_service
         run: docker compose up --build --detach --wait
 
       - name: Verify container runtimes
